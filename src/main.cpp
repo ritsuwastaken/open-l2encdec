@@ -157,15 +157,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    std::filesystem::path input_path(argv[optind]);
-    std::string input_file = input_path.string();
-    std::string input_file_name = input_path.filename().string();
-    std::string input_file_dir = input_path.parent_path().string();
-
     bool has_single_option = argc == 2 && optind == 1;
-    bool has_decode_prefix = input_file_name.starts_with(PREFIXES[Command::DECODE] + "-");
-    if (has_single_option && has_decode_prefix)
-        command = Command::ENCODE;
+    if (has_single_option)
+    {
+        std::filesystem::path input_path(argv[optind]);
+        bool has_decode_prefix = input_path.filename().string().starts_with(PREFIXES[Command::DECODE] + "-");
+        if (has_decode_prefix)
+            command = Command::ENCODE;
+    }
 
     int opt;
     while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:")) != -1)
@@ -317,6 +316,12 @@ int main(int argc, char *argv[])
         print_usage(argv[0]);
         return 1;
     }
+
+
+    std::filesystem::path input_path(argv[optind]);
+    std::string input_file = input_path.string();
+    std::string input_file_name = input_path.filename().string();
+    std::string input_file_dir = input_path.parent_path().string();
 
     std::vector<unsigned char> input_data;
     std::vector<unsigned char> output_data;
