@@ -49,11 +49,17 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - Input/output paths with spaces are not supported
 
 ## Build
+#### CMake
 - [cmake](https://cmake.org/download/) >= 3.11
 - [gmp](https://gmplib.org/) >= 6.2.1 - optional, but recommended for performance
 ```shell
-cmake . -B 'build'
-cmake --build 'build'
+$ cmake . -B 'build'
+$ cmake --build 'build'
+```
+#### Docker
+```shell
+$ docker build -t l2encdec-builder .  
+$ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 ```
 Check [l2encdec.h](https://github.com/ritsuwastaken/open-l2encdec/blob/main/include/l2encdec.h) and [main.cpp](https://github.com/ritsuwastaken/open-l2encdec/blob/main/src/main.cpp) for usage examples.
 
