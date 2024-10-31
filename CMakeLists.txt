@@ -57,7 +57,7 @@ set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME ${EXECUTABLE_NA
 
 # Link libs statically when possible, link gmp if found
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-  if(NOT UNIX)
+  if(NOT UNIX AND NOT MSVC)
     target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,-Bdynamic,--no-whole-archive)
   elseif(MSVC)
     target_compile_options(${TARGET} PRIVATE
