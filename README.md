@@ -41,7 +41,6 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 ## Changes
 - Doesn't include `loader.exe`, `loaderCT1.exe` and `gg-bps.dll`
-- Moved RSA modulus and exponent patcher to the main executable
 - Replaced `zlib` with `miniz`, added support for `mini-gmp`
 
 ## Known issues
