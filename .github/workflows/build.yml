@@ -18,15 +18,33 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            output: l2encdec.exe
+            cmake_generator: "MinGW Makefiles"
+            gmp_setup: true
+          - os: ubuntu-latest
+            output: l2encdec
+            cmake_generator: "Unix Makefiles"
+            gmp_setup: false
+          - os: macos-latest
+            output: l2encdec_osx
+            cmake_generator: "Unix Makefiles"
+            gmp_setup: false
+
+    runs-on: ${{ matrix.os }}
     env:
-      CMAKE_GENERATOR: "MinGW Makefiles"
+      CMAKE_GENERATOR: ${{ matrix.cmake_generator }}
       CMAKE_BUILD_TYPE: "Release"
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup MSYS2 for MinGW and GMP
+        if: matrix.gmp_setup
         uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -34,17 +52,17 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-gmp
 
-      # Borrowed from: https://github.com/scivision/rpn-calc-fortran
       - name: Put MSYS2_MinGW64 on PATH
+        if: matrix.gmp_setup
         run: echo "D:/a/_temp/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Build
         run: |
-          cmake . -B 'build' -DGMP_ROOT="D:/a/_temp/msys64/mingw64"
+          cmake . -B 'build' ${{ matrix.gmp_setup && '-DGMP_ROOT="D:/a/_temp/msys64/mingw64"' || '' }}
           cmake --build 'build' --config Release
 
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./build/l2encdec.exe
+          files: ./build/${{ matrix.output }}

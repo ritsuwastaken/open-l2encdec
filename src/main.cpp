@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cstring>
 #include <filesystem>
-#include <format>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -150,6 +149,13 @@ int main(int argc, char *argv[])
     std::string blowfish_key = "";
     int *xor_key = nullptr;
     int *start_position = nullptr;
+
+    if (argc == 1)
+    {
+        print_usage(argv[0]);
+        std::cin.get();
+        return 1;
+    }
 
     std::filesystem::path input_path(argv[optind]);
     std::string input_file = input_path.string();
@@ -377,11 +383,11 @@ int main(int argc, char *argv[])
     if (output_filename == "")
     {
         std::string new_output_file_name = command == Command::ENCODE
-                                               ? std::format("{}-{}", PREFIXES[command], input_file_name)
-                                               : std::format("{}-{}-{}", PREFIXES[command], protocol, input_file_name);
+                                               ? PREFIXES[command] + "-" + input_file_name
+                                               : PREFIXES[command] + "-" + std::to_string(protocol) + "-" + input_file_name;
         output_filename = input_file_dir.empty()
                               ? new_output_file_name
-                              : std::format("{}/{}", input_file_dir, new_output_file_name);
+                              : input_file_dir + "/" + new_output_file_name;
     }
 
     if (write(output_filename, output_data) != 0)

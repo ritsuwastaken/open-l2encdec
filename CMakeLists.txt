@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 project(l2encdec VERSION 1.0.0 LANGUAGES CXX C)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
@@ -21,7 +22,7 @@ if (MSVC)
 endif()
 
 # GMP
-if(NOT APPLE)
+if(NOT UNIX)
   set(GMP_USE_STATIC_LIBS ON)
 endif()
 find_package(GMP QUIET)
@@ -48,12 +49,16 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 
 # Executable
 add_executable(${PROJECT_NAME}_exe src/main.cpp ${COMMON_SOURCES})
-set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+set(EXECUTABLE_NAME ${PROJECT_NAME})
+if (APPLE)
+  set(EXECUTABLE_NAME ${PROJECT_NAME}_osx)
+endif()
+set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 
 # Link libs statically when possible, link gmp if found
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++ -static)
+  if(NOT UNIX)
+    target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,-Bdynamic,--no-whole-archive)
   elseif(MSVC)
     target_compile_options(${TARGET} PRIVATE
       $<$<CONFIG:>:/MT>
