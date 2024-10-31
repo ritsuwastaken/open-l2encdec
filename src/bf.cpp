@@ -1,0 +1,20 @@
+#include <blowfish.h>
+#include "bf.h"
+
+size_t BF::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const unsigned char *key, size_t key_size)
+{
+    Blowfish blowfish;
+    blowfish.SetKey(key, key_size);
+    output_data.resize(input_data.size());
+    blowfish.Encrypt(output_data.data(), input_data.data(), input_data.size());
+    return output_data.size();
+}
+
+size_t BF::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const unsigned char *key, size_t key_size)
+{
+    Blowfish blowfish;
+    blowfish.SetKey(key, key_size);
+    output_data.resize(input_data.size());
+    blowfish.Decrypt(output_data.data(), input_data.data(), input_data.size());
+    return output_data.size();
+}

@@ -1,0 +1,50 @@
+name: build
+
+on:
+  push:
+    paths:
+      - ".github/**"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - "src/**"
+      - "include/**"
+      - "miniz/**"
+      - "blowfish/**"
+      - "mini-gmp/**"
+      - "getopt/**"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      CMAKE_GENERATOR: "MinGW Makefiles"
+      CMAKE_BUILD_TYPE: "Release"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 for MinGW and GMP
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-gmp
+
+      # Borrowed from: https://github.com/scivision/rpn-calc-fortran
+      - name: Put MSYS2_MinGW64 on PATH
+        run: echo "D:/a/_temp/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build
+        run: |
+          cmake . -B 'build' -DGMP_ROOT="D:/a/_temp/msys64/mingw64"
+          cmake --build 'build' --config Release
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ./build/l2encdec.exe

@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "x86-Release",
+            "generator": "Visual Studio 17 2022",
+            "configurationType": "Release",
+            "buildRoot": "${projectDir}\\build\\${name}",
+            "installRoot": "${projectDir}\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "inheritEnvironments": [
+                "msvc_x86"
+            ]
+        },
+        {
+            "name": "x64-Release",
+            "generator": "Visual Studio 17 2022",
+            "configurationType": "Release",
+            "buildRoot": "${projectDir}\\build\\${name}",
+            "installRoot": "${projectDir}\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "inheritEnvironments": [
+                "msvc_x64"
+            ]
+        }
+    ]
+}
