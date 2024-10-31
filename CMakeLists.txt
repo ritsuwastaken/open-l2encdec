@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-project(l2encdec VERSION 1.0.2 LANGUAGES CXX C)
+project(l2encdec VERSION 1.0.3 LANGUAGES CXX C)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 set(GETOPT_MS_SOURCES getopt/getopt.c getopt/getopt.h)
@@ -57,8 +57,12 @@ set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME ${EXECUTABLE_NA
 
 # Link libs statically when possible, link gmp if found
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-  if(NOT UNIX AND NOT MSVC)
-    target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,-Bdynamic,--no-whole-archive)
+  if(NOT APPLE AND NOT MSVC)
+    if(WIN32)
+      target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,-Bdynamic,--no-whole-archive)
+    else()
+      target_link_options(${TARGET} PRIVATE -static-libgcc -static-libstdc++)
+    endif()
   elseif(MSVC)
     target_compile_options(${TARGET} PRIVATE
       $<$<CONFIG:>:/MT>
