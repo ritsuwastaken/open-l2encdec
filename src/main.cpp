@@ -23,7 +23,7 @@ std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::DECOMPRESSION_FAILED, "Failed to decompress file"},
     {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"},
     {l2encdec::DecodeResult::CRC32_FAILED, "Failed to calculate CRC32"},
-    {l2encdec::DecodeResult::CRC32_MISMATCH, "CRC32 verification failed"}};
+    {l2encdec::DecodeResult::CRC32_MISMATCH, "CRC32 verification failed, use -t to skip"}};
 
 std::map<std::string, l2encdec::Type> ENCDEC_TYPES = {
     {"blowfish", l2encdec::Type::BLOWFISH},
