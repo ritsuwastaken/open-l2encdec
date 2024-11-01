@@ -54,6 +54,8 @@ jobs:
       - name: Build
         if: matrix.os == 'windows-latest'
         uses: lukka/run-cmake@v10
+        with:
+          configurePreset: msvc
 
       - name: Build
         if: matrix.os != 'windows-latest'
