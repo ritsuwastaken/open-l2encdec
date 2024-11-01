@@ -1,0 +1,12 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "msvc",
+            "displayName": "MSVC preset",
+            "description": "Sets Visual Studio generator, build and install directory",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/"
+        }
+    ]
+}
