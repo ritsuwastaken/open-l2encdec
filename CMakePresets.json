@@ -16,7 +16,10 @@
             "displayName": "MSVC preset",
             "description": "Sets Visual Studio generator and build directory",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/"
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
         }
     ]
 }
