@@ -37,12 +37,15 @@ if(MSVC)
 else()
     find_package(GMP QUIET)
 endif()
-if(GMP_FOUND)
-    list(APPEND INCLUDES ${GMP_INCLUDE_DIR})
-    add_compile_definitions(GMP_FOUND)
-else()
+
+if(NOT GMP_FOUND AND NOT gmp_FOUND)
     list(APPEND SOURCES mini-gmp/mini-gmp.c)
     list(APPEND INCLUDES mini-gmp)
+else()
+    if (GMP_FOUND)
+        list(APPEND INCLUDES ${GMP_INCLUDE_DIR})
+    endif()
+    add_compile_definitions(GMP_FOUND)
 endif()
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
@@ -58,9 +61,11 @@ foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
     target_include_directories(${TARGET} PRIVATE ${INCLUDES})
     target_compile_definitions(${TARGET} PRIVATE L2ENCDEC_EXPORTS)
     
-    if(GMP_FOUND) # Unix
+    if(GMP_FOUND)
         target_link_libraries(${TARGET} PRIVATE ${GMP_LIB})
-    elseif(gmp_FOUND) # MSVC
+    endif()
+
+    if(gmp_FOUND)
         target_link_libraries(${TARGET} PRIVATE PkgConfig::gmp)
     endif()
     
