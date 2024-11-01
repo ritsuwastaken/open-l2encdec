@@ -24,7 +24,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            output: l2encdec.exe
+            output: Release/l2encdec.exe
             cmake_generator: "Visual Studio 17 2022"
           - os: ubuntu-latest
             output: l2encdec
