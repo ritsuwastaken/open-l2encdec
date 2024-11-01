@@ -23,16 +23,13 @@ jobs:
         include:
           - os: windows-latest
             output: l2encdec.exe
-            cmake_generator: "MinGW Makefiles"
-            gmp_setup: true
+            cmake_generator: "Visual Studio 17 2022"
           - os: ubuntu-latest
             output: l2encdec
             cmake_generator: "Unix Makefiles"
-            gmp_setup: false
           - os: macos-latest
             output: l2encdec_osx
             cmake_generator: "Unix Makefiles"
-            gmp_setup: false
 
     runs-on: ${{ matrix.os }}
     env:
@@ -43,22 +40,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup MSYS2 for MinGW and GMP
-        if: matrix.gmp_setup
-        uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          install: >-
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-gmp
-
-      - name: Put MSYS2_MinGW64 on PATH
-        if: matrix.gmp_setup
-        run: echo "D:/a/_temp/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Setup vcpkg
+        if: matrix.os == 'windows-latest'
+        uses: lukka/run-vcpkg@v11
 
       - name: Build
         run: |
-          cmake . -B 'build' ${{ matrix.gmp_setup && '-DGMP_SEARCH_PATH="D:/a/_temp/msys64/mingw64"' || '' }}
+          cmake . -B 'build' ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"' || '' }}
           cmake --build 'build' --config Release
 
       - name: Set execute permissions
