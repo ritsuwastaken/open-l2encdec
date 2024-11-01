@@ -47,10 +47,19 @@ jobs:
           vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
           runVcpkgInstall: true
 
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+        if: matrix.os == 'windows-latest'
+
       - name: Build
+        if: matrix.os == 'windows-latest'
+        uses: lukka/run-cmake@v10
+
+      - name: Build
+        if: matrix.os != 'windows-latest'
         run: |
-          cmake . -B 'build' ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"' || '' }}
-          cmake --build 'build' --config Release
+          cmake . -B 'build'
+          cmake --build 'build'
 
       - name: Set execute permissions
         if: matrix.os != 'windows-latest'
