@@ -1,12 +1,24 @@
 FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    libgmp-dev \
-    git \
+    mercurial \
+    autoconf \
+    libtool \
+    bison \
+    byacc \
+    texinfo \
     g++-mingw-w64-x86-64-posix \
-    gcc-mingw-w64-x86-64-posix
+    gcc-mingw-w64-x86-64-posix \
+    build-essential \
+    libgmp-dev \
+    cmake
+
+RUN hg clone --updaterev tip https://gmplib.org/repo/gmp /gmp-source
+RUN cd /gmp-source && \
+    ./.bootstrap && \
+    ./configure --host=x86_64-w64-mingw32 --enable-static --disable-shared --prefix=/usr/x86_64-w64-mingw32 && \
+    make -j$(nproc) && \
+    make install
 
 WORKDIR /app
 
