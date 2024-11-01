@@ -4,14 +4,16 @@ on:
   push:
     paths:
       - ".github/**"
-      - "CMakeLists.txt"
-      - "cmake/**"
-      - "src/**"
-      - "include/**"
-      - "miniz/**"
       - "blowfish/**"
-      - "mini-gmp/**"
+      - "cmake/**"
       - "getopt/**"
+      - "include/**"
+      - "mini-gmp/**"
+      - "miniz/**"
+      - "src/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "vcpkg.json"
 
 permissions:
   contents: write
