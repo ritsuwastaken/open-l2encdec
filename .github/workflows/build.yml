@@ -37,6 +37,7 @@ jobs:
     env:
       CMAKE_GENERATOR: ${{ matrix.cmake_generator }}
       CMAKE_BUILD_TYPE: "Release"
+      PKG_CONFIG: "pkg-config --static"
 
     steps:
       - name: Checkout
@@ -48,7 +49,7 @@ jobs:
         with:
           vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
 
-      - name: Get CMake (MSVC)
+      - name: Setup CMake (MSVC)
         uses: lukka/get-cmake@latest
         if: matrix.os == 'windows-latest'
 
