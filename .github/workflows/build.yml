@@ -40,24 +40,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup vcpkg
+      - name: Setup vcpkg (MSVC)
         if: matrix.os == 'windows-latest'
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
           runVcpkgInstall: true
 
-      - name: Get CMake
+      - name: Get CMake (MSVC)
         uses: lukka/get-cmake@latest
         if: matrix.os == 'windows-latest'
 
-      - name: Build
+      - name: Build (MSVC)
         if: matrix.os == 'windows-latest'
         uses: lukka/run-cmake@v10
         with:
           configurePreset: msvc
+          buildPresetAdditionalArgs: "['--config Release']"
 
-      - name: Build
+      - name: Build (Unix)
         if: matrix.os != 'windows-latest'
         run: |
           cmake . -B 'build'
