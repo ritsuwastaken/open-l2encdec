@@ -58,7 +58,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake . -B 'build' ${{ matrix.gmp_setup && '-DGMP_ROOT="D:/a/_temp/msys64/mingw64"' || '' }}
+          cmake . -B 'build' ${{ matrix.gmp_setup && '-DGMP_SEARCH_PATH="D:/a/_temp/msys64/mingw64"' || '' }}
           cmake --build 'build' --config Release
 
       - name: Set execute permissions
