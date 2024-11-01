@@ -55,6 +55,7 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: msvc
+          buildPreset: msvc-build
           buildPresetAdditionalArgs: "['--config Release']"
 
       - name: Build (Unix)

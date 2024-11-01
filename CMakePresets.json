@@ -21,5 +21,19 @@
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "msvc-build",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "msvc"
+        },
+        {
+            "name": "unix-build",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "unix"
+        }
     ]
 }
