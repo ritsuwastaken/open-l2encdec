@@ -2,9 +2,19 @@
     "version": 8,
     "configurePresets": [
         {
+            "name": "unix",
+            "displayName": "Unix preset",
+            "description": "Sets Unix Makefiles generator and build directory",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
             "name": "msvc",
             "displayName": "MSVC preset",
-            "description": "Sets Visual Studio generator, build and install directory",
+            "description": "Sets Visual Studio generator and build directory",
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/"
         }
