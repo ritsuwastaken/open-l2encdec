@@ -17,20 +17,45 @@
             }
         },
         {
-            "name": "msvc",
-            "displayName": "MSVC preset",
-            "description": "Sets Visual Studio generator and build directory",
+            "name": "msvc-base",
+            "hidden": true,
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build_msvc/",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             },
+            "binaryDir": "${sourceDir}/build_msvc/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "msvc-x64",
+            "inherits": "msvc-base",
+            "displayName": "MSVC x64",
+            "architecture": "x64",
+            "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-windows-static"
+            }
+        },
+        {
+            "name": "msvc-x86",
+            "inherits": "msvc-base",
+            "displayName": "MSVC x86",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-static"
+            }
+        },
+        {
+            "name": "msvc-arm64",
+            "inherits": "msvc-base",
+            "displayName": "MSVC ARM64",
+            "architecture": "ARM64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows-static"
             }
         },
         {
@@ -52,13 +77,6 @@
     ],
     "buildPresets": [
         {
-            "name": "msvc-build",
-            "description": "Build using MSVC",
-            "displayName": "MSVC Build",
-            "configurePreset": "msvc",
-            "configuration": "Release"
-        },
-        {
             "name": "unix-build",
             "description": "Build using Unix Makefiles generator",
             "displayName": "Unix Build",
@@ -70,6 +88,21 @@
             "description": "Build using MinGW toolchain",
             "displayName": "MinGW Build",
             "configurePreset": "mingw",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-x64-build",
+            "configurePreset": "msvc-x64",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-x86-build",
+            "configurePreset": "msvc-x86",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-arm64-build",
+            "configurePreset": "msvc-arm64",
             "configuration": "Release"
         }
     ]
