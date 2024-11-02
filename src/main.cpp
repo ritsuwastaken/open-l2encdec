@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     std::string output_filename = "";
     int protocol = 0;
     bool skip_tail = false;
-    bool use_legacy_rsa = false;
+    bool use_legacy_decrypt_rsa = false;
     l2encdec::Type algorithm = l2encdec::Type::NONE;
     std::string header = "";
     std::string modulus = "";
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
             skip_tail = true;
             break;
         case 'l':
-            use_legacy_rsa = true;
+            use_legacy_decrypt_rsa = true;
             break;
         case 'a':
             if (!optarg || ENCDEC_TYPES.find(optarg) == ENCDEC_TYPES.end())
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
                    : protocol;
 
     l2encdec::Params params;
-    if (protocol != 0 && !l2encdec::init_params(&params, protocol, input_file_name, use_legacy_rsa))
+    if (protocol != 0 && !l2encdec::init_params(&params, protocol, input_file_name, use_legacy_decrypt_rsa))
         std::cerr << "Warning: unsupported protocol" << std::endl;
 
     params.skip_tail = skip_tail;
