@@ -23,6 +23,10 @@ set(INCLUDES
     miniz
 )
 
+if (MSVC)
+    add_compile_options(/SAFESEH:NO)
+endif()
+
 if(MSVC)
     list(APPEND SOURCES getopt/getopt.c)
     list(APPEND INCLUDES getopt)
