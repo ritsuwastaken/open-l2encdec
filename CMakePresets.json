@@ -6,7 +6,7 @@
             "displayName": "Unix preset",
             "description": "Sets Unix Makefiles generator and build directory",
             "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build/",
+            "binaryDir": "${sourceDir}/build_unix/",
             "condition": {
                 "type": "notEquals",
                 "lhs": "${hostSystemName}",
@@ -21,7 +21,7 @@
             "displayName": "MSVC preset",
             "description": "Sets Visual Studio generator and build directory",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/",
+            "binaryDir": "${sourceDir}/build_msvc/",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -32,6 +32,22 @@
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_TARGET_TRIPLET": "x64-windows-static"
             }
+        },
+        {
+            "name": "mingw",
+            "displayName": "MinGW preset",
+            "description": "Sets MinGW generator and build directory",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_mingw/",
+            "toolchainFile": "${sourceDir}/cmake/mingw-w64-x86_64.cmake",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
     ],
     "buildPresets": [
@@ -39,13 +55,22 @@
             "name": "msvc-build",
             "description": "",
             "displayName": "",
-            "configurePreset": "msvc"
+            "configurePreset": "msvc",
+            "configuration": "Release"
         },
         {
             "name": "unix-build",
             "description": "",
             "displayName": "",
-            "configurePreset": "unix"
+            "configurePreset": "unix",
+            "configuration": "Release"
+        },
+        {
+            "name": "mingw-build",
+            "description": "Build using MinGW toolchain",
+            "displayName": "MinGW Build",
+            "configurePreset": "mingw",
+            "configuration": "Release"
         }
     ]
 }
