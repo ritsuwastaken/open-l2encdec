@@ -2,3 +2,6 @@
 .vs
 .vscode
 build
+build_unix
+build_msvc
+build_mingw
