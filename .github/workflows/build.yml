@@ -23,15 +23,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-latest
+          - os: windows-2022
             output: ./build_msvc/Release/l2encdec.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             output: ./build_unix/l2encdec
             configure_preset: unix
             build_preset: unix-build
-          - os: macos-latest
+          - os: macos-14
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
