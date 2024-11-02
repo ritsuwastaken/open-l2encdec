@@ -50,8 +50,8 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 ## Build
 #### CMake
-- [cmake](https://cmake.org/download/) >= 3.11
-- [gmp](https://gmplib.org/) >= 6.2.1 - optional, but recommended for performance
+- [cmake](https://cmake.org/download/) >= 3.21
+- [gmp](https://gmplib.org/) >= 6.2 - optional, but recommended for performance
 ```shell
 $ cmake . -B 'build'
 $ cmake --build 'build'

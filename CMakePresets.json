@@ -7,6 +7,11 @@
             "description": "Sets Unix Makefiles generator and build directory",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build/",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -17,6 +22,11 @@
             "description": "Sets Visual Studio generator and build directory",
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",

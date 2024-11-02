@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.21)
 project(l2encdec VERSION 1.0.6 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
