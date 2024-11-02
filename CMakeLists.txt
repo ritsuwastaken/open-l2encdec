@@ -60,7 +60,7 @@ endif()
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
     target_include_directories(${TARGET} PRIVATE ${INCLUDES})
     target_compile_definitions(${TARGET} PRIVATE L2ENCDEC_EXPORTS)
-    
+
     if(GMP_FOUND)
         if (MSVC)
             target_link_libraries(${TARGET} PRIVATE PkgConfig::GMP)
