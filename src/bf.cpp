@@ -6,7 +6,7 @@ size_t BF::encrypt(const std::vector<unsigned char> &input_data, std::vector<uns
     Blowfish blowfish;
     blowfish.SetKey(key, key_size);
     output_data.resize(input_data.size());
-    blowfish.Encrypt(output_data.data(), input_data.data(), input_data.size());
+    blowfish.Encrypt(output_data.data(), input_data.data(), static_cast<int>(input_data.size()));
     return output_data.size();
 }
 
@@ -15,6 +15,6 @@ size_t BF::decrypt(const std::vector<unsigned char> &input_data, std::vector<uns
     Blowfish blowfish;
     blowfish.SetKey(key, key_size);
     output_data.resize(input_data.size());
-    blowfish.Decrypt(output_data.data(), input_data.data(), input_data.size());
+    blowfish.Decrypt(output_data.data(), input_data.data(), static_cast<int>(input_data.size()));
     return output_data.size();
 }

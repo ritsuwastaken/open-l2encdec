@@ -69,7 +69,7 @@ size_t remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &
 void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)
 {
     std::vector<unsigned char> padded_buffer;
-    int input_size = add_padding(padded_buffer, input_data);
+    size_t input_size = add_padding(padded_buffer, input_data);
 
     mpz_t modulus, public_exp;
     mpz_init(modulus);

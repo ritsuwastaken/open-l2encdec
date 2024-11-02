@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
             {
                 protocol = std::stoi(optarg);
             }
-            catch (const std::exception &e)
+            catch (const std::exception&)
             {
                 std::cerr << "Invalid protocol value: " << optarg << std::endl;
                 print_usage(argv[0]);
@@ -282,7 +282,7 @@ int main(int argc, char *argv[])
             {
                 xor_key = new int(std::stoi(optarg));
             }
-            catch (const std::exception &e)
+            catch (const std::exception&)
             {
                 std::cerr << "Invalid XOR key value: " << optarg << std::endl;
                 return 1;
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
             {
                 start_position = new int(std::stoi(optarg));
             }
-            catch (const std::exception &e)
+            catch (const std::exception&)
             {
                 std::cerr << "Invalid start index value: " << optarg << std::endl;
                 return 1;

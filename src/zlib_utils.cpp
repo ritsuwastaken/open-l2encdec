@@ -54,7 +54,7 @@ int ZlibUtils::unpack(const std::vector<unsigned char> &input_buffer, std::vecto
 
 int ZlibUtils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
-    int uncompressed_size = input_buffer.size();
+    size_t uncompressed_size = input_buffer.size();
     output_buffer.clear();
     output_buffer.reserve(uncompressed_size);
     output_buffer.insert(output_buffer.end(),
@@ -72,7 +72,7 @@ int ZlibUtils::pack(const std::vector<unsigned char> &input_buffer, std::vector<
 
     do
     {
-        stream.avail_in = std::min(DEFLATE_CHUNK_SIZE, static_cast<size_t>(input_buffer.size() - input_pos));
+        stream.avail_in = static_cast<unsigned int>(std::min(DEFLATE_CHUNK_SIZE, input_buffer.size() - input_pos));
         stream.next_in = const_cast<unsigned char *>(&in[input_pos]);
 
         do
