@@ -62,7 +62,9 @@ $ mkdir -p build
 $ docker build -t l2encdec-builder .  
 $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 ```
-Check [l2encdec.h](https://github.com/ritsuwastaken/open-l2encdec/blob/main/include/l2encdec.h) and [main.cpp](https://github.com/ritsuwastaken/open-l2encdec/blob/main/src/main.cpp) for usage examples.
+#### Visual Studio (as CMake project)
+- [Visual Studio 17 2022 or newer](https://visualstudio.microsoft.com/downloads/)
+- [vcpkg](https://github.com/microsoft/vcpkg) - [Included with Visual Studio](https://devblogs.microsoft.com/cppblog/vcpkg-is-now-included-with-visual-studio/)
 
 ## Credits
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
