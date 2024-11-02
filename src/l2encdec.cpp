@@ -10,7 +10,7 @@
 
 const size_t FOOTER_SIZE = 20;
 const size_t FOOTER_CRC32_OFFSET = 12;
-const size_t BLOWFISH_KEY_NULL_TERMINATOR = 1;
+const int BLOWFISH_KEY_NULL_TERMINATOR = 1;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -119,9 +119,8 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
         break;
     case l2encdec::Type::BLOWFISH:
     {
-        const unsigned char *key = reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str());
-        size_t key_size = std::strlen(reinterpret_cast<const char *>(key)) + BLOWFISH_KEY_NULL_TERMINATOR;
-        BF::encrypt(input_data, encrypted_data, key, key_size);
+        int key_size = static_cast<int>(params.blowfish_key.length()) + BLOWFISH_KEY_NULL_TERMINATOR;
+        BF::encrypt(input_data, encrypted_data, reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str()), key_size);
         break;
     }
     case l2encdec::Type::RSA:
@@ -181,9 +180,8 @@ l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_
         break;
     case l2encdec::Type::BLOWFISH:
     {
-        const unsigned char *key = reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str());
-        size_t key_size = std::strlen(reinterpret_cast<const char *>(key)) + BLOWFISH_KEY_NULL_TERMINATOR;
-        BF::decrypt(data, decrypted_data, key, key_size);
+        int key_size = static_cast<int>(params.blowfish_key.length()) + BLOWFISH_KEY_NULL_TERMINATOR;
+        BF::decrypt(data, decrypted_data, reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str()), key_size);
         break;
     }
     case l2encdec::Type::RSA:
