@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2022
+          - os: windows-latest
             output: ./build_msvc/Release/l2encdec.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
