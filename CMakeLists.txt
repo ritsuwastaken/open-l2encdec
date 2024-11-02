@@ -63,7 +63,6 @@ foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
     
     if(GMP_FOUND)
         if (MSVC)
-            message(STATUS "PkgConfig::GMP: ${PkgConfig::GMP}")
             target_link_libraries(${TARGET} PRIVATE PkgConfig::GMP)
         else()
             target_link_libraries(${TARGET} PRIVATE ${GMP_LIB})
