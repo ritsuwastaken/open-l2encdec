@@ -24,7 +24,7 @@ set(INCLUDES
 )
 
 if (MSVC)
-    add_compile_options(/SAFESEH:NO)
+    add_link_options(/SAFESEH:NO)
 endif()
 
 if(MSVC)
