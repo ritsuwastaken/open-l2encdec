@@ -11,7 +11,10 @@ RUN apt-get update && apt-get install -y \
     gcc-mingw-w64-x86-64-posix \
     build-essential \
     libgmp-dev \
-    cmake
+    python3 \
+    python3-pip
+
+RUN pip3 install cmake
 
 RUN hg clone --updaterev tip https://gmplib.org/repo/gmp /gmp-source
 RUN cd /gmp-source && \
@@ -24,18 +27,21 @@ WORKDIR /app
 
 COPY . .
 
-RUN cmake . -B 'docker_build_linux' && \
-    cmake --build 'docker_build_linux'
+RUN cmake . --preset unix && \
+    cmake --build --preset unix-build
 
-RUN cmake . -B 'docker_build_windows' \
-    -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-w64-x86_64.cmake \
-    -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build 'docker_build_windows'
+RUN cmake . --preset mingw && \
+    cmake --build --preset mingw-build
 
 RUN mkdir -p /build && \
-    cp docker_build_linux/l2encdec /build/l2encdec && \
-    cp docker_build_windows/l2encdec.exe /build/
+    cp build_unix/l2encdec /build/l2encdec && \
+    cp build_mingw/l2encdec.exe /build/l2encdec.exe
 
 VOLUME /build
 
-ENTRYPOINT ["/bin/sh", "-c", "cp /build/l2encdec /mounted-build/ && cp /build/l2encdec.exe /mounted-build/ && chown $(stat -c '%u:%g' /mounted-build/) /mounted-build/l2encdec && chown $(stat -c '%u:%g' /mounted-build/) /mounted-build/l2encdec.exe"]
+ENTRYPOINT ["/bin/sh", "-c", "\
+    cp /build/l2encdec /mounted-build/ && \
+    cp /build/l2encdec.exe /mounted-build/ && \
+    chown $(stat -c '%u:%g' /mounted-build/) /mounted-build/l2encdec && \
+    chown $(stat -c '%u:%g' /mounted-build/) /mounted-build/l2encdec.exe \
+"]

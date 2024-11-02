@@ -24,19 +24,19 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            output: Release/l2encdec.exe
-            cmake_generator: "Visual Studio 17 2022"
+            output: ./build_msvc/Release/l2encdec.exe
+            configure_preset: msvc
+            build_preset: msvc-build
           - os: ubuntu-latest
-            output: l2encdec
-            cmake_generator: "Unix Makefiles"
+            output: ./build_unix/l2encdec
+            configure_preset: unix
+            build_preset: unix-build
           - os: macos-latest
-            output: l2encdec_osx
-            cmake_generator: "Unix Makefiles"
+            output: ./build_unix/l2encdec_osx
+            configure_preset: unix
+            build_preset: unix-build
 
     runs-on: ${{ matrix.os }}
-    env:
-      CMAKE_GENERATOR: ${{ matrix.cmake_generator }}
-      CMAKE_BUILD_TYPE: "Release"
 
     steps:
       - name: Checkout
@@ -46,30 +46,21 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: lukka/run-vcpkg@v11
 
-      - name: Setup CMake (MSVC)
+      - name: Setup CMake
         uses: lukka/get-cmake@latest
-        if: matrix.os == 'windows-latest'
 
-      - name: Build (MSVC)
-        if: matrix.os == 'windows-latest'
+      - name: Build
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: msvc
-          buildPreset: msvc-build
-          buildPresetAdditionalArgs: "['--config Release']"
-
-      - name: Build (Unix)
-        if: matrix.os != 'windows-latest'
-        run: |
-          cmake . -B 'build'
-          cmake --build 'build'
+          configurePreset: ${{ matrix.configure_preset }}
+          buildPreset: ${{ matrix.build_preset }}
 
       - name: Set execute permissions
         if: matrix.os != 'windows-latest'
-        run: chmod +x ./build/${{ matrix.output }}
+        run: chmod +x ${{ matrix.output }}
 
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./build/${{ matrix.output }}
+          files: ${{ matrix.output }}
