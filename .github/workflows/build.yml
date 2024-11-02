@@ -37,7 +37,6 @@ jobs:
     env:
       CMAKE_GENERATOR: ${{ matrix.cmake_generator }}
       CMAKE_BUILD_TYPE: "Release"
-      PKG_CONFIG: "pkg-config --static"
 
     steps:
       - name: Checkout
