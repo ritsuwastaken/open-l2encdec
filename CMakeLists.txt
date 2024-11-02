@@ -23,10 +23,6 @@ set(INCLUDES
     miniz
 )
 
-if (MSVC)
-    add_link_options(/SAFESEH:NO)
-endif()
-
 if(MSVC)
     list(APPEND SOURCES getopt/getopt.c)
     list(APPEND INCLUDES getopt)
@@ -72,6 +68,7 @@ foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
 
     if (MSVC)
         target_compile_options(${TARGET} PRIVATE $<$<CONFIG:Release>:/MT>)
+        target_link_options(${TARGET} PRIVATE /SAFESEH:NO)
     elseif(MINGW)
         target_link_options(${TARGET} PRIVATE -static -lwinpthread)
     elseif(UNIX AND NOT APPLE)
