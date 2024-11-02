@@ -53,15 +53,15 @@
     "buildPresets": [
         {
             "name": "msvc-build",
-            "description": "",
-            "displayName": "",
+            "description": "Build using MSVC",
+            "displayName": "MSVC Build",
             "configurePreset": "msvc",
             "configuration": "Release"
         },
         {
             "name": "unix-build",
-            "description": "",
-            "displayName": "",
+            "description": "Build using Unix Makefiles generator",
+            "displayName": "Unix Build",
             "configurePreset": "unix",
             "configuration": "Release"
         },
