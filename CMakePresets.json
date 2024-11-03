@@ -20,6 +20,7 @@
             "name": "msvc-base",
             "hidden": true,
             "generator": "Visual Studio 17 2022",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -27,8 +28,7 @@
             },
             "binaryDir": "${sourceDir}/build_msvc/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
@@ -60,8 +60,7 @@
         },
         {
             "name": "mingw",
-            "displayName": "MinGW preset",
-            "description": "Sets MinGW generator and build directory",
+            "displayName": "MinGW x86_64",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build_mingw/",
             "toolchainFile": "${sourceDir}/cmake/mingw-w64-x86_64.cmake",
