@@ -101,6 +101,18 @@ bool l2encdec::init_params(Params *params, int protocol, std::string filename, b
     return true;
 }
 
+l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input_data, size_t header_size) 
+{
+    uint32_t checksum = *reinterpret_cast<const uint32_t *>(input_data.data() + input_data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
+    std::vector<unsigned char> input_data_without_footer(input_data.begin(), input_data.end() - FOOTER_SIZE);
+    uint32_t calculated_checksum = 0;
+    if (ZlibUtils::checksum(input_data_without_footer, calculated_checksum, header_size) != 0)
+        return l2encdec::ChecksumResult::FAILED;
+    if (calculated_checksum != checksum)
+        return l2encdec::ChecksumResult::MISMATCH;
+    return l2encdec::ChecksumResult::SUCCESS;
+}
+
 l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_data,
                                         std::vector<unsigned char> &output_data,
                                         const Params &params)
@@ -153,19 +165,8 @@ l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_
                                         const Params &params)
 {
     size_t header_size = params.header.length() * 2;
-
-    if (!params.skip_tail)
-    {
-        uint32_t checksum = *reinterpret_cast<const uint32_t *>(input_data.data() + input_data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
-        std::vector<unsigned char> input_data_without_footer(input_data.begin(), input_data.end() - FOOTER_SIZE);
-        uint32_t calculated_checksum = 0;
-        if (ZlibUtils::checksum(input_data_without_footer, calculated_checksum, header_size) != 0)
-            return l2encdec::DecodeResult::CRC32_FAILED;
-        if (calculated_checksum != checksum)
-            return l2encdec::DecodeResult::CRC32_MISMATCH;
-    }
-
-    std::vector<unsigned char> data(input_data.begin() + header_size, input_data.end() - FOOTER_SIZE);
+    size_t footer_size = params.skip_tail ? 0 : FOOTER_SIZE;
+    std::vector<unsigned char> data(input_data.begin() + header_size, input_data.end() - footer_size);
     std::vector<unsigned char> decrypted_data;
     switch (params.type)
     {

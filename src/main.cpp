@@ -21,9 +21,11 @@ std::map<l2encdec::EncodeResult, const char *> ENCODE_ERRORS = {
 std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::INVALID_TYPE, "Invalid protocol"},
     {l2encdec::DecodeResult::DECOMPRESSION_FAILED, "Failed to decompress file"},
-    {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"},
-    {l2encdec::DecodeResult::CRC32_FAILED, "Failed to calculate CRC32"},
-    {l2encdec::DecodeResult::CRC32_MISMATCH, "CRC32 verification failed, use -t to skip"}};
+    {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"}};
+
+std::map<l2encdec::ChecksumResult, const char *> CHECKSUM_ERRORS = {
+    {l2encdec::ChecksumResult::FAILED, "Failed to verify checksum"},
+    {l2encdec::ChecksumResult::MISMATCH, "Checksum mismatch"}};
 
 std::map<std::string, l2encdec::Type> ENCDEC_TYPES = {
     {"blowfish", l2encdec::Type::BLOWFISH},
@@ -116,7 +118,8 @@ void print_usage(const char *name)
               << "  -c <command>          options: encode, decode; default: decode\n"
               << "  -p <protocol>         used for default params, options: 111, 120, 121, 211-212, 411-414\n"
               << "  -o <output_file>      path to output file\n"
-              << "  -t                    skip tail verification for decoding; do not add tail when encoding\n"
+              << "  -v                    skip checksum verification\n"
+              << "  -t                    do not add tail/read file without tail (e.g. for Exteel files)\n"
               << "  -l                    use legacy RSA credentials for decryption; only for protocols 411-414\n"
               << "  -a <algorithm>        possible options: blowfish, rsa, xor, xor_position, xor_filename\n"
               << "  -m <modulus_hex>      custom modulus for `rsa`\n"
@@ -141,6 +144,7 @@ int main(int argc, char *argv[])
     std::string output_filename = "";
     int protocol = 0;
     bool skip_tail = false;
+    bool verify = false;
     bool use_legacy_decrypt_rsa = false;
     l2encdec::Type algorithm = l2encdec::Type::NONE;
     std::string header = "";
@@ -167,7 +171,7 @@ int main(int argc, char *argv[])
     }
 
     int opt;
-    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:")) != -1)
+    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:v")) != -1)
     {
         switch (opt)
         {
@@ -203,7 +207,7 @@ int main(int argc, char *argv[])
             {
                 protocol = std::stoi(optarg);
             }
-            catch (const std::exception&)
+            catch (const std::exception &)
             {
                 std::cerr << "Invalid protocol value: " << optarg << std::endl;
                 print_usage(argv[0]);
@@ -282,7 +286,7 @@ int main(int argc, char *argv[])
             {
                 xor_key = new int(std::stoi(optarg));
             }
-            catch (const std::exception&)
+            catch (const std::exception &)
             {
                 std::cerr << "Invalid XOR key value: " << optarg << std::endl;
                 return 1;
@@ -299,11 +303,14 @@ int main(int argc, char *argv[])
             {
                 start_position = new int(std::stoi(optarg));
             }
-            catch (const std::exception&)
+            catch (const std::exception &)
             {
                 std::cerr << "Invalid start index value: " << optarg << std::endl;
                 return 1;
             }
+            break;
+        case 'v':
+            verify = false;
             break;
         case '?':
             print_usage(argv[0]);
@@ -316,7 +323,6 @@ int main(int argc, char *argv[])
         print_usage(argv[0]);
         return 1;
     }
-
 
     std::filesystem::path input_path(argv[optind]);
     std::string input_file = input_path.string();
@@ -377,6 +383,15 @@ int main(int argc, char *argv[])
         }
         break;
     case Command::DECODE:
+        if (verify && !skip_tail)
+        {
+            if (auto status = l2encdec::verify_checksum(input_data, params.header.size());
+                status != l2encdec::ChecksumResult::SUCCESS)
+            {
+                std::cerr << CHECKSUM_ERRORS.at(status) << std::endl;
+                return 1;
+            }
+        }
         if (auto status = l2encdec::decode(input_data, output_data, params);
             status != l2encdec::DecodeResult::SUCCESS)
         {

@@ -28,14 +28,19 @@ namespace l2encdec
         RSA
     };
 
+    enum class ChecksumResult
+    {
+        SUCCESS = 0,
+        FAILED = -1,
+        MISMATCH = -2
+    };
+
     enum class DecodeResult
     {
         SUCCESS = 0,
         INVALID_TYPE = -1,
         DECOMPRESSION_FAILED = -2,
         DECRYPTION_FAILED = -3,
-        CRC32_FAILED = -4,  // Returned only when Params::skip_tail is false
-        CRC32_MISMATCH = -5 // Returned only when Params::skip_tail is false
     };
 
     enum class EncodeResult
@@ -43,7 +48,7 @@ namespace l2encdec
         SUCCESS = 0,
         INVALID_TYPE = -1,
         COMPRESSION_FAILED = -2,
-        CRC32_FAILED = -4 // Returned only when Params::skip_tail is false
+        CRC32_FAILED = -3, // Returned only when Params::skip_tail is false
     };
 
     struct Params
@@ -71,6 +76,11 @@ namespace l2encdec
      * @return `true` if the parameters were initialized successfully, `false` otherwise.
      */
     L2ENCDEC_API bool init_params(Params *params, int protocol, std::string filename, bool use_legacy_decrypt_rsa = false);
+
+    /**
+     * @brief Verify the checksum of the input data.
+     */
+    L2ENCDEC_API ChecksumResult verify_checksum(const std::vector<unsigned char> &input_data, size_t header_size);
 
     /**
      * @brief Encode the input data using the specified protocol.
