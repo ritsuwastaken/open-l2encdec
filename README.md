@@ -53,8 +53,8 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - [cmake](https://cmake.org/download/) >= 3.28
 - [gmp](https://gmplib.org/) >= 6.2 - optional, but recommended for performance
 ```shell
-$ cmake . -B 'build'
-$ cmake --build 'build'
+$ cmake . -B 'build' --preset unix
+$ cmake --build 'build' --preset unix-build
 ```
 #### Docker
 ```shell
