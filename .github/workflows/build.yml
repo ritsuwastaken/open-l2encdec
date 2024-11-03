@@ -23,18 +23,24 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-latest
+          - os: windows-2022
             output: ./build_msvc/Release/l2encdec.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
+            setup_vcpkg: true
+            set_execute_permissions: false
           - os: ubuntu-22.04
             output: ./build_unix/l2encdec
             configure_preset: unix
             build_preset: unix-build
+            setup_vcpkg: false
+            set_execute_permissions: true
           - os: macos-14
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
+            setup_vcpkg: false
+            set_execute_permissions: true
 
     runs-on: ${{ matrix.os }}
 
@@ -42,8 +48,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup vcpkg (MSVC)
-        if: matrix.os == 'windows-latest'
+      - name: Setup vcpkg
+        if: matrix.setup_vcpkg
         uses: lukka/run-vcpkg@v11
 
       - name: Setup CMake
@@ -56,7 +62,7 @@ jobs:
           buildPreset: ${{ matrix.build_preset }}
 
       - name: Set execute permissions
-        if: matrix.os != 'windows-latest'
+        if: matrix.set_execute_permissions
         run: chmod +x ${{ matrix.output }}
 
       - name: Release
