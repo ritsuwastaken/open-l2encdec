@@ -55,7 +55,7 @@ namespace l2encdec
     {
         Type type;
         std::string header; // `decrypt`: expected header, `encrypt`: header to prepend
-        bool skip_tail;     // `decrypt`: skip crc32 verification; `encrypt`: do not append tail containing crc32 checksum
+        bool skip_tail;     // `decrypt`: read file without tail; `encrypt`: do not append tail
 
         std::string filename;   // for l2encdec::Type::XOR_FILENAME
         int xor_key;            // for l2encdec::Type::XOR
