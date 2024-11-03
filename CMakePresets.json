@@ -80,15 +80,13 @@
             "name": "unix-build",
             "description": "Build using Unix Makefiles generator",
             "displayName": "Unix Build",
-            "configurePreset": "unix",
-            "configuration": "Release"
+            "configurePreset": "unix"
         },
         {
             "name": "mingw-build",
             "description": "Build using MinGW toolchain",
             "displayName": "MinGW Build",
-            "configurePreset": "mingw",
-            "configuration": "Release"
+            "configurePreset": "mingw"
         },
         {
             "name": "msvc-x64-build",
