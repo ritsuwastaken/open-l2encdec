@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
 set(SOURCES
     src/l2encdec.cpp
     src/rsa.cpp
@@ -47,7 +49,7 @@ else()
     list(APPEND INCLUDES mini-gmp)
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES})
 add_executable(${PROJECT_NAME}_exe src/main.cpp ${SOURCES})
 
 if(APPLE)
