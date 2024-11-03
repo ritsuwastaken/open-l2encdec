@@ -15,19 +15,19 @@ set(SOURCES
     src/xor.cpp
     src/bf.cpp
     src/zlib_utils.cpp
-    blowfish/blowfish.cpp
-    miniz/miniz.c
+    third_party/blowfish/blowfish.cpp
+    third_party/miniz/miniz.c
 )
 
 set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    blowfish
-    miniz
+    third_party/blowfish
+    third_party/miniz
 )
 
 if(MSVC)
-    list(APPEND SOURCES getopt/getopt.c)
-    list(APPEND INCLUDES getopt)
+    list(APPEND SOURCES third_party/getopt/getopt.c)
+    list(APPEND INCLUDES third_party/getopt)
 endif()
 
 if(MSVC)
@@ -45,8 +45,8 @@ endif()
 if(GMP_FOUND)
     add_compile_definitions(GMP_FOUND)
 else()
-    list(APPEND SOURCES mini-gmp/mini-gmp.c)
-    list(APPEND INCLUDES mini-gmp)
+    list(APPEND SOURCES third_party/mini-gmp/mini-gmp.c)
+    list(APPEND INCLUDES third_party/mini-gmp)
 endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})
