@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     std::string exponent = "";
     std::string blowfish_key = "";
     int *xor_key = nullptr;
-    int *start_position = nullptr;
+    int *xor_start_position = nullptr;
 
     if (argc == 1)
     {
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
             }
             try
             {
-                start_position = new int(std::stoi(optarg));
+                xor_start_position = new int(std::stoi(optarg));
             }
             catch (const std::exception &)
             {
@@ -366,8 +366,8 @@ int main(int argc, char *argv[])
         params.blowfish_key = blowfish_key;
     if (xor_key != nullptr)
         params.xor_key = *xor_key;
-    if (start_position != nullptr)
-        params.xor_start_position = *start_position;
+    if (xor_start_position != nullptr)
+        params.xor_start_position = *xor_start_position;
 
     std::cout << "Command: " << (command == Command::ENCODE ? "encode" : "decode") << std::endl
               << "Protocol: " << protocol << std::endl;
