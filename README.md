@@ -16,7 +16,8 @@ Drag and drop file(s) onto the executable or use command line options
 - -c *string* - command - `encode` or `decode`. Defaults to `decode`
 - -p *number* - protocol - 111, 120, 121, 211, 212, 411, 412, 413, 414
 - -o *string* - output file path
-- -t - skip tail verification for decoding; do not add tail when encoding
+- -v - skip checksum verification
+- -t - do not add tail/read file without tail (e.g. for Exteel files)
 - -f *string* - force different filename for `xor_filename` - protocol 121
 - -l - use legacy RSA credentials for decryption; only for protocols 411-414
 
