@@ -118,7 +118,7 @@ void print_usage(const char *name)
               << "  -c <command>          options: encode, decode; default: decode\n"
               << "  -p <protocol>         used for default params, options: 111, 120, 121, 211-212, 411-414\n"
               << "  -o <output_file>      path to output file\n"
-              << "  -v                    skip checksum verification\n"
+              << "  -v                    verify checksum before decoding\n"
               << "  -t                    do not add tail/read file without tail (e.g. for Exteel files)\n"
               << "  -l                    use legacy RSA credentials for decryption; only for protocols 411-414\n"
               << "  -a <algorithm>        possible options: blowfish, rsa, xor, xor_position, xor_filename\n"
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
             }
             break;
         case 'v':
-            verify = false;
+            verify = true;
             break;
         case '?':
             print_usage(argv[0]);
