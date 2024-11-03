@@ -59,7 +59,7 @@ $ cmake --build 'build'
 #### Docker
 ```shell
 $ mkdir -p build
-$ docker build -t l2encdec-builder .  
+$ docker build -f dockerfiles/win64.Dockerfile -t l2encdec-builder .  
 $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 ```
 #### Visual Studio (as CMake project)
