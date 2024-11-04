@@ -40,6 +40,10 @@ enum class Command
     DECODE
 };
 
+std::map<std::string, Command> COMMANDS = {
+    {"encode", Command::ENCODE},
+    {"decode", Command::DECODE}};
+
 std::map<Command, std::string> PREFIXES = {
     {Command::ENCODE, "enc"},
     {Command::DECODE, "dec"}};
@@ -185,16 +189,7 @@ int main(int argc, char *argv[])
                 return 1;
             }
 
-            if (std::strcmp(optarg, "encode") == 0)
-                command = Command::ENCODE;
-            else if (std::strcmp(optarg, "decode") == 0)
-                command = Command::DECODE;
-            else
-            {
-                std::cerr << "Invalid command: " << optarg << std::endl;
-                print_usage(argv[0]);
-                return 1;
-            }
+            command = COMMANDS.contains(optarg) ? COMMANDS.at(optarg) : Command::DECODE;
             break;
         case 'p':
             if (!optarg)
