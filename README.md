@@ -77,7 +77,9 @@ $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 - **ddokkaebi** - [Blowfish](https://github.com/ddokkaebi/Blowfish)
 - **richgel999** - [miniz](https://github.com/richgel999/miniz)
 - **Free Software Foundation** - [gmp, mini-gmp](https://gmplib.org/)
-- **Microsoft** - [getopt](https://github.com/iotivity/iotivity) from IoTivity project
+- **Microsoft** - [getopt](https://github.com/iotivity/iotivity/blob/master/resource/c_common/windows/src/getopt.c) from [IoTivity](https://github.com/iotivity/iotivity) project
+- **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8) for CMake
+- **caballa** - [FindGMP module](https://github.com/seahorn/crab/blob/master/cmake/FindGMP.cmake) for CMake from [crab](https://github.com/seahorn/crab)
 
 ## License
 This project is licensed under MIT
