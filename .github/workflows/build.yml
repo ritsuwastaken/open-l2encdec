@@ -35,6 +35,8 @@ jobs:
             build_preset: unix-build
             setup_vcpkg: false
             set_execute_permissions: true
+            cc: gcc-12
+            cxx: g++-12
           - os: macos-14
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
@@ -48,14 +50,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install GCC 12
-        if: matrix.os == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-12 g++-12
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
-
       - name: Setup vcpkg
         if: matrix.setup_vcpkg
         uses: lukka/run-vcpkg@v11
@@ -65,6 +59,9 @@ jobs:
 
       - name: Build
         uses: lukka/run-cmake@v10
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
