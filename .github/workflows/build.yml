@@ -4,13 +4,10 @@ on:
   push:
     paths:
       - ".github/**"
-      - "blowfish/**"
       - "cmake/**"
-      - "getopt/**"
       - "include/**"
-      - "mini-gmp/**"
-      - "miniz/**"
       - "src/**"
+      - "third_party/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
       - "vcpkg.json"
