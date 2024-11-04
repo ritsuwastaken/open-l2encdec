@@ -183,13 +183,13 @@ int main(int argc, char *argv[])
             print_usage(argv[0]);
             return 0;
         case 'c':
-            if (!optarg)
+            if (!optarg || !COMMANDS.contains(optarg))
             {
                 print_usage(argv[0]);
                 return 1;
             }
 
-            command = COMMANDS.contains(optarg) ? COMMANDS.at(optarg) : Command::DECODE;
+            command = COMMANDS.at(optarg);
             break;
         case 'p':
             if (!optarg)
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
             use_legacy_decrypt_rsa = true;
             break;
         case 'a':
-            if (!optarg || ENCDEC_TYPES.find(optarg) == ENCDEC_TYPES.end())
+            if (!optarg || !ENCDEC_TYPES.contains(optarg))
             {
                 std::cerr << "Invalid algorithm" << std::endl;
                 print_usage(argv[0]);
@@ -412,6 +412,5 @@ int main(int argc, char *argv[])
     }
 
     std::cout << "Saved to: " << output_filename << std::endl;
-
     return 0;
 }
