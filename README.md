@@ -1,5 +1,5 @@
 # open-l2encdec
-Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**. Multiplatform. Can be used as a library.
+Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**. Multiplatform.
 
 #### Supported methods and headers
 - **XOR**: 111, 120, 121
