@@ -24,7 +24,7 @@ Drag and drop file(s) onto the executable or use command line options
 #### Advanced options
 - -a *string* - encryption algorithm - `blowfish`, `rsa`, `xor`, `xor_position`, `xor_filename`
 - -m *string* - custom modulus for RSA in hex
-- -e/-d *hex* - custom public or private exponent for RSA in hex
+- -e/-d *string* - custom public or private exponent for RSA in hex
 - -b *string* - custom key for Blowfish
 - -x *string* - custom key for XOR in hex
 - -s *string* - custom start index for XOR position in hex
