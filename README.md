@@ -31,7 +31,7 @@ Drag and drop file(s) onto the executable or use command line options
 - -w *string* - custom wide char header; default: Lineage2Ver + protocol
 
 #### Examples
-```bash
+```shell
 # Decode a file
 $ ./l2encdec -c decode filename.ini
 # Encode a file using protocol 413
@@ -61,6 +61,7 @@ $ cmake --build --preset unix-build
 - [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0
 ```shell
 $ mkdir -p build
+# win32.Dockerfile, win64.Dockerfile or unix.Dockerfile
 $ docker build -f dockerfiles/win64.Dockerfile -t l2encdec-builder .  
 $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 ```
