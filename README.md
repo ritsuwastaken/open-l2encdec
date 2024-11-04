@@ -51,7 +51,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 ## Build
 #### CMake
-- [cmake](https://cmake.org/download/) >= 3.28
+- [CMake](https://cmake.org/download/) >= 3.28
 - [gmp](https://gmplib.org/) >= 6.2 - optional, but recommended for performance
 ```shell
 $ cmake . --preset unix
@@ -66,6 +66,7 @@ $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 #### Visual Studio (as CMake project)
 - [Visual Studio 17 2022 or newer](https://visualstudio.microsoft.com/downloads/)
 - [vcpkg](https://github.com/microsoft/vcpkg) - [Included with Visual Studio](https://devblogs.microsoft.com/cppblog/vcpkg-is-now-included-with-visual-studio/)
+- [CMake](https://cmake.org/) - [Included with Visual Studio](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170#installation)
 
 ## Credits
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
