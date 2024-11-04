@@ -58,6 +58,7 @@ $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
 #### Docker
+- [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0
 ```shell
 $ mkdir -p build
 $ docker build -f dockerfiles/win64.Dockerfile -t l2encdec-builder .  
