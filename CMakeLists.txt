@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(l2encdec VERSION 1.0.9 LANGUAGES CXX C)
+project(l2encdec VERSION 1.0.11 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
