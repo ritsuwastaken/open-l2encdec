@@ -56,13 +56,20 @@ endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
+if(BUILD_SHARED_LIBS)
+    if(NOT WIN32)
+        target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden)
+    endif()
+    target_compile_definitions(${PROJECT_NAME} 
+        PRIVATE L2ENCDEC_EXPORTS
+        PUBLIC L2ENCDEC_SHARED)
+endif()
 
 add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
 set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>")
 
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-    target_compile_definitions(${TARGET} PRIVATE L2ENCDEC_EXPORTS)
     if (GMP_FOUND)
         target_compile_definitions(${TARGET} PRIVATE GMP_FOUND)
         target_link_libraries(${TARGET} PRIVATE $<IF:$<C_COMPILER_ID:MSVC>,PkgConfig::GMP,${GMP_LIB}>)

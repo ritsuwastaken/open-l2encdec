@@ -11,7 +11,11 @@
 #define L2ENCDEC_API __declspec(dllimport)
 #endif
 #else
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define L2ENCDEC_API __attribute__ ((visibility ("default")))
+#else
 #define L2ENCDEC_API
+#endif
 #endif
 
 namespace l2encdec
