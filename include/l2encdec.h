@@ -12,7 +12,7 @@
 #endif
 #else
 #if defined(__GNUC__) && __GNUC__ >= 4
-#define L2ENCDEC_API __attribute__ ((visibility ("default")))
+#define L2ENCDEC_API __attribute__((visibility("default")))
 #else
 #define L2ENCDEC_API
 #endif
@@ -58,15 +58,12 @@ namespace l2encdec
     struct Params
     {
         Type type;
-        std::string header; // `decrypt`: expected header, `encrypt`: header to prepend
-        bool skip_tail;     // `decrypt`: read file without tail; `encrypt`: do not append tail
-
-        std::string filename;   // for l2encdec::Type::XOR_FILENAME
-        int xor_key;            // for l2encdec::Type::XOR
-        int xor_start_position; // for l2encdec::Type::XOR_POSITION
-
-        std::string blowfish_key; // for l2encdec::Type::BLOWFISH
-
+        std::string header;               // `decrypt`: expected header, `encrypt`: header to prepend
+        bool skip_tail;                   // `decrypt`: read file without tail; `encrypt`: do not append tail
+        std::string filename;             // for l2encdec::Type::XOR_FILENAME
+        int xor_key;                      // for l2encdec::Type::XOR
+        int xor_start_position;           // for l2encdec::Type::XOR_POSITION
+        std::string blowfish_key;         // for l2encdec::Type::BLOWFISH
         std::string rsa_modulus;          // for l2encdec::Type::RSA
         std::string rsa_public_exponent;  // for l2encdec::Type::RSA, encrypt
         std::string rsa_private_exponent; // for l2encdec::Type::RSA, decrypt
