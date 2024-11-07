@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
     std::string modulus = "";
     std::string exponent = "";
     std::string blowfish_key = "";
+    std::string filename = "";
     int *xor_key = nullptr;
     int *xor_start_position = nullptr;
 
@@ -307,6 +308,15 @@ int main(int argc, char *argv[])
         case 'v':
             verify = true;
             break;
+        case 'f':
+            if (!optarg)
+            {
+                std::cerr << "Missing filename for -f option" << std::endl;
+                print_usage(argv[0]);
+                return 1;
+            }
+            filename = optarg;
+            break;
         case '?':
             print_usage(argv[0]);
             return 1;
@@ -344,7 +354,7 @@ int main(int argc, char *argv[])
         std::cerr << "Warning: unsupported protocol" << std::endl;
 
     params.skip_tail = skip_tail;
-    params.filename = input_file_name;
+    params.filename = filename == "" ? input_file_name : filename;
 
     if (header != "")
         params.header = header;
