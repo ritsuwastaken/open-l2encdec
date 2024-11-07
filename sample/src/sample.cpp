@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 {
     // Initialize parameters for protocol 120
     l2encdec::Params params;
-    if (!l2encdec::init_params(&params, 120, "test.txt"))
+    if (!l2encdec::init_params(&params, 120))
         return 1;
 
     // Read input file
