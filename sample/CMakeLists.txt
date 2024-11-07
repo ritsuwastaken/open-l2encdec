@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Switch off to link l2encdec statically
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 # Using FetchContent:
