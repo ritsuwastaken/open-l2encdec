@@ -24,6 +24,9 @@ int main(int argc, char *argv[])
     if (!l2encdec::init_params(&params, 120))
         return 1;
 
+    // Add custom tail
+    params.tail = "00000000000000000000000012e0cdec00000000";
+
     // Read input file
     std::vector<unsigned char> input_data = read_file("input.txt");
     std::vector<unsigned char> encoded_data;
