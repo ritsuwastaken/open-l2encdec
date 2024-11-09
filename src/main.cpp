@@ -326,9 +326,9 @@ int main(int argc, char *argv[])
                 return 1;
             }
             tail = optarg;
-            if (tail.size() < TAIL_HEX_SIZE)
+            if (tail.size() != TAIL_HEX_SIZE)
             {
-                std::cerr << "Tail can't be shorter than 40 symbols (20 bytes)" << std::endl;
+                std::cerr << "Tail hex string must be exactly 40 symbols (20 bytes)" << std::endl;
                 return 1;
             }
             break;
