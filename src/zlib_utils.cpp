@@ -102,16 +102,7 @@ int ZlibUtils::pack(const std::vector<unsigned char> &input_buffer, std::vector<
     return 0;
 }
 
-int ZlibUtils::checksum(const std::vector<unsigned char> &buffer, uint32_t &checksum, size_t header_size)
+uint32_t ZlibUtils::checksum(const std::vector<unsigned char> &buffer, uint32_t checksum)
 {
-    size_t size = buffer.size();
-    if (size < header_size + BLOCK_SIZE)
-        return -1;
-
-    uint32_t crc = mz_crc32(checksum, buffer.data(), header_size);
-    crc = mz_crc32(crc, buffer.data() + header_size, size - header_size - BLOCK_SIZE);
-    crc = mz_crc32(crc, buffer.data() + size - BLOCK_SIZE, BLOCK_SIZE);
-    checksum = crc;
-
-    return 0;
+    return mz_crc32(checksum, buffer.data(), buffer.size());
 }

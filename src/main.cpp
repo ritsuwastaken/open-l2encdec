@@ -15,8 +15,7 @@
 
 std::map<l2encdec::EncodeResult, const char *> ENCODE_ERRORS = {
     {l2encdec::EncodeResult::INVALID_TYPE, "Invalid protocol"},
-    {l2encdec::EncodeResult::COMPRESSION_FAILED, "Failed to compress file"},
-    {l2encdec::EncodeResult::CRC32_FAILED, "Failed to calculate CRC32"}};
+    {l2encdec::EncodeResult::COMPRESSION_FAILED, "Failed to compress file"}};
 
 std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::INVALID_TYPE, "Invalid protocol"},
@@ -24,7 +23,6 @@ std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"}};
 
 std::map<l2encdec::ChecksumResult, const char *> CHECKSUM_ERRORS = {
-    {l2encdec::ChecksumResult::FAILED, "Failed to verify checksum"},
     {l2encdec::ChecksumResult::MISMATCH, "Checksum mismatch"}};
 
 std::map<std::string, l2encdec::Type> ENCDEC_TYPES = {
@@ -390,7 +388,7 @@ int main(int argc, char *argv[])
     case Command::DECODE:
         if (verify && !skip_tail)
         {
-            if (auto status = l2encdec::verify_checksum(input_data, params.header.size());
+            if (auto status = l2encdec::verify_checksum(input_data);
                 status != l2encdec::ChecksumResult::SUCCESS)
             {
                 std::cerr << CHECKSUM_ERRORS.at(status) << std::endl;

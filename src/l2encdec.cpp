@@ -101,13 +101,11 @@ bool l2encdec::init_params(Params *params, int protocol, std::string filename, b
     return true;
 }
 
-l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input_data, size_t header_size) 
+l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input_data)
 {
     uint32_t checksum = *reinterpret_cast<const uint32_t *>(input_data.data() + input_data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
     std::vector<unsigned char> input_data_without_footer(input_data.begin(), input_data.end() - FOOTER_SIZE);
-    uint32_t calculated_checksum = 0;
-    if (ZlibUtils::checksum(input_data_without_footer, calculated_checksum, header_size) != 0)
-        return l2encdec::ChecksumResult::FAILED;
+    uint32_t calculated_checksum = ZlibUtils::checksum(input_data_without_footer);
     if (calculated_checksum != checksum)
         return l2encdec::ChecksumResult::MISMATCH;
     return l2encdec::ChecksumResult::SUCCESS;
@@ -149,11 +147,8 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
     }
 
     insert_header(encrypted_data, params.header);
-    uint32_t crc = 0;
-    if (ZlibUtils::checksum(encrypted_data, crc, params.header.length() * 2) != 0)
-        return l2encdec::EncodeResult::CRC32_FAILED;
     if (!params.skip_tail)
-        insert_tail(encrypted_data, crc);
+        insert_tail(encrypted_data, ZlibUtils::checksum(encrypted_data));
 
     output_data = std::move(encrypted_data);
 

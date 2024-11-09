@@ -35,8 +35,7 @@ namespace l2encdec
     enum class ChecksumResult
     {
         SUCCESS = 0,
-        FAILED = -1,
-        MISMATCH = -2
+        MISMATCH = -1
     };
 
     enum class DecodeResult
@@ -52,7 +51,6 @@ namespace l2encdec
         SUCCESS = 0,
         INVALID_TYPE = -1,
         COMPRESSION_FAILED = -2,
-        CRC32_FAILED = -3, // Returned only when Params::skip_tail is false
     };
 
     struct Params
@@ -81,7 +79,7 @@ namespace l2encdec
     /**
      * @brief Verify the checksum of the input data.
      */
-    L2ENCDEC_API ChecksumResult verify_checksum(const std::vector<unsigned char> &input_data, size_t header_size);
+    L2ENCDEC_API ChecksumResult verify_checksum(const std::vector<unsigned char> &input_data);
 
     /**
      * @brief Encode the input data using the specified protocol.
