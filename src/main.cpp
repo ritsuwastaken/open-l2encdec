@@ -47,6 +47,7 @@ std::map<Command, std::string> PREFIXES = {
     {Command::DECODE, "dec"}};
 
 const size_t DEFAULT_HEADER_SIZE = 28;
+const size_t TAIL_HEX_SIZE = 40;
 
 int read(const std::string &filename, std::vector<unsigned char> &data)
 {
@@ -325,6 +326,11 @@ int main(int argc, char *argv[])
                 return 1;
             }
             tail = optarg;
+            if (tail.size() < TAIL_HEX_SIZE)
+            {
+                std::cerr << "Tail can't be shorter than 40 symbols (20 bytes)" << std::endl;
+                return 1;
+            }
             break;
         case '?':
             print_usage(argv[0]);
