@@ -58,15 +58,16 @@ inline void insert_tail(std::vector<unsigned char> &data, int crc)
 
 inline void insert_tail(std::vector<unsigned char> &data, const std::string &tail)
 {
-    if (tail.size() % 2 != 0)
-        tail = "0" + tail;
+    std::string padded_tail = tail;
+    if (padded_tail.size() % 2 != 0)
+        padded_tail = "0" + padded_tail;
 
     std::vector<unsigned char> tail_bytes;
-    for (size_t i = 0; i < tail.size(); i += 2)
+    for (size_t i = 0; i < padded_tail.size(); i += 2)
     {
         unsigned int byte;
         std::stringstream ss;
-        ss << std::hex << tail.substr(i, 2);
+        ss << std::hex << padded_tail.substr(i, 2);
         ss >> byte;
         tail_bytes.push_back(static_cast<unsigned char>(byte));
     }
