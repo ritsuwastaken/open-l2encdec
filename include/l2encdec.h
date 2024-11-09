@@ -69,8 +69,9 @@ namespace l2encdec
 
     /**
      * @brief Initialize default parameters for the specified protocol.
-     * @param params
-     * @param protocol
+     * @param params Struct to populate with parameters
+     * @param protocol Last three digits of the file header
+     * @param filename Filename used to calculate the XOR key for protocol 121
      * @param use_legacy_decrypt_rsa Use original private exponent and modulus for decryption, for protocols 411-414
      * @return `true` if the parameters were initialized successfully, `false` otherwise.
      */
