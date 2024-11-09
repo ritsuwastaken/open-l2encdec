@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
-#include <stdexcept>
 #include <string>
 #include <sstream>
 #include "xor.h"
@@ -60,9 +59,7 @@ inline void insert_tail(std::vector<unsigned char> &data, int crc)
 inline void insert_tail(std::vector<unsigned char> &data, const std::string &tail)
 {
     if (tail.size() % 2 != 0)
-    {
-        throw std::invalid_argument("Hex string must have an even length");
-    }
+        tail = "0" + tail;
 
     std::vector<unsigned char> tail_bytes;
     for (size_t i = 0; i < tail.size(); i += 2)
@@ -73,6 +70,7 @@ inline void insert_tail(std::vector<unsigned char> &data, const std::string &tai
         ss >> byte;
         tail_bytes.push_back(static_cast<unsigned char>(byte));
     }
+
     data.insert(data.end(), tail_bytes.begin(), tail_bytes.end());
 }
 
