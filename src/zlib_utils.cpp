@@ -4,7 +4,6 @@
 const size_t COMPRESSED_HEADER_SIZE = 4;
 const size_t INFLATE_CHUNK_SIZE = 1024 * 16;
 const size_t DEFLATE_CHUNK_SIZE = 1024 * 1024;
-const size_t BLOCK_SIZE = 128;
 
 int ZlibUtils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
