@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <stdexcept>
 #include <string>
+#include <sstream>
 #include "xor.h"
 #include "bf.h"
 #include "rsa.h"
@@ -53,6 +55,25 @@ inline void insert_tail(std::vector<unsigned char> &data, int crc)
 {
     data.insert(data.end(), FOOTER_SIZE, 0x00);
     *reinterpret_cast<uint32_t *>(data.data() + data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET) = crc;
+}
+
+inline void insert_tail(std::vector<unsigned char> &data, const std::string &tail)
+{
+    if (tail.size() % 2 != 0)
+    {
+        throw std::invalid_argument("Hex string must have an even length");
+    }
+
+    std::vector<unsigned char> tail_bytes;
+    for (size_t i = 0; i < tail.size(); i += 2)
+    {
+        unsigned int byte;
+        std::stringstream ss;
+        ss << std::hex << tail.substr(i, 2);
+        ss >> byte;
+        tail_bytes.push_back(static_cast<unsigned char>(byte));
+    }
+    data.insert(data.end(), tail_bytes.begin(), tail_bytes.end());
 }
 
 inline int get_XOR_key_by_index(int index)
@@ -148,7 +169,12 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
 
     insert_header(encrypted_data, params.header);
     if (!params.skip_tail)
-        insert_tail(encrypted_data, ZlibUtils::checksum(encrypted_data));
+    {
+        if (!params.tail.empty())
+            insert_tail(encrypted_data, params.tail);
+        else
+            insert_tail(encrypted_data, ZlibUtils::checksum(encrypted_data));
+    }
 
     output_data = std::move(encrypted_data);
 

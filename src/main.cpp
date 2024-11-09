@@ -131,6 +131,7 @@ void print_usage(const char *name)
               << "  -f <filename>         force different filename for `xor_filename` - protocol 121\n"
               << "  -s <start_index_hex>  custom start index for `xor_position` - protocol 120\n"
               << "  -w <header>           custom wide char header; default: Lineage2Ver<protocol>\n"
+              << "  -T <tail_hex>         custom tail for encoding, e.g. 000000000000000000000000deadbeaf00000000; contains checksum by default\n"
               << "  <input_file>          path to input file\n\n"
               << "Example:\n"
               << "  " << name << " -c decode filename.ini\n"
@@ -150,6 +151,7 @@ int main(int argc, char *argv[])
     bool use_legacy_decrypt_rsa = false;
     l2encdec::Type algorithm = l2encdec::Type::NONE;
     std::string header = "";
+    std::string tail = "";
     std::string modulus = "";
     std::string exponent = "";
     std::string blowfish_key = "";
@@ -174,7 +176,7 @@ int main(int argc, char *argv[])
     }
 
     int opt;
-    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:vf")) != -1)
+    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:vfT:")) != -1)
     {
         switch (opt)
         {
@@ -315,6 +317,15 @@ int main(int argc, char *argv[])
             }
             filename = optarg;
             break;
+        case 'T':
+            if (!optarg)
+            {
+                std::cerr << "Missing hex string for -T option" << std::endl;
+                print_usage(argv[0]);
+                return 1;
+            }
+            tail = optarg;
+            break;
         case '?':
             print_usage(argv[0]);
             return 1;
@@ -356,6 +367,8 @@ int main(int argc, char *argv[])
 
     if (header != "")
         params.header = header;
+    if (tail != "")
+        params.tail = tail;
     if (algorithm != l2encdec::Type::NONE)
         params.type = algorithm;
     if (modulus != "")
