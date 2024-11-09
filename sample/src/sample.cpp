@@ -27,12 +27,10 @@ int main(int argc, char *argv[])
     // Add custom tail
     params.tail = "00000000000000000000000012e0cdec00000000";
 
-    // Read input file
     std::vector<unsigned char> input_data = read_file("input.txt");
-    std::vector<unsigned char> encoded_data;
-    std::vector<unsigned char> decoded_data;
 
     // Encode the data
+    std::vector<unsigned char> encoded_data;
     auto encode_result = l2encdec::encode(input_data, encoded_data, params);
     if (encode_result != l2encdec::EncodeResult::SUCCESS)
         return 1;
@@ -40,6 +38,7 @@ int main(int argc, char *argv[])
     write_file("encoded.input.txt", encoded_data);
 
     // Decode the data
+    std::vector<unsigned char> decoded_data;
     auto decode_result = l2encdec::decode(encoded_data, decoded_data, params);
     if (decode_result != l2encdec::DecodeResult::SUCCESS)
         return 1;
