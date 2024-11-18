@@ -126,9 +126,7 @@ l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned ch
     uint32_t checksum = *reinterpret_cast<const uint32_t *>(input_data.data() + input_data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
     std::vector<unsigned char> input_data_without_footer(input_data.begin(), input_data.end() - FOOTER_SIZE);
     uint32_t calculated_checksum = ZlibUtils::checksum(input_data_without_footer);
-    if (calculated_checksum != checksum)
-        return l2encdec::ChecksumResult::MISMATCH;
-    return l2encdec::ChecksumResult::SUCCESS;
+    return calculated_checksum == checksum ? l2encdec::ChecksumResult::SUCCESS : l2encdec::ChecksumResult::MISMATCH;
 }
 
 l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_data,
@@ -168,12 +166,9 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
 
     insert_header(encrypted_data, params.header);
     if (!params.skip_tail)
-    {
-        if (!params.tail.empty())
-            insert_tail(encrypted_data, params.tail);
-        else
-            insert_tail(encrypted_data, ZlibUtils::checksum(encrypted_data));
-    }
+        params.tail.empty()
+            ? insert_tail(encrypted_data, ZlibUtils::checksum(encrypted_data))
+            : insert_tail(encrypted_data, params.tail);
 
     output_data = std::move(encrypted_data);
 
