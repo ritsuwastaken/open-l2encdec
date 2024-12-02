@@ -17,7 +17,7 @@ Drag and drop file(s) onto the executable or use command line options
 - -p *number* - protocol - `111`, `120`, `121`, `211`, `212`, `411`, `412`, `413`, `414`
 - -o *string* - output file path
 - -v - verify checksum in the tail before decoding (the game client doesn't do it)
-- -t - do not add tail/read file without tail (e.g. for Exteel files)
+- -t - do not add tail/read file without tail (e.g., for Exteel files)
 - -f *string* - force different filename for `xor_filename` - protocol `121`
 - -l - use legacy RSA credentials for decryption; only for protocols `411-414`
 
@@ -29,7 +29,7 @@ Drag and drop file(s) onto the executable or use command line options
 - -x *string* - custom key for `xor` in hex
 - -s *string* - custom start index for `xor_position` in hex
 - -w *string* - custom wide char header; default: Lineage2Ver + protocol
-- -T *string* - custom tail for encoding, must be exactly 40 characters (20 bytes) e.g. `000000000000000000000000deadbeaf00000000`; contains checksum by default
+- -T *string* - custom tail for encoding, must be exactly 40 characters (20 bytes) e.g., `000000000000000000000000deadbeaf00000000`; contains checksum by default
 
 #### Examples
 ```shell
@@ -47,7 +47,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 ## Known issues
 - Missing metadata in `111`, `120` and `121` tails - original `l2encdec` bug
-- Protocol `121` encryption/decryption requires original filename, use `-f` option to force it
+- Protocol `121` encryption and decryption require the original filename. Use the `-f` option to specify it manually
 - Input/output paths with spaces are not supported
 
 ## Build
