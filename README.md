@@ -1,7 +1,7 @@
 # open-l2encdec
 Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**. Multiplatform. Can be used as [a library](https://github.com/ritsuwastaken/open-l2encdec/tree/main/sample).
 
-#### Supported methods and headers
+#### Supported headers (Lineage2Ver###)
 - **XOR**: 111, 120, 121
 - **Blowfish**: 211, 212
 - **RSA**: 411, 412, 413, 414 - **l2encdec** key by default
