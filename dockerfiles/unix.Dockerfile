@@ -2,8 +2,9 @@ FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libgmp-dev \
-    python3-pip
+    python3-pip \
+    libssl-dev
+
 RUN pip3 install cmake
 
 WORKDIR /app

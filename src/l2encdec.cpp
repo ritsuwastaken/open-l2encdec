@@ -156,7 +156,7 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
         std::vector<unsigned char> compressed_data;
         if (ZlibUtils::pack(input_data, compressed_data) != 0)
             return l2encdec::EncodeResult::COMPRESSION_FAILED;
-        RSA::encrypt(compressed_data, encrypted_data, params.rsa_modulus, params.rsa_public_exponent);
+        L2RSA::encrypt(compressed_data, encrypted_data, params.rsa_modulus, params.rsa_public_exponent);
         break;
     }
     case l2encdec::Type::NONE:
@@ -203,7 +203,7 @@ l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_
     case l2encdec::Type::RSA:
     {
         std::vector<unsigned char> compressed_data;
-        if (RSA::decrypt(data, compressed_data, params.rsa_modulus, params.rsa_private_exponent) != 0)
+        if (L2RSA::decrypt(data, compressed_data, params.rsa_modulus, params.rsa_private_exponent) != 0)
             return l2encdec::DecodeResult::DECRYPTION_FAILED;
         if (ZlibUtils::unpack(compressed_data, decrypted_data) != 0)
             return l2encdec::DecodeResult::DECOMPRESSION_FAILED;

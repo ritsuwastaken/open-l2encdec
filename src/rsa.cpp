@@ -1,9 +1,4 @@
-#ifdef GMP_FOUND
-#include <gmp.h>
-#else
-#include <mini-gmp.h>
-#endif
-
+#include <openssl/bn.h>
 #include "rsa.h"
 #include <thread>
 #include <iomanip>
@@ -66,24 +61,21 @@ size_t remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &
     return output_size;
 }
 
-void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)
+void L2RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)
 {
     std::vector<unsigned char> padded_buffer;
     size_t input_size = add_padding(padded_buffer, input_data);
 
-    mpz_t modulus, public_exp;
-    mpz_init(modulus);
-    mpz_init(public_exp);
-    mpz_set_str(modulus, modulus_hex.c_str(), 16);
-    mpz_set_str(public_exp, public_exp_hex.c_str(), 16);
+    BIGNUM *modulus = BN_new();
+    BIGNUM *public_exp = BN_new();
+    BN_CTX *ctx = BN_CTX_new();
+    
+    BN_hex2bn(&modulus, modulus_hex.c_str());
+    BN_hex2bn(&public_exp, public_exp_hex.c_str());
 
     output_data.resize(input_size);
     std::vector<unsigned char> encrypted_buffer(input_size);
     size_t total_blocks = (input_size + BLOCK_SIZE - 1) / BLOCK_SIZE;
-
-    mpz_t block, encrypted_block;
-    mpz_init(block);
-    mpz_init(encrypted_block);
 
     size_t hardware_concurrency = std::thread::hardware_concurrency();
     size_t num_threads = hardware_concurrency > 0 ? hardware_concurrency : NUM_THREADS;
@@ -93,25 +85,24 @@ void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsi
 
     auto encrypt_block = [&]()
     {
-        mpz_t block, encrypted_block;
-        mpz_init(block);
-        mpz_init(encrypted_block);
+        BIGNUM *block = BN_new();
+        BIGNUM *encrypted_block = BN_new();
+        BN_CTX *local_ctx = BN_CTX_new();
 
         size_t i;
         while ((i = next_block.fetch_add(1)) < total_blocks)
         {
             size_t offset = i * BLOCK_SIZE;
-            size_t count;
-
-            mpz_import(block, BLOCK_SIZE / 4, 1, 4, 1, 0, padded_buffer.data() + offset);
-            mpz_powm(encrypted_block, block, public_exp, modulus);
-            mpz_export(encrypted_buffer.data() + offset, &count, 1, 4, 1, 0, encrypted_block);
-
+            
+            BN_bin2bn(padded_buffer.data() + offset, BLOCK_SIZE, block);
+            BN_mod_exp(encrypted_block, block, public_exp, modulus, local_ctx);
+            BN_bn2bin(encrypted_block, encrypted_buffer.data() + offset);
             completed_blocks.fetch_add(1);
         }
 
-        mpz_clear(block);
-        mpz_clear(encrypted_block);
+        BN_free(block);
+        BN_free(encrypted_block);
+        BN_CTX_free(local_ctx);
     };
 
     for (size_t i = 0; i < num_threads; ++i)
@@ -124,25 +115,25 @@ void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsi
         thread.join();
     }
 
-    mpz_clear(block);
-    mpz_clear(encrypted_block);
-    mpz_clear(modulus);
-    mpz_clear(public_exp);
+    BN_free(modulus);
+    BN_free(public_exp);
+    BN_CTX_free(ctx);
 
     output_data.assign(encrypted_buffer.begin(), encrypted_buffer.end());
 }
 
-int RSA::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &private_exp_hex)
+int L2RSA::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &private_exp_hex)
 {
     size_t file_size = input_data.size();
     if ((file_size % BLOCK_SIZE) != 0)
         return -1;
 
-    mpz_t modulus, private_exp;
-    mpz_init(modulus);
-    mpz_init(private_exp);
-    mpz_set_str(modulus, modulus_hex.c_str(), 16);
-    mpz_set_str(private_exp, private_exp_hex.c_str(), 16);
+    BIGNUM *modulus = BN_new();
+    BIGNUM *private_exp = BN_new();
+    BN_CTX *ctx = BN_CTX_new();
+    
+    BN_hex2bn(&modulus, modulus_hex.c_str());
+    BN_hex2bn(&private_exp, private_exp_hex.c_str());
 
     std::vector<unsigned char> decrypted_buffer(file_size);
     size_t total_blocks = file_size / BLOCK_SIZE;
@@ -155,25 +146,45 @@ int RSA::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsig
 
     auto decrypt_block = [&]()
     {
-        mpz_t block, decrypted_block;
-        mpz_init(block);
-        mpz_init(decrypted_block);
+        BIGNUM *block = BN_new();
+        BIGNUM *decrypted_block = BN_new();
+        BN_CTX *local_ctx = BN_CTX_new();
+        std::vector<unsigned char> temp_buffer(BLOCK_SIZE);
 
         size_t i;
         while ((i = next_block.fetch_add(1)) < total_blocks)
         {
             size_t offset = i * BLOCK_SIZE;
-            size_t count;
-
-            mpz_import(block, BLOCK_SIZE / 4, 1, 4, 1, 0, input_data.data() + offset);
-            mpz_powm(decrypted_block, block, private_exp, modulus);
-            mpz_export(decrypted_buffer.data() + offset, &count, 1, 4, 1, 0, decrypted_block);
+            
+            std::copy(input_data.begin() + offset, 
+                     input_data.begin() + offset + BLOCK_SIZE,
+                     temp_buffer.begin());
+            BN_bin2bn(temp_buffer.data(), BLOCK_SIZE, block);
+            
+            BN_mod_exp(decrypted_block, block, private_exp, modulus, local_ctx);
+            
+            std::fill(temp_buffer.begin(), temp_buffer.end(), 0);
+            int bytes_written = BN_bn2bin(decrypted_block, temp_buffer.data());
+            
+            if (bytes_written < BLOCK_SIZE)
+            {
+                std::copy_backward(temp_buffer.begin(), 
+                                 temp_buffer.begin() + bytes_written,
+                                 temp_buffer.begin() + BLOCK_SIZE);
+                std::fill(temp_buffer.begin(), 
+                         temp_buffer.begin() + (BLOCK_SIZE - bytes_written), 
+                         0);
+            }
+            
+            std::copy(temp_buffer.begin(), temp_buffer.end(),
+                     decrypted_buffer.begin() + offset);
 
             completed_blocks.fetch_add(1);
         }
 
-        mpz_clear(block);
-        mpz_clear(decrypted_block);
+        BN_free(block);
+        BN_free(decrypted_block);
+        BN_CTX_free(local_ctx);
     };
 
     for (size_t i = 0; i < num_threads; ++i)
@@ -186,8 +197,9 @@ int RSA::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsig
         thread.join();
     }
 
-    mpz_clear(modulus);
-    mpz_clear(private_exp);
+    BN_free(modulus);
+    BN_free(private_exp);
+    BN_CTX_free(ctx);
 
     output_data.resize(file_size);
     remove_padding(output_data, decrypted_buffer);
