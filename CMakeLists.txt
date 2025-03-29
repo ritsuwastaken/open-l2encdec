@@ -23,6 +23,7 @@ set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     third_party/blowfish
     third_party/miniz
+    ${OPENSSL_INCLUDE_DIR}
 )
 
 set(EXE_SOURCES src/main.cpp)
@@ -34,28 +35,13 @@ if(MSVC)
     list(APPEND EXE_INCLUDES third_party/getopt)
 endif()
 
-if(MSVC)
-    find_package(PkgConfig QUIET)
-    if (PkgConfig_FOUND)
-        pkg_check_modules(GMP IMPORTED_TARGET gmp)
-    endif()
-else()
-    if(MINGW)
-        set(GMP_USE_STATIC_LIBS ON)
-    endif()
-    find_package(GMP QUIET)
-    if (GMP_FOUND)
-        list(APPEND INCLUDES ${GMP_INCLUDE_DIR})
-    endif()
-endif()
-
-if(NOT GMP_FOUND)
-    list(APPEND SOURCES third_party/mini-gmp/mini-gmp.c)
-    list(APPEND INCLUDES third_party/mini-gmp)
-endif()
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+find_package(OpenSSL REQUIRED)
 
 add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto)
+
 if(BUILD_SHARED_LIBS)
     if(NOT WIN32)
         target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden)
@@ -65,15 +51,13 @@ if(BUILD_SHARED_LIBS)
         PUBLIC L2ENCDEC_SHARED)
 endif()
 
-add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
+add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES})
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
+target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} OpenSSL::Crypto)
+target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC L2ENCDEC_NO_EXPORT L2ENCDEC_NO_IMPORT)
 set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>")
 
 foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-    if (GMP_FOUND)
-        target_compile_definitions(${TARGET} PRIVATE GMP_FOUND)
-        target_link_libraries(${TARGET} PRIVATE $<IF:$<C_COMPILER_ID:MSVC>,PkgConfig::GMP,${GMP_LIB}>)
-    endif()
     if (MSVC)
         target_compile_options(${TARGET} PRIVATE $<$<CONFIG:Release>:/MT>)
         target_link_options(${TARGET} PRIVATE /SAFESEH:NO)
