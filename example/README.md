@@ -1,5 +1,7 @@
-# open-l2encdec/sample
+# open-l2encdec/example
+
 # Build and usage
+
 ```shell
 $ mkdir -p build && cd build
 $ cmake .. && make
