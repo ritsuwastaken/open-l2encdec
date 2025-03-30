@@ -1,9 +1,9 @@
 FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
+    git \
     build-essential \
-    python3-pip \
-    libssl-dev
+    python3-pip
 
 RUN pip3 install cmake
 

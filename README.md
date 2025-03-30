@@ -50,7 +50,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 ## Changes
 
 - Doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
-- Replaced `zlib` with `miniz`, replaced `gmp` with `OpenSSL::Crypto`
+- Replaced `zlib` with `miniz`, replaced `gmp` with `MbedTLS`
 
 ## Known issues
 
@@ -63,7 +63,6 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 #### CMake
 
 - [CMake](https://cmake.org/download/) >= 3.28
-- [OpenSSL](https://openssl-library.org/) >= 3.3.3
 
 ```shell
 $ cmake . --preset unix
@@ -84,7 +83,6 @@ $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 #### Visual Studio (as CMake project)
 
 - [Visual Studio 17 2022 or newer](https://visualstudio.microsoft.com/downloads/)
-- [vcpkg](https://github.com/microsoft/vcpkg) - [Included with Visual Studio](https://devblogs.microsoft.com/cppblog/vcpkg-is-now-included-with-visual-studio/)
 - [CMake](https://cmake.org/) - [Included with Visual Studio](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170#installation)
 
 ## Credits
@@ -93,7 +91,7 @@ $ docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder
 - **Hint** - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
-- **OpenSSL Project** - [OpenSSL](https://github.com/openssl/openssl)
+- **Trusted Firmware** - [MbedTLS](https://github.com/Mbed-TLS/mbedtls)
 - **ddokkaebi** - [Blowfish](https://github.com/ddokkaebi/Blowfish)
 - **Microsoft** - [getopt](https://github.com/iotivity/iotivity/blob/master/resource/c_common/windows/src/getopt.c) from [IoTivity](https://github.com/iotivity/iotivity) project
 - **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8) for CMake

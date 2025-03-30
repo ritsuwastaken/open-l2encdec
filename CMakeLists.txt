@@ -1,13 +1,23 @@
 cmake_minimum_required(VERSION 3.28)
 project(l2encdec VERSION 1.0.17 LANGUAGES CXX C)
 
+include(FetchContent)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+set(BUILD_SHARED_LIBS OFF)
+set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
+set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+FetchContent_Declare(
+    mbedtls
+    GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
+    GIT_TAG        v3.6.3
+)
+FetchContent_MakeAvailable(mbedtls)
 
 set(SOURCES
     src/l2encdec.cpp
@@ -23,45 +33,30 @@ set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     third_party/blowfish
     third_party/miniz
-    ${OPENSSL_INCLUDE_DIR}
 )
 
 set(EXE_SOURCES src/main.cpp)
-
 set(EXE_INCLUDES "")
-
 if(MSVC)
     list(APPEND EXE_SOURCES third_party/getopt/getopt.c)
     list(APPEND EXE_INCLUDES third_party/getopt)
 endif()
 
-set(OPENSSL_USE_STATIC_LIBS TRUE)
-find_package(OpenSSL REQUIRED)
-
 add_library(${PROJECT_NAME} ${SOURCES})
+target_compile_definitions(${PROJECT_NAME} PUBLIC L2ENCDEC_STATIC)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto)
+target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509)
 
-if(BUILD_SHARED_LIBS)
-    if(NOT WIN32)
-        target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden)
-    endif()
-    target_compile_definitions(${PROJECT_NAME} 
-        PRIVATE L2ENCDEC_EXPORTS
-        PUBLIC L2ENCDEC_SHARED)
-endif()
-
-add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES})
+add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
+target_compile_definitions(${PROJECT_NAME}_exe PUBLIC L2ENCDEC_STATIC)
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} OpenSSL::Crypto)
-target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC L2ENCDEC_NO_EXPORT L2ENCDEC_NO_IMPORT)
-set_target_properties(${PROJECT_NAME}_exe PROPERTIES OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>")
+target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} mbedtls mbedcrypto mbedx509)
+target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC)
+set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
+    OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
+)
 
-foreach(TARGET ${PROJECT_NAME} ${PROJECT_NAME}_exe)
-    if (MSVC)
-        target_compile_options(${TARGET} PRIVATE $<$<CONFIG:Release>:/MT>)
-        target_link_options(${TARGET} PRIVATE /SAFESEH:NO)
-    elseif(MINGW)
-        target_link_options(${TARGET} PRIVATE -static -lwinpthread)
-    endif()
-endforeach()
+if(MINGW)
+    target_link_options(${PROJECT_NAME} PRIVATE -static -lwinpthread)
+    target_link_options(${PROJECT_NAME}_exe PRIVATE -static -lwinpthread)
+endif()

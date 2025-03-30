@@ -1,6 +1,0 @@
-{
-  "name": "l2encdec",
-  "version-string": "1.0.17",
-  "builtin-baseline": "b322364f06308bdd24823f9d8f03fe0cc86fd46f",
-  "dependencies": ["openssl"]
-}

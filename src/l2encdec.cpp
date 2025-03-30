@@ -93,7 +93,7 @@ inline int get_XOR_key_by_filename(std::string filename)
     return ind & 0xff;
 }
 
-bool l2encdec::init_params(Params *params, int protocol, std::string filename, bool use_legacy_decrypt_rsa)
+L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::string filename, bool use_legacy_decrypt_rsa)
 {
     if (auto it = PROTOCOL_CONFIGS.find(protocol); it != PROTOCOL_CONFIGS.end())
     {
@@ -121,7 +121,7 @@ bool l2encdec::init_params(Params *params, int protocol, std::string filename, b
     return true;
 }
 
-l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input_data)
+L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input_data)
 {
     uint32_t checksum = *reinterpret_cast<const uint32_t *>(input_data.data() + input_data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
     std::vector<unsigned char> input_data_without_footer(input_data.begin(), input_data.end() - FOOTER_SIZE);
@@ -129,9 +129,9 @@ l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned ch
     return calculated_checksum == checksum ? l2encdec::ChecksumResult::SUCCESS : l2encdec::ChecksumResult::MISMATCH;
 }
 
-l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_data,
-                                        std::vector<unsigned char> &output_data,
-                                        const Params &params)
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_data,
+                                                     std::vector<unsigned char> &output_data,
+                                                     const Params &params)
 {
     std::vector<unsigned char> encrypted_data;
     switch (params.type)
@@ -156,7 +156,7 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
         std::vector<unsigned char> compressed_data;
         if (ZlibUtils::pack(input_data, compressed_data) != 0)
             return l2encdec::EncodeResult::COMPRESSION_FAILED;
-        L2RSA::encrypt(compressed_data, encrypted_data, params.rsa_modulus, params.rsa_public_exponent);
+        RSA::encrypt(compressed_data, encrypted_data, params.rsa_modulus, params.rsa_public_exponent);
         break;
     }
     case l2encdec::Type::NONE:
@@ -175,9 +175,9 @@ l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input_
     return l2encdec::EncodeResult::SUCCESS;
 }
 
-l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_data,
-                                        std::vector<unsigned char> &output_data,
-                                        const Params &params)
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_data,
+                                                     std::vector<unsigned char> &output_data,
+                                                     const Params &params)
 {
     size_t header_size = params.header.length() * 2;
     size_t footer_size = params.skip_tail ? 0 : FOOTER_SIZE;
@@ -203,7 +203,7 @@ l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input_
     case l2encdec::Type::RSA:
     {
         std::vector<unsigned char> compressed_data;
-        if (L2RSA::decrypt(data, compressed_data, params.rsa_modulus, params.rsa_private_exponent) != 0)
+        if (RSA::decrypt(data, compressed_data, params.rsa_modulus, params.rsa_private_exponent) != 0)
             return l2encdec::DecodeResult::DECRYPTION_FAILED;
         if (ZlibUtils::unpack(compressed_data, decrypted_data) != 0)
             return l2encdec::DecodeResult::DECOMPRESSION_FAILED;

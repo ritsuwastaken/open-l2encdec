@@ -20,13 +20,13 @@
             "name": "msvc-base",
             "hidden": true,
             "generator": "Visual Studio 17 2022",
-            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             },
             "binaryDir": "${sourceDir}/build_msvc/",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/msvc-static-mt.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -35,28 +35,19 @@
             "name": "msvc-x64",
             "inherits": "msvc-base",
             "displayName": "MSVC x64",
-            "architecture": "x64",
-            "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "x64-windows-static"
-            }
+            "architecture": "x64"
         },
         {
             "name": "msvc-x86",
             "inherits": "msvc-base",
             "displayName": "MSVC x86",
-            "architecture": "Win32",
-            "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "x86-windows-static"
-            }
+            "architecture": "Win32"
         },
         {
             "name": "msvc-arm64",
             "inherits": "msvc-base",
             "displayName": "MSVC ARM64",
-            "architecture": "ARM64",
-            "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "arm64-windows-static"
-            }
+            "architecture": "ARM64"
         },
         {
             "name": "mingw-w64-i686",
