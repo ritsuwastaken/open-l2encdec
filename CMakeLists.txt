@@ -11,7 +11,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 set(USER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force dependencies to build statically" FORCE)
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
@@ -31,7 +31,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(miniz)
 
-set(BUILD_SHARED_LIBS ${USER_BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS ${USER_BUILD_SHARED_LIBS} CACHE BOOL "Restore user preference" FORCE)
 
 set(SOURCES
     src/l2encdec.cpp
