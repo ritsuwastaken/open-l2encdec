@@ -22,7 +22,7 @@ FetchContent_MakeAvailable(mbedtls)
 FetchContent_Declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG        master
+    GIT_TAG        ae07a3615925f252f54fecb84aee2e3cfd4f0676
 )
 FetchContent_MakeAvailable(miniz)
 
