@@ -4,23 +4,7 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
-#if defined(L2ENCDEC_STATIC)
 #define L2ENCDEC_API
-#else
-#ifdef L2ENCDEC_EXPORTS
-#define L2ENCDEC_API __declspec(dllexport)
-#else
-#define L2ENCDEC_API __declspec(dllimport)
-#endif
-#endif
-#else
-#if defined(__GNUC__) && __GNUC__ >= 4
-#define L2ENCDEC_API __attribute__((visibility("default")))
-#else
-#define L2ENCDEC_API
-#endif
-#endif
 
 namespace l2encdec
 {
