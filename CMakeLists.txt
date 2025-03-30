@@ -32,19 +32,19 @@ set(SOURCES
     src/xor.cpp
     src/bf.cpp
     src/zlib_utils.cpp
-    third_party/blowfish/blowfish.cpp
+    3rd_party/blowfish/blowfish.cpp
 )
 
 set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    third_party/blowfish
+    3rd_party/blowfish
 )
 
 set(EXE_SOURCES src/main.cpp)
 set(EXE_INCLUDES "")
 if(MSVC)
-    list(APPEND EXE_SOURCES third_party/getopt/getopt.c)
-    list(APPEND EXE_INCLUDES third_party/getopt)
+    list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
+    list(APPEND EXE_INCLUDES 3rd_party/getopt)
 endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})

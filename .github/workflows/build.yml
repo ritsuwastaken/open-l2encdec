@@ -7,7 +7,7 @@ on:
       - "cmake/**"
       - "include/**"
       - "src/**"
-      - "third_party/**"
+      - "3rd_party/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
