@@ -19,6 +19,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(mbedtls)
 
+FetchContent_Declare(
+    miniz
+    GIT_REPOSITORY https://github.com/richgel999/miniz.git
+    GIT_TAG        3.0.2
+)
+FetchContent_MakeAvailable(miniz)
+
 set(SOURCES
     src/l2encdec.cpp
     src/rsa.cpp
@@ -26,13 +33,11 @@ set(SOURCES
     src/bf.cpp
     src/zlib_utils.cpp
     third_party/blowfish/blowfish.cpp
-    third_party/miniz/miniz.c
 )
 
 set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     third_party/blowfish
-    third_party/miniz
 )
 
 set(EXE_SOURCES src/main.cpp)
@@ -45,12 +50,12 @@ endif()
 add_library(${PROJECT_NAME} ${SOURCES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC L2ENCDEC_STATIC)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509)
+target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 
 add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
 target_compile_definitions(${PROJECT_NAME}_exe PUBLIC L2ENCDEC_STATIC)
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} mbedtls mbedcrypto mbedx509)
+target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} mbedtls mbedcrypto mbedx509 miniz)
 target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC)
 set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
     OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
