@@ -7,10 +7,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+set(USER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+
 set(BUILD_SHARED_LIBS OFF)
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
 
 FetchContent_Declare(
     mbedtls
@@ -25,6 +30,8 @@ FetchContent_Declare(
     GIT_TAG        ae07a3615925f252f54fecb84aee2e3cfd4f0676
 )
 FetchContent_MakeAvailable(miniz)
+
+set(BUILD_SHARED_LIBS ${USER_BUILD_SHARED_LIBS})
 
 set(SOURCES
     src/l2encdec.cpp
@@ -58,10 +65,10 @@ endif()
 add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
 target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC)
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME}_exe PRIVATE ${PROJECT_NAME} mbedtls mbedcrypto mbedx509 miniz)
-set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
-    OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
-)
+target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 if(MINGW)
     target_link_options(${PROJECT_NAME}_exe PRIVATE -static -lwinpthread)
 endif()
+set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
+    OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
+)
