@@ -10,7 +10,6 @@ on:
       - "third_party/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
-      - "vcpkg.json"
 
 permissions:
   contents: write
@@ -21,16 +20,14 @@ jobs:
       matrix:
         include:
           - os: windows-2022
-            output: ./build_msvc/Release/l2encdec.exe
+            output: ./build_msvc/Release/l2encdec_win.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-            setup_vcpkg: true
             set_execute_permissions: false
           - os: ubuntu-22.04
             output: ./build_unix/l2encdec
             configure_preset: unix
             build_preset: unix-build
-            setup_vcpkg: false
             set_execute_permissions: true
             cc: gcc-12
             cxx: g++-12
@@ -38,7 +35,6 @@ jobs:
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
-            setup_vcpkg: false
             set_execute_permissions: true
 
     runs-on: ${{ matrix.os }}
@@ -46,10 +42,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup vcpkg
-        if: matrix.setup_vcpkg
-        uses: lukka/run-vcpkg@v11
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest
