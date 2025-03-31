@@ -23,19 +23,16 @@ jobs:
             output: ./build_msvc/Release/l2encdec_win.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-            set_execute_permissions: false
           - os: ubuntu-22.04
             output: ./build_unix/l2encdec
             configure_preset: unix
             build_preset: unix-build
-            set_execute_permissions: true
             cc: gcc-12
             cxx: g++-12
           - os: macos-14
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
-            set_execute_permissions: true
 
     runs-on: ${{ matrix.os }}
 
@@ -54,10 +51,6 @@ jobs:
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
-
-      - name: Set execute permissions
-        if: matrix.set_execute_permissions
-        run: chmod +x ${{ matrix.output }}
 
       - name: Release
         uses: softprops/action-gh-release@v2
