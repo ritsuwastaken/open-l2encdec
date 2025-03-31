@@ -13,7 +13,9 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_EXE": "ON",
+                "L2ENCDEC_BUILD_LIB": "OFF"
             }
         },
         {
@@ -28,7 +30,9 @@
             "binaryDir": "${sourceDir}/build_msvc/",
             "toolchainFile": "${sourceDir}/tools/cmake/toolchains/msvc-static-mt.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_EXE": "ON",
+                "L2ENCDEC_BUILD_LIB": "OFF"
             }
         },
         {
@@ -61,7 +65,9 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_EXE": "ON",
+                "L2ENCDEC_BUILD_LIB": "OFF"
             }
         },
         {
@@ -76,7 +82,9 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_EXE": "ON",
+                "L2ENCDEC_BUILD_LIB": "OFF"
             }
         }
     ],

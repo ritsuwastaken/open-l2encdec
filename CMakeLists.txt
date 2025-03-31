@@ -8,6 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+option(L2ENCDEC_BUILD_LIB "Build library" ON)
+option(L2ENCDEC_BUILD_EXE "Build executable" OFF)
+
+if(L2ENCDEC_BUILD_LIB MATCHES OFF AND L2ENCDEC_BUILD_EXE MATCHES OFF)
+    message(FATAL_ERROR "At least one of L2ENCDEC_BUILD_LIB or L2ENCDEC_BUILD_EXE must be ON")
+endif()
+
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 set(USER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
@@ -45,20 +52,24 @@ set(INCLUDES
     3rd_party/blowfish
 )
 
-add_library(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
-
-set(EXE_SOURCES src/main.cpp)
-set(EXE_INCLUDES "")
-if(MSVC)
-    list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
-    list(APPEND EXE_INCLUDES 3rd_party/getopt)
+if(L2ENCDEC_BUILD_LIB)
+    add_library(${PROJECT_NAME} ${SOURCES})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
+    target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 endif()
 
-add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
-target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
-set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
-    OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
-)
+if(L2ENCDEC_BUILD_EXE)
+    set(EXE_SOURCES src/main.cpp)
+    set(EXE_INCLUDES "")
+    if(MSVC)
+        list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
+        list(APPEND EXE_INCLUDES 3rd_party/getopt)
+    endif()
+
+    add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
+    target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
+    target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
+    set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
+        OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
+    )
+endif()
