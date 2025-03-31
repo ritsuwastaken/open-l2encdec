@@ -50,7 +50,6 @@ add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 
-
 set(EXE_SOURCES src/main.cpp)
 set(EXE_INCLUDES "")
 if(MSVC)
