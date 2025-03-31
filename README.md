@@ -71,11 +71,11 @@ $ cmake --build --preset unix-build
 
 #### Docker / Podman
 
-| [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0  | [Podman](https://podman.io/docs/installation) >= 1.17.2              |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `mkdir -p build`                                                     | `mkdir -p build`                                                     |
-| `docker build -f dockerfiles/win64.Dockerfile -t l2encdec-builder .` | `podman build -f dockerfiles/win64.Dockerfile -t l2encdec-builder .` |
-| `docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`  | `podman run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`  |
+| [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0   | [Podman](https://podman.io/docs/installation) >= 1.17.2               |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `mkdir -p build`                                                      | `mkdir -p build`                                                      |
+| `docker build -f tools/docker/win64.Dockerfile -t l2encdec-builder .` | `podman build -f tools/docker/win64.Dockerfile -t l2encdec-builder .` |
+| `docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`   | `podman run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`   |
 
 #### Visual Studio (as CMake project)
 

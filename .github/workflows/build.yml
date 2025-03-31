@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ".github/**"
-      - "cmake/**"
+      - "tools/cmake/**"
       - "include/**"
       - "src/**"
       - "3rd_party/**"
