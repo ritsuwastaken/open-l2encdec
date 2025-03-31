@@ -40,7 +40,6 @@ set(SOURCES
     src/zlib_utils.cpp
     3rd_party/blowfish/blowfish.cpp
 )
-
 set(INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     3rd_party/blowfish
