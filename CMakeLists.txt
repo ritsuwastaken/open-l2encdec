@@ -46,16 +46,17 @@ set(INCLUDES
     3rd_party/blowfish
 )
 
+add_library(${PROJECT_NAME} ${SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
+target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
+
+
 set(EXE_SOURCES src/main.cpp)
 set(EXE_INCLUDES "")
 if(MSVC)
     list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
     list(APPEND EXE_INCLUDES 3rd_party/getopt)
 endif()
-
-add_library(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 
 add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
