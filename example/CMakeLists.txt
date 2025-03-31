@@ -20,5 +20,5 @@ FetchContent_MakeAvailable(l2encdec)
 # set(L2ENCDEC_DIR ${CMAKE_SOURCE_DIR}/..)
 # add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_BINARY_DIR}/l2encdec)
 
-add_executable(l2encdec_example src/main.cpp)
-target_link_libraries(l2encdec_example PRIVATE l2encdec)
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
