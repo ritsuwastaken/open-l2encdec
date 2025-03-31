@@ -56,16 +56,10 @@ endif()
 add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
-if(MINGW)
-    target_link_options(${PROJECT_NAME} PRIVATE -static -lwinpthread)
-endif()
 
 add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
 target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
 target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
-if(MINGW)
-    target_link_options(${PROJECT_NAME}_exe PRIVATE -static -lwinpthread)
-endif()
 set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
     OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
 )

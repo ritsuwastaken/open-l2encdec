@@ -1,11 +1,4 @@
-# https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8
-# Sample toolchain file for building for Windows from an Ubuntu Linux system.
-#
-# Typical usage:
-#    *) install cross compiler: `sudo apt-get install mingw-w64`
-#    *) cd build
-#    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/mingw-w64-x86_64.cmake ..
-# This is free and unencumbered software released into the public domain.
+# based on https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
@@ -23,3 +16,7 @@ set(CMAKE_FIND_ROOT_PATH /usr/${TOOLCHAIN_PREFIX})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+# static linking
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -lwinpthread")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static -lwinpthread")
