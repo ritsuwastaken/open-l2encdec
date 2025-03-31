@@ -60,7 +60,7 @@ if(L2ENCDEC_BUILD_LIB)
 endif()
 
 if(L2ENCDEC_BUILD_EXE)
-    set(EXE_SOURCES src/main.cpp)
+    set(EXE_SOURCES src/cli.cpp)
     set(EXE_INCLUDES
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         3rd_party/blowfish
