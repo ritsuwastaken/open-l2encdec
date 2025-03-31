@@ -47,27 +47,31 @@ set(SOURCES
     src/zlib_utils.cpp
     3rd_party/blowfish/blowfish.cpp
 )
-set(INCLUDES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    3rd_party/blowfish
-)
 
 if(L2ENCDEC_BUILD_LIB)
     add_library(${PROJECT_NAME} ${SOURCES})
-    target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
+    target_include_directories(${PROJECT_NAME} 
+        PRIVATE 
+            3rd_party/blowfish
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
     target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
 endif()
 
 if(L2ENCDEC_BUILD_EXE)
     set(EXE_SOURCES src/main.cpp)
-    set(EXE_INCLUDES "")
+    set(EXE_INCLUDES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        3rd_party/blowfish
+    )
     if(MSVC)
         list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
         list(APPEND EXE_INCLUDES 3rd_party/getopt)
     endif()
 
     add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
-    target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES} ${INCLUDES})
+    target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES})
     target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
     set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
         OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"

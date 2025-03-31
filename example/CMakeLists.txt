@@ -19,15 +19,6 @@ FetchContent_MakeAvailable(l2encdec)
 # Alternatively, when used as a subproject:
 # set(L2ENCDEC_DIR ${CMAKE_SOURCE_DIR}/..)
 # add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_BINARY_DIR}/l2encdec)
-# find_path(L2ENCDEC_INCLUDE_DIR
-#     NAMES l2encdec.h
-#     PATHS ${L2ENCDEC_DIR}/include
-#     NO_DEFAULT_PATH
-# )
 
 add_executable(l2encdec_example src/main.cpp)
 target_link_libraries(l2encdec_example PRIVATE l2encdec)
-# Using FetchContent:
-target_include_directories(l2encdec_example PRIVATE ${l2encdec_SOURCE_DIR}/include)
-# As a subproject:
-# target_include_directories(l2encdec_example PRIVATE ${L2ENCDEC_INCLUDE_DIR})
