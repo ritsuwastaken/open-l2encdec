@@ -1,6 +1,7 @@
 # open-l2encdec
 
-A tool for encrypting and decrypting Lineage 2 game files across multiple protocols and platforms. Available both as a standalone executable and [as a library](https://github.com/ritsuwastaken/open-l2encdec/tree/main/example). Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
+A tool for encrypting and decrypting Lineage 2 game files across multiple protocols and platforms. Available both as a standalone executable and [as a library](https://github.com/ritsuwastaken/open-l2encdec/tree/main/example).  
+Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 #### Supported protocol headers (Lineage2Ver###)
 
@@ -51,8 +52,9 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 ## Changes
 
-- Doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
-- Replaced `zlib` with `miniz`; replaced `gmp` with `MbedTLS`
+- Replaced `zlib` with `miniz`
+- Replaced `gmp` with `MbedTLS`
+- This project doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
 
 ## Known issues
 
@@ -64,6 +66,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 #### CMake
 
 - [CMake](https://cmake.org/download/) >= 3.28
+- [Git](https://git-scm.com/downloads)
 
 ```shell
 $ cmake . --preset unix
