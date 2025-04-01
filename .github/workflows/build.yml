@@ -65,7 +65,7 @@ jobs:
           mkdir -p artifacts
           cp ${{ matrix.output }} artifacts/${{ matrix.executable }}
 
-      - name: Zip Release
+      - name: Zip artifact
         uses: thedoctor0/zip-release@0.7.5
         if: startsWith(github.ref, 'refs/tags/')
         with:
