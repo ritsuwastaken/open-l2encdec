@@ -54,11 +54,11 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 - Replaced `zlib` with `miniz`
 - Replaced `gmp` with `MbedTLS`
-- This project doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
 
 ## Known issues
 
-- Missing metadata in `111`, `120` and `121` tails - original `l2encdec` bug
+- This project doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
+- Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
 - Protocol `121` encryption and decryption require the original filename. Use the `-f` option to specify it manually
 
 ## Build options
