@@ -37,6 +37,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(miniz)
 
+add_subdirectory(3rd_party/blowfish)
+if(MSVC)
+    add_subdirectory(3rd_party/getopt)
+endif()
+
 set(BUILD_SHARED_LIBS ${USER_BUILD_SHARED_LIBS} CACHE BOOL "Restore user preference" FORCE)
 
 set(SOURCES
@@ -45,18 +50,12 @@ set(SOURCES
     src/xor.cpp
     src/bf.cpp
     src/zlib_utils.cpp
-    3rd_party/blowfish/blowfish.cpp
 )
 
 if(L2ENCDEC_BUILD_LIB)
     add_library(${PROJECT_NAME} ${SOURCES})
-    target_include_directories(${PROJECT_NAME} 
-        PRIVATE 
-            3rd_party/blowfish
-        PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
-    )
-    target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         set_target_properties(${PROJECT_NAME} PROPERTIES
             CXX_VISIBILITY_PRESET hidden
@@ -69,19 +68,9 @@ if(L2ENCDEC_BUILD_LIB)
 endif()
 
 if(L2ENCDEC_BUILD_EXE)
-    set(EXE_SOURCES src/cli.cpp)
-    set(EXE_INCLUDES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        3rd_party/blowfish
-    )
-    if(MSVC)
-        list(APPEND EXE_SOURCES 3rd_party/getopt/getopt.c)
-        list(APPEND EXE_INCLUDES 3rd_party/getopt)
-    endif()
-
-    add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
-    target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES})
-    target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedcrypto miniz)
+    add_executable(${PROJECT_NAME}_exe src/cli.cpp ${SOURCES})
+    target_include_directories(${PROJECT_NAME}_exe PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedcrypto miniz blowfish $<$<BOOL:${MSVC}>:getopt>)
     target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_STATIC)
     set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
         OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
