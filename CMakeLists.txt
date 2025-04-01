@@ -38,7 +38,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(miniz)
 
 add_subdirectory(3rd_party/blowfish)
-if(MSVC)
+if(MSVC AND L2ENCDEC_BUILD_EXE MATCHES ON)
     add_subdirectory(3rd_party/getopt)
 endif()
 
