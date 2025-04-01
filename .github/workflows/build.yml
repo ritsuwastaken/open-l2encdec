@@ -23,16 +23,22 @@ jobs:
             output: ./build_msvc/Release/l2encdec_win.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
+            zip_name: l2encdec_windows.zip
+            executable: l2encdec_win.exe
           - os: ubuntu-22.04
             output: ./build_unix/l2encdec
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
+            zip_name: l2encdec_linux.zip
+            executable: l2encdec
           - os: macos-14
             output: ./build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
+            zip_name: l2encdec_macos.zip
+            executable: l2encdec_osx
 
     runs-on: ${{ matrix.os }}
 
@@ -52,8 +58,24 @@ jobs:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
 
+      - name: Copy artifact
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp ${{ matrix.output }} artifacts/${{ matrix.executable }}
+
+      - name: Zip Release
+        uses: thedoctor0/zip-release@0.7.5
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: "zip"
+          filename: ${{ matrix.zip_name }}
+          directory: artifacts
+          path: ${{ matrix.executable }}
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ matrix.output }}
+          files: artifacts/${{ matrix.zip_name }}
