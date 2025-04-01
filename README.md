@@ -54,7 +54,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 - Replaced `zlib` with `miniz`
 - Replaced `gmp` with `MbedTLS`
-- API is different to original l2encdec
+- API differs from the original `l2encdec` by DStuff
 
 ## Known issues
 
