@@ -25,7 +25,8 @@ Drag and drop file(s) onto the executable or use command line options
 - -f _string_ - force different filename for `xor_filename` - protocol `121`
 - -l - use legacy RSA credentials for decryption; only for protocols `411-414`
 
-#### Advanced options
+<details>
+<summary>Advanced options</summary>
 
 - -a _string_ - encryption algorithm - `blowfish`, `rsa`, `xor`, `xor_position`, `xor_filename`
 - -m _string_ - custom modulus for `rsa` in hex
@@ -35,6 +36,7 @@ Drag and drop file(s) onto the executable or use command line options
 - -s _string_ - custom start index for `xor_position` in hex
 - -w _string_ - custom wide char header; default: Lineage2Ver + protocol
 - -T _string_ - custom tail for encoding, must be exactly 40 characters (20 bytes), e.g., `000000000000000000000000deadbeaf00000000`; contains checksum by default
+</details>
 
 #### Examples
 
