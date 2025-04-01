@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#if defined(L2ENCDEC_STATIC)
+#define L2ENCDEC_API
+#else
 #if defined(_WIN32) || defined(_WIN64)
 #ifdef L2ENCDEC_EXPORTS
 #define L2ENCDEC_API __declspec(dllexport)
@@ -15,6 +18,7 @@
 #define L2ENCDEC_API __attribute__((visibility("default")))
 #else
 #define L2ENCDEC_API
+#endif
 #endif
 #endif
 
