@@ -80,6 +80,7 @@ if(L2ENCDEC_BUILD_EXE)
     add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
     target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES})
     target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
+    target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_EXPORTS)
     set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
         OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
     )
