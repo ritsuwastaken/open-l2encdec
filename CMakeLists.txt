@@ -7,15 +7,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-endif()
 
 option(L2ENCDEC_BUILD_LIB "Build library" ON)
 option(L2ENCDEC_BUILD_EXE "Build executable" OFF)
 
-if(L2ENCDEC_BUILD_LIB MATCHES OFF AND L2ENCDEC_BUILD_EXE MATCHES OFF)
+if(NOT L2ENCDEC_BUILD_LIB AND NOT L2ENCDEC_BUILD_EXE)
     message(FATAL_ERROR "At least one of L2ENCDEC_BUILD_LIB or L2ENCDEC_BUILD_EXE must be ON")
 endif()
 
@@ -60,7 +56,13 @@ if(L2ENCDEC_BUILD_LIB)
         PUBLIC
             ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
-    target_link_libraries(${PROJECT_NAME} PRIVATE mbedtls mbedcrypto mbedx509 miniz)
+    target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            CXX_VISIBILITY_PRESET hidden
+            VISIBILITY_INLINES_HIDDEN ON
+        )
+    endif()
     if(BUILD_SHARED_LIBS)
         target_compile_definitions(${PROJECT_NAME} PRIVATE L2ENCDEC_EXPORTS)
     endif()
@@ -79,7 +81,7 @@ if(L2ENCDEC_BUILD_EXE)
 
     add_executable(${PROJECT_NAME}_exe ${EXE_SOURCES} ${SOURCES})
     target_include_directories(${PROJECT_NAME}_exe PRIVATE ${EXE_INCLUDES})
-    target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedtls mbedcrypto mbedx509 miniz)
+    target_link_libraries(${PROJECT_NAME}_exe PRIVATE mbedcrypto miniz)
     target_compile_definitions(${PROJECT_NAME}_exe PRIVATE L2ENCDEC_EXPORTS)
     set_target_properties(${PROJECT_NAME}_exe PROPERTIES 
         OUTPUT_NAME "${PROJECT_NAME}$<$<PLATFORM_ID:Darwin>:_osx>$<$<PLATFORM_ID:Windows>:_win>"
