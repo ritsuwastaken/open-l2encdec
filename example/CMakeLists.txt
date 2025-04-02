@@ -13,7 +13,7 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 FetchContent_Declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
-    GIT_TAG 1.1.8
+    GIT_TAG 1.1.9
 )
 FetchContent_MakeAvailable(l2encdec)
 
