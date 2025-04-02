@@ -11,11 +11,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN cmake . --preset mingw-w64-x86_64 && \
+RUN cd tools/cli && \
+    cmake . --preset mingw-w64-x86_64 && \
     cmake --build --preset mingw-w64-x86_64-build
 
 RUN mkdir -p /build && \
-    cp build_mingw_x86_64/l2encdec_win.exe /build/l2encdec.exe
+    cp tools/cli/build_mingw_x86_64/l2encdec_win.exe /build/l2encdec.exe
 
 VOLUME /build
 
