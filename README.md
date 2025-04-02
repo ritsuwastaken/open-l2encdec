@@ -63,7 +63,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
 - Protocol `121` encryption and decryption require the original filename. Use the `-f` option to specify it manually
 
-## Build options
+## CLI build options
 
 #### CMake
 
@@ -71,6 +71,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - [Git](https://git-scm.com/downloads)
 
 ```shell
+$ cd tools/cli
 $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
