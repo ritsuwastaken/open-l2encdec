@@ -27,7 +27,7 @@ jobs:
             zip_name: l2encdec_windows.zip
             executable: l2encdec_win.exe
           - os: ubuntu-22.04
-            output: build_unix/l2encdec
+            output: build_unix/l2encdec_linux
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-12
