@@ -21,24 +21,24 @@ jobs:
       matrix:
         include:
           - os: windows-2022
-            output: build_msvc/Release/l2encdec_win.exe
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
             zip_name: l2encdec_windows.zip
+            output: build_msvc/Release
             executable: l2encdec_win.exe
           - os: ubuntu-22.04
-            output: build_unix/l2encdec_linux
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
             zip_name: l2encdec_linux.zip
+            output: build_unix
             executable: l2encdec_linux
           - os: macos-14
-            output: build_unix/l2encdec_osx
             configure_preset: unix
             build_preset: unix-build
             zip_name: l2encdec_macos.zip
+            output: build_unix
             executable: l2encdec_osx
 
     runs-on: ${{ matrix.os }}
@@ -65,7 +65,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p artifacts
-          cp tools/cli/${{ matrix.output }} artifacts/${{ matrix.executable }}
+          cp tools/cli/${{ matrix.output }}/${{ matrix.executable }} artifacts/${{ matrix.executable }}
 
       - name: Zip artifact
         uses: thedoctor0/zip-release@0.7.5
