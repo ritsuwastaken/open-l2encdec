@@ -1,5 +1,5 @@
-#include <blowfish.h>
 #include "bf.h"
+#include <blowfish.h>
 
 size_t BF::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const unsigned char *key, int key_size)
 {
