@@ -1,9 +1,9 @@
-#include <l2encdec.h>
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <string>
 #include <sstream>
+#include "l2encdec_private.h"
 #include "xor.h"
 #include "bf.h"
 #include "rsa.h"

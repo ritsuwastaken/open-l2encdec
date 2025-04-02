@@ -1,26 +1,12 @@
 #ifndef L2ENCDEC_PUBLIC_H
 #define L2ENCDEC_PUBLIC_H
 
+#ifndef L2ENCDEC_API
+#define L2ENCDEC_API
+#endif
+
 #include <string>
 #include <vector>
-
-#if defined(L2ENCDEC_STATIC)
-#define L2ENCDEC_API
-#else
-#if defined(_WIN32) || defined(_WIN64)
-#ifdef L2ENCDEC_EXPORTS
-#define L2ENCDEC_API __declspec(dllexport)
-#else
-#define L2ENCDEC_API __declspec(dllimport)
-#endif
-#else
-#if __GNUC__ >= 4
-#define L2ENCDEC_API __attribute__((visibility("default")))
-#else
-#define L2ENCDEC_API
-#endif
-#endif
-#endif
 
 namespace l2encdec
 {

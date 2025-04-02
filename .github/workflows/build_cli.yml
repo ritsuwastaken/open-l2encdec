@@ -1,0 +1,83 @@
+name: build cli
+
+on:
+  push:
+    paths:
+      - ".github/**"
+      - "tools/cmake/**"
+      - "tools/cli/**"
+      - "include/**"
+      - "src/**"
+      - "3rd_party/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-2022
+            output: build_msvc/Release/l2encdec_win.exe
+            configure_preset: msvc-x86
+            build_preset: msvc-x86-build
+            zip_name: l2encdec_windows.zip
+            executable: l2encdec_win.exe
+          - os: ubuntu-22.04
+            output: build_unix/l2encdec
+            configure_preset: unix
+            build_preset: unix-build
+            cc: gcc-12
+            cxx: g++-12
+            zip_name: l2encdec_linux.zip
+            executable: l2encdec_linux
+          - os: macos-14
+            output: build_unix/l2encdec_osx
+            configure_preset: unix
+            build_preset: unix-build
+            zip_name: l2encdec_macos.zip
+            executable: l2encdec_osx
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Build
+        uses: lukka/run-cmake@v10
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        with:
+          configurePreset: ${{ matrix.configure_preset }}
+          buildPreset: ${{ matrix.build_preset }}
+          cmakeListsTxtPath: tools/cli/CMakeLists.txt
+
+      - name: Copy artifact
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp tools/cli/${{ matrix.output }} artifacts/${{ matrix.executable }}
+
+      - name: Zip artifact
+        uses: thedoctor0/zip-release@0.7.5
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: "zip"
+          filename: ${{ matrix.zip_name }}
+          directory: artifacts
+          path: ${{ matrix.executable }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: artifacts/${{ matrix.zip_name }}
