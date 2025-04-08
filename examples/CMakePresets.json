@@ -1,0 +1,118 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "unix",
+            "displayName": "Unix preset",
+            "description": "Sets Unix Makefiles generator and build directory",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_unix/",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "msvc-base",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "binaryDir": "${sourceDir}/build_msvc/",
+            "toolchainFile": "${sourceDir}/../tools/cmake/toolchains/msvc-static-mt.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "msvc-x64",
+            "inherits": "msvc-base",
+            "displayName": "MSVC x64",
+            "architecture": "x64"
+        },
+        {
+            "name": "msvc-x86",
+            "inherits": "msvc-base",
+            "displayName": "MSVC x86",
+            "architecture": "Win32"
+        },
+        {
+            "name": "msvc-arm64",
+            "inherits": "msvc-base",
+            "displayName": "MSVC ARM64",
+            "architecture": "ARM64"
+        },
+        {
+            "name": "mingw-w64-i686",
+            "displayName": "MinGW x86",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_mingw_i686/",
+            "toolchainFile": "${sourceDir}/../tools/cmake/toolchains/mingw-w64-i686.cmake",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mingw-w64-x86_64",
+            "displayName": "MinGW x86_64",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_mingw_x86_64/",
+            "toolchainFile": "${sourceDir}/../tools/cmake/toolchains/mingw-w64-x86_64.cmake",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "unix-build",
+            "description": "Build using Unix Makefiles generator",
+            "displayName": "Unix Build",
+            "configurePreset": "unix"
+        },
+        {
+            "name": "mingw-w64-i686-build",
+            "description": "Build using MinGW toolchain",
+            "displayName": "MinGW Build",
+            "configurePreset": "mingw-w64-i686"
+        },
+        {
+            "name": "mingw-w64-x86_64-build",
+            "description": "Build using MinGW toolchain",
+            "displayName": "MinGW Build",
+            "configurePreset": "mingw-w64-x86_64"
+        },
+        {
+            "name": "msvc-x64-build",
+            "configurePreset": "msvc-x64",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-x86-build",
+            "configurePreset": "msvc-x86",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-arm64-build",
+            "configurePreset": "msvc-arm64",
+            "configuration": "Release"
+        }
+    ]
+}
