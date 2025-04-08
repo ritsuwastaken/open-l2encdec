@@ -22,7 +22,7 @@ add_library(${PROJECT_NAME}
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 generate_export_header(${PROJECT_NAME}
-    EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/include/l2encdec-export.h
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/l2encdec-export.h
     EXPORT_MACRO_NAME L2ENCDEC_API
 )
 
@@ -35,8 +35,8 @@ endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 )
 
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
@@ -46,17 +46,17 @@ set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
-    GIT_TAG        v3.6.3
+    GIT_TAG v3.6.3
 )
 FetchContent_MakeAvailable(mbedtls)
 
 FetchContent_Declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG        ae07a3615925f252f54fecb84aee2e3cfd4f0676
+    GIT_TAG ae07a3615925f252f54fecb84aee2e3cfd4f0676
 )
 FetchContent_MakeAvailable(miniz)
 
-add_subdirectory(3rd_party/blowfish)
+add_subdirectory(extern/blowfish)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(blowfish VERSION 1.0.0 LANGUAGES CXX C)
+project(blowfish VERSION 1.0.0 LANGUAGES CXX)
 add_library(blowfish STATIC blowfish.cpp)
 target_include_directories(blowfish PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(blowfish PROPERTIES

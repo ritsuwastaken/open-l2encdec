@@ -8,7 +8,7 @@ on:
       - "tools/cli/**"
       - "include/**"
       - "src/**"
-      - "3rd_party/**"
+      - "extern/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
