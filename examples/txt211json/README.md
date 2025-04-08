@@ -2,6 +2,8 @@
 
 A tool for merging Lineage II C1 item and skill data with names and descriptions, then exporting the result to JSON.
 
+### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
+
 ## Usage
 
 ```shell

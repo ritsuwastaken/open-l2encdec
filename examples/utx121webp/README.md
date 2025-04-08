@@ -3,6 +3,8 @@
 Only for extracting DXT1 and DXT3 textures from Lineage II UTX files.  
 This tool is based on [UE Viewer](https://www.gildor.org/en/projects/umodel).
 
+### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
+
 ## Usage
 
 ```shell
