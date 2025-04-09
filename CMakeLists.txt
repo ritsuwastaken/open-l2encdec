@@ -39,15 +39,17 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 )
 
-set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
-set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
-set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
     GIT_TAG v3.6.3
 )
+set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
+set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
+set(MBEDTLS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/tools/cmake/configs/mbedtls_config.h" CACHE STRING "" FORCE)
+set(DISABLE_PACKAGE_CONFIG_AND_INSTALL ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(mbedtls)
 
 FetchContent_Declare(
