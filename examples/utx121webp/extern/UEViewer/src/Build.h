@@ -3,7 +3,7 @@
 //#define DEBUG_MEMORY	1
 #define RENDERING		0
 #define THREADING		0
-#define PROFILE			1
+#define PROFILE			0
 #define DECLARE_VIEWER_PROPS	1
 //#define VSTUDIO_INTEGRATION		1	// improved debugging with Visual Studio
 

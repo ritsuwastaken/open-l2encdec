@@ -10,7 +10,6 @@ set(UEVIEWER_SOURCES
     src/CoreWin32.cpp
     src/GameFileSystem.cpp
     src/Memory.cpp
-    src/Parallel.cpp
     src/TypeInfo.cpp
     src/UnCore.cpp
     src/UnCoreSerialize.cpp
