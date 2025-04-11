@@ -1,6 +1,6 @@
 # l2encdec/examples
 
-See [`txt211json`](./txt211json), [`utx121webp`](./utx121webp) or [`tools/cli`](../tools/cli) for more usage examples
+See [`txt211json`](./txt211json), [`utx121webp`](./utx121webp) or [`cli`](./cli) for more usage examples
 
 ## Usage
 
@@ -12,7 +12,7 @@ include(FetchContent)
 FetchContent_Declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
-    GIT_TAG 1.1.9
+    GIT_TAG 1.1.11
 )
 FetchContent_MakeAvailable(l2encdec)
 
