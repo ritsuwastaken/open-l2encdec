@@ -93,10 +93,19 @@ jobs:
           directory: ${{ matrix.output_txt211json }}
           path: ${{ matrix.executable_txt211json }}
 
+      - name: Zip l2encdec
+        uses: thedoctor0/zip-release@0.7.5
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: "zip"
+          filename: ${{ matrix.zip_name_cli }}
+          directory: ${{ matrix.output_cli }}
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
+            ${{ matrix.output_cli }}/${{ matrix.zip_name_cli }}
             ${{ matrix.output_utx121webp }}/${{ matrix.zip_name_utx121webp }}
             ${{ matrix.output_txt211json }}/${{ matrix.zip_name_txt211json }}
