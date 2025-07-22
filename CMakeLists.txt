@@ -43,7 +43,7 @@ target_include_directories(${PROJECT_NAME}
 FetchContent_Declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
-    GIT_TAG v3.6.3
+    GIT_TAG v3.6.4
 )
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
@@ -55,7 +55,7 @@ FetchContent_MakeAvailable(mbedtls)
 FetchContent_Declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG ae07a3615925f252f54fecb84aee2e3cfd4f0676
+    GIT_TAG c883286f1a6443720e7705450f59e579a4bbb8e2
 )
 FetchContent_MakeAvailable(miniz)
 
