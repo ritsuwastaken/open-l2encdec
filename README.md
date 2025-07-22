@@ -51,15 +51,8 @@ $ ./l2encdec -c encode -p 413 -o enc-filename.ini dec-filename.ini
 $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-filename.ini filename.ini
 ```
 
-## Changes
-
-- Replaced `zlib` with `miniz`
-- Replaced `gmp` with `MbedTLS`
-- API differs from the original `l2encdec` by DStuff
-
 ## Known issues
 
-- This project doesn't include `loader.exe`, `loaderCT1.exe`, `gg-bps.dll` and `patcher.exe`
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
 - Protocol `121` encryption and decryption require the original filename. Use the `-f` option to specify it manually
 
