@@ -20,7 +20,7 @@ add_subdirectory(extern/UEViewer)
 FetchContent_Declare(
     webp
     GIT_REPOSITORY https://github.com/webmproject/libwebp.git
-    GIT_TAG v1.5.0
+    GIT_TAG v1.6.0
 )
 set(WEBP_BUILD_ANIM_UTILS OFF CACHE BOOL "" FORCE)
 set(WEBP_BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
