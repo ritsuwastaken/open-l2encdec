@@ -12,7 +12,7 @@ include(FetchContent)
 FetchContent_Declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
-    GIT_TAG 1.1.11
+    GIT_TAG 1.1.12
 )
 FetchContent_MakeAvailable(l2encdec)
 
