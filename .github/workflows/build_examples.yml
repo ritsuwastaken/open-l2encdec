@@ -95,7 +95,7 @@ jobs:
           directory: ${{ matrix.output_txt211json }}
           path: ${{ matrix.executable_txt211json }}
 
-      - name: Zip CLI
+      - name: Zip cli
         uses: thedoctor0/zip-release@0.7.5
         if: startsWith(github.ref, 'refs/tags/')
         with:
