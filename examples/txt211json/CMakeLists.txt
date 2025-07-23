@@ -25,7 +25,7 @@ FetchContent_MakeAvailable(json)
 # not the intended way to install utfcpp, but it works for this version
 FetchContent_Declare(
     utfcpp
-    GIT_REPOSITORY "https://github.com/nemtrif/utfcpp.git"
+    GIT_REPOSITORY https://github.com/nemtrif/utfcpp.git
     GIT_TAG v4.0.6
 )
 
