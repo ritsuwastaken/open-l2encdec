@@ -54,7 +54,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 ## Known issues
 
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
-- Protocol `121` encryption and decryption require the original filename. Use the `-f` option to specify it manually
+- Protocol `121` encryption and decryption require the original filename - specify the name via options if the file was renamed
 
 ## CLI build options
 
