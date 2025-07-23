@@ -26,7 +26,7 @@
                 "rhs": "Windows"
             },
             "binaryDir": "${sourceDir}/build_msvc/",
-            "toolchainFile": "${sourceDir}/../../tools/cmake/toolchains/msvc-static-mt.cmake",
+            "toolchainFile": "${sourceDir}/../../cmake/toolchains/msvc-static-mt.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -54,7 +54,7 @@
             "displayName": "MinGW x86",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build_mingw_i686/",
-            "toolchainFile": "${sourceDir}/../../tools/cmake/toolchains/mingw-w64-i686.cmake",
+            "toolchainFile": "${sourceDir}/../../cmake/toolchains/mingw-w64-i686.cmake",
             "condition": {
                 "type": "notEquals",
                 "lhs": "${hostSystemName}",
@@ -69,7 +69,7 @@
             "displayName": "MinGW x86_64",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build_mingw_x86_64/",
-            "toolchainFile": "${sourceDir}/../../tools/cmake/toolchains/mingw-w64-x86_64.cmake",
+            "toolchainFile": "${sourceDir}/../../cmake/toolchains/mingw-w64-x86_64.cmake",
             "condition": {
                 "type": "notEquals",
                 "lhs": "${hostSystemName}",
