@@ -28,10 +28,8 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/nemtrif/utfcpp.git
     GIT_TAG v4.0.6
 )
-
 set(UTF8_TESTS OFF CACHE BOOL "" FORCE)
 set(UTF8_SAMPLES OFF CACHE BOOL "" FORCE)
-
 FetchContent_MakeAvailable(utfcpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec nlohmann_json::nlohmann_json)
