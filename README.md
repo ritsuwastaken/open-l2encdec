@@ -1,7 +1,6 @@
 # open-l2encdec
 
 A tool for encrypting and decrypting Lineage 2 game files across multiple protocols and platforms.  
-Available both as a standalone executable and [as a library](/examples).  
 Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 #### Supported protocol headers (Lineage2Ver###)
@@ -12,7 +11,9 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
-### [CLI usage and build options](/tools/cli)
+### [CLI usage and build options](/tools/cli/)
+
+### [Basic usage and other examples](/examples/)
 
 ## Known issues
 
