@@ -89,7 +89,7 @@ $ cmake --build --preset unix-build
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
 - **Trusted Firmware** - [MbedTLS](https://github.com/Mbed-TLS/mbedtls)
-- **ddokkaebi, picoHz** - [Blowfish](https://github.com/ddokkaebi/Blowfish)
+- **ddokkaebi, picoHz** - [Blowfish C++ implementation](https://github.com/ddokkaebi/Blowfish)
 - **Microsoft** - [getopt](https://github.com/iotivity/iotivity/blob/master/resource/c_common/windows/src/getopt.c) from [IoTivity](https://github.com/iotivity/iotivity) project
 - **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8) for CMake
 
