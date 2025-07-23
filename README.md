@@ -11,7 +11,7 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
-### [CLI usage and build options](/tools/cli/)
+### [CLI usage and build options](/examples/cli/)
 
 ### [Basic usage and other examples](/examples/)
 

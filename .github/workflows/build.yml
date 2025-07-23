@@ -5,7 +5,7 @@ on:
     paths:
       - ".github/**"
       - "cmake/**"
-      - "tools/cli/**"
+      - "examples/cli/**"
       - "include/**"
       - "src/**"
       - "extern/**"

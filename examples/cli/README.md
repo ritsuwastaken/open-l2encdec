@@ -1,4 +1,4 @@
-# tools/cli
+# examples/cli
 
 l2encdec-like CLI
 
@@ -51,7 +51,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - [Git](https://git-scm.com/downloads)
 
 ```shell
-$ cd tools/cli
+$ cd examples/cli
 $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
@@ -60,7 +60,7 @@ $ cmake --build --preset unix-build
 
 |                                                    | [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0                                                                               | [Podman](https://podman.io/docs/installation) >= 1.17.2                                                                                           |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Build container image                              | `docker build -f tools/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                         | `podman build -f tools/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                         |
+| Build container image                              | `docker build -f examples/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                      | `podman build -f examples/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                      |
 | Either extract executable to host                  | `mkdir -p build && docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`                                                             | `mkdir -p build && podman run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`                                                             |
 | Or run tool directly on files in current directory | `docker run --rm -v "$(pwd):/app/data" --entrypoint "/build/l2encdec.exe" l2encdec-builder -c decode -o /app/data/output.dat /app/data/input.dat` | `podman run --rm -v "$(pwd):/app/data" --entrypoint "/build/l2encdec.exe" l2encdec-builder -c decode -o /app/data/output.dat /app/data/input.dat` |
 

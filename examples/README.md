@@ -1,6 +1,6 @@
 # l2encdec/examples
 
-See [`txt211json`](./txt211json), [`utx121webp`](./utx121webp) or [`tools/cli`](../tools/cli) for more usage examples
+See [`txt211json`](./txt211json), [`utx121webp`](./utx121webp) or [`cli`](./cli) for more usage examples
 
 ## Usage
 

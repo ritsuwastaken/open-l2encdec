@@ -11,12 +11,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN cd tools/cli && \
+RUN cd examples/cli && \
     cmake . --preset unix && \
     cmake --build --preset unix-build
 
 RUN mkdir -p /build && \
-    cp tools/cli/build_unix/l2encdec /build/l2encdec
+    cp examples/cli/build_unix/l2encdec /build/l2encdec
 
 VOLUME /build
 

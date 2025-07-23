@@ -25,10 +25,13 @@ jobs:
             build_preset: msvc-x86-build
             output_txt211json: examples/build_msvc/txt211json/Release
             output_utx121webp: examples/build_msvc/utx121webp/Release
+            output_cli: examples/build_msvc/cli/Release
             executable_txt211json: txt211json.exe
             executable_utx121webp: utx121webp.exe
+            executable_cli: l2encdec_win.exe
             zip_name_utx121webp: utx121webp_windows.zip
             zip_name_txt211json: txt211json_windows.zip
+            zip_name_cli: l2encdec_windows.zip
           - os: ubuntu-22.04
             configure_preset: unix
             build_preset: unix-build
@@ -36,19 +39,25 @@ jobs:
             cxx: g++-12
             output_utx121webp: examples/build_unix/utx121webp
             output_txt211json: examples/build_unix/txt211json
+            output_cli: examples/build_unix/cli
             executable_utx121webp: utx121webp
             executable_txt211json: txt211json
+            executable_cli: l2encdec_linux
             zip_name_utx121webp: utx121webp_linux.zip
             zip_name_txt211json: txt211json_linux.zip
+            zip_name_cli: l2encdec_linux.zip
           - os: macos-14
             configure_preset: unix
             build_preset: unix-build
             output_utx121webp: examples/build_unix/utx121webp
             output_txt211json: examples/build_unix/txt211json
+            output_cli: examples/build_unix/cli
             executable_utx121webp: utx121webp
             executable_txt211json: txt211json
+            executable_cli: l2encdec_osx
             zip_name_utx121webp: utx121webp_macos.zip
             zip_name_txt211json: txt211json_macos.zip
+            zip_name_cli: l2encdec_macos.zip
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -86,6 +95,15 @@ jobs:
           directory: ${{ matrix.output_txt211json }}
           path: ${{ matrix.executable_txt211json }}
 
+      - name: Zip CLI
+        uses: thedoctor0/zip-release@0.7.5
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: "zip"
+          filename: ${{ matrix.zip_name_cli }}
+          directory: ${{ matrix.output_cli }}
+          path: ${{ matrix.executable_cli }}
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -93,3 +111,4 @@ jobs:
           files: |
             ${{ matrix.output_utx121webp }}/${{ matrix.zip_name_utx121webp }}
             ${{ matrix.output_txt211json }}/${{ matrix.zip_name_txt211json }}
+            ${{ matrix.output_cli }}/${{ matrix.zip_name_cli }}
