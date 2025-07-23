@@ -17,6 +17,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 if(MSVC)
-    add_subdirectory(${L2ENCDEC_DIR}/extern/getopt ${CMAKE_CURRENT_BINARY_DIR}/getopt)
+    add_subdirectory(extern/getopt)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec $<$<BOOL:${MSVC}>:getopt>)
