@@ -13,9 +13,9 @@
 
 namespace
 {
-    constexpr int L2_PROTOCOL_VERSION = 121;
     constexpr std::string_view DEFAULT_OUTPUT_DIR = "webp_output";
     constexpr int PROGRESS_BAR_WIDTH = 50;
+    constexpr size_t DEFAULT_HEADER_SIZE = 28;
 
     inline std::vector<unsigned char> read_file(const std::string &filename)
     {
@@ -30,6 +30,33 @@ namespace
         std::ofstream file(filename, std::ios::binary);
         std::filesystem::create_directories(std::filesystem::path(filename).parent_path());
         file.write(reinterpret_cast<const char *>(data.data()), data.size());
+    }
+
+    int read_protocol_from_input_data(const std::vector<unsigned char> &data)
+    {
+        if (data.size() < DEFAULT_HEADER_SIZE)
+            return 0;
+
+        std::string string;
+        for (size_t i = 0; i < DEFAULT_HEADER_SIZE; i += 2)
+        {
+            if (data[i + 1] == 0)
+            {
+                string += static_cast<char>(data[i]);
+            }
+        }
+
+        try
+        {
+            int protocol = std::stoi(string.substr(11));
+            if (std::find(std::begin(l2encdec::SUPPORTED_PROTOCOLS), std::end(l2encdec::SUPPORTED_PROTOCOLS), protocol) != std::end(l2encdec::SUPPORTED_PROTOCOLS))
+                return protocol;
+            return 0;
+        }
+        catch (...)
+        {
+            return 0;
+        }
     }
 
     void print_progress(size_t current, size_t total)
@@ -129,13 +156,22 @@ int main(int argc, char **argv)
 
         auto encrypted_package = read_file(argv[1]);
 
-        l2encdec::Params params;
-        if (!l2encdec::init_params(&params, L2_PROTOCOL_VERSION, filename))
-            throw std::runtime_error("Failed to initialize L2 protocol parameters");
+        int protocol = read_protocol_from_input_data(encrypted_package);
 
         std::vector<unsigned char> decoded_package;
-        if (l2encdec::decode(encrypted_package, decoded_package, params) != l2encdec::DecodeResult::SUCCESS)
-            throw std::runtime_error("Failed to decode package: " + std::string(argv[1]));
+        if (protocol != 0)
+        {
+            l2encdec::Params params;
+            if (!l2encdec::init_params(&params, protocol, filename))
+                throw std::runtime_error("Failed to initialize L2 protocol parameters");
+
+            if (l2encdec::decode(encrypted_package, decoded_package, params) != l2encdec::DecodeResult::SUCCESS)
+                throw std::runtime_error("Failed to decode package: " + std::string(argv[1]));
+        }
+        else
+        {
+            decoded_package = std::move(encrypted_package);
+        }
 
         UEViewer::getInstance().initialize();
         std::vector<TextureData> textures;
