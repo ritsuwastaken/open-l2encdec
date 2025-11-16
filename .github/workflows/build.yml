@@ -19,15 +19,23 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2022
+          - os: windows-2025
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04-arm
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
-          - os: macos-14
+          - os: ubuntu-24.04
+            configure_preset: unix
+            build_preset: unix-build
+            cc: gcc-12
+            cxx: g++-12
+          - os: macos-15
+            configure_preset: unix
+            build_preset: unix-build
+          - os: macos-15-intel
             configure_preset: unix
             build_preset: unix-build
 
