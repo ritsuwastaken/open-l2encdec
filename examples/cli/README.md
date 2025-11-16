@@ -47,7 +47,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 
 #### CMake
 
-- [CMake](https://cmake.org/download/) >= 3.28
+- [CMake](https://cmake.org/download/) >= 3.14
 - [Git](https://git-scm.com/downloads)
 
 ```shell
