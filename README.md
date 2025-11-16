@@ -18,7 +18,7 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 ## Known issues
 
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
-- Protocol `121` encryption and decryption require the original filename - specify the name via options if the file was renamed
+- Protocol `121` encryption and decryption require the original filename - specify the filename via options
 
 ## Credits
 
