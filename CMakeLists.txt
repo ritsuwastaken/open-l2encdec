@@ -4,23 +4,17 @@ project(l2encdec VERSION 1.1.15 LANGUAGES CXX)
 include(FetchContent)
 include(GenerateExportHeader)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-
 FetchContent_Declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
     GIT_TAG v3.6.5
+    GIT_SHALLOW TRUE
 )
-
 FetchContent_Declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
     GIT_TAG 3.1.0
+    GIT_SHALLOW TRUE
 )
 
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
@@ -41,6 +35,15 @@ add_library(${PROJECT_NAME}
     src/xor.cpp
     src/bf.cpp
     src/zlib_utils.cpp
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    POSITION_INDEPENDENT_CODE ON
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
 )
 
 generate_export_header(${PROJECT_NAME}
