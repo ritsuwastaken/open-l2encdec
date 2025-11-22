@@ -9,6 +9,7 @@
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
 constexpr int BLOWFISH_KEY_NULL_TERMINATOR = 1;
+constexpr std::string HEADER_PREFIX = "Lineage2Ver";
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -95,7 +96,7 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::strin
     }
 
     params->filename = filename;
-    params->header = "Lineage2Ver" + std::to_string(protocol);
+    params->header = HEADER_PREFIX + std::to_string(protocol);
 
     return true;
 }
