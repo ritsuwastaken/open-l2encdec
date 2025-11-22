@@ -5,10 +5,11 @@
 #include "zlib_utils.h"
 #include <cstddef>
 #include <sstream>
+#include <format>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
-constexpr std::string HEADER_PREFIX = "Lineage2Ver";
+constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -78,7 +79,7 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std:
         *params = MODERN_RSA_PARAMS;
 
     params->filename = filename;
-    params->header = HEADER_PREFIX + std::to_string(protocol);
+    params->header = std::format("{}{}", HEADER_PREFIX, protocol);
 
     return true;
 }
