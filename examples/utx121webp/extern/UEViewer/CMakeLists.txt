@@ -1,10 +1,6 @@
 project(UEViewer VERSION 1.0.0 LANGUAGES CXX)
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 set(UEVIEWER_SOURCES
     src/Core.cpp
     src/CoreWin32.cpp
@@ -20,6 +16,13 @@ set(UEVIEWER_SOURCES
 )
 
 add_library(${PROJECT_NAME} STATIC ${UEVIEWER_SOURCES} src/ueviewer.cpp)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(MSVC)
