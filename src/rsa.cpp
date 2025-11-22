@@ -1,10 +1,10 @@
 #include "rsa.h"
+#include <algorithm>
+#include <atomic>
 #include <mbedtls/bignum.h>
-#include <vector>
 #include <string>
 #include <thread>
-#include <atomic>
-#include <algorithm>
+#include <vector>
 
 #define ALIGN_TO_4_BYTES(x) (((x) + 3) & ~3)
 

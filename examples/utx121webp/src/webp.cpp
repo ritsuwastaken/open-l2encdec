@@ -1,6 +1,6 @@
 #include "webp.h"
-#include <webp/encode.h>
 #include <string.h>
+#include <webp/encode.h>
 
 void compress_webp(const unsigned char *pic, int Width, int Height, std::vector<uint8_t> &CompressedData)
 {

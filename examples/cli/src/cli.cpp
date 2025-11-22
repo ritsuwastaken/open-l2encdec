@@ -3,9 +3,9 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <l2encdec.h>
 #include <map>
 #include <vector>
-#include <l2encdec.h>
 
 #ifdef _WIN32
 #include <getopt.h>

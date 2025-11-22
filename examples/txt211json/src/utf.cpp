@@ -1,6 +1,6 @@
 #include "utf.h"
-#include <utf8.h>
 #include <iostream>
+#include <utf8.h>
 
 std::string utf::utf16LE_to_utf8(const std::vector<unsigned char> &input_data)
 {

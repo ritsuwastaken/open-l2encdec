@@ -3,13 +3,13 @@
 
 #include "normalize.h"
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace json
 {
-    constexpr int INDENT = 4;
-    std::string dump(const std::vector<DataBlock> &blocks, int indent = INDENT);
-}
+constexpr int INDENT = 4;
+std::string dump(const std::vector<DataBlock> &blocks, int indent = INDENT);
+} // namespace json
 
 #endif // JSON_H

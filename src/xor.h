@@ -1,17 +1,17 @@
 #ifndef XOR_H
 #define XOR_H
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace XOR
 {
-    using KeyGenerator = std::function<int(int)>;
+using KeyGenerator = std::function<int(int)>;
 
-    size_t encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key);
-    size_t encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
-    size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key);
-    size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
-}
+size_t encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key);
+size_t encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
+size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key);
+size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
+} // namespace XOR
 
 #endif // XOR_H

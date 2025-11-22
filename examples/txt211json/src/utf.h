@@ -6,10 +6,10 @@
 
 class utf
 {
-public:
+  public:
     static std::string utf16LE_to_utf8(const std::vector<unsigned char> &input_data);
 
-private:
+  private:
     static constexpr uint8_t UTF16_BOM_FIRST = 0xFF;
     static constexpr uint8_t UTF16_BOM_SECOND = 0xFE;
     static constexpr size_t UTF16_BOM_SIZE = 2;

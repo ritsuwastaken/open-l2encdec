@@ -1,86 +1,86 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <string>
-#include <atomic>
-#include <algorithm>
-#include <thread>
-#include <filesystem>
-#include <l2encdec.h>
-#include <ueviewer.h>
 #include "webp.h"
 #include "write_queue.h"
+#include <algorithm>
+#include <atomic>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <l2encdec.h>
+#include <string>
+#include <thread>
+#include <ueviewer.h>
+#include <vector>
 
 namespace
 {
-    constexpr std::string_view DEFAULT_OUTPUT_DIR = "webp_output";
-    constexpr int PROGRESS_BAR_WIDTH = 50;
-    constexpr size_t DEFAULT_HEADER_SIZE = 28;
+constexpr std::string_view DEFAULT_OUTPUT_DIR = "webp_output";
+constexpr int PROGRESS_BAR_WIDTH = 50;
+constexpr size_t DEFAULT_HEADER_SIZE = 28;
 
-    inline std::vector<unsigned char> read_file(const std::string &filename)
+inline std::vector<unsigned char> read_file(const std::string &filename)
+{
+    std::ifstream file(filename, std::ios::binary);
+    return std::vector<unsigned char>(
+        std::istreambuf_iterator<char>(file),
+        std::istreambuf_iterator<char>());
+}
+
+void write_file(const std::string &filename, const std::vector<unsigned char> &data)
+{
+    std::ofstream file(filename, std::ios::binary);
+    std::filesystem::create_directories(std::filesystem::path(filename).parent_path());
+    file.write(reinterpret_cast<const char *>(data.data()), data.size());
+}
+
+int read_protocol_from_input_data(const std::vector<unsigned char> &data)
+{
+    if (data.size() < DEFAULT_HEADER_SIZE)
+        return 0;
+
+    std::string string;
+    for (size_t i = 0; i < DEFAULT_HEADER_SIZE; i += 2)
     {
-        std::ifstream file(filename, std::ios::binary);
-        return std::vector<unsigned char>(
-            std::istreambuf_iterator<char>(file),
-            std::istreambuf_iterator<char>());
-    }
-
-    void write_file(const std::string &filename, const std::vector<unsigned char> &data)
-    {
-        std::ofstream file(filename, std::ios::binary);
-        std::filesystem::create_directories(std::filesystem::path(filename).parent_path());
-        file.write(reinterpret_cast<const char *>(data.data()), data.size());
-    }
-
-    int read_protocol_from_input_data(const std::vector<unsigned char> &data)
-    {
-        if (data.size() < DEFAULT_HEADER_SIZE)
-            return 0;
-
-        std::string string;
-        for (size_t i = 0; i < DEFAULT_HEADER_SIZE; i += 2)
+        if (data[i + 1] == 0)
         {
-            if (data[i + 1] == 0)
-            {
-                string += static_cast<char>(data[i]);
-            }
-        }
-
-        try
-        {
-            int protocol = std::stoi(string.substr(11));
-            if (std::find(std::begin(l2encdec::SUPPORTED_PROTOCOLS), std::end(l2encdec::SUPPORTED_PROTOCOLS), protocol) != std::end(l2encdec::SUPPORTED_PROTOCOLS))
-                return protocol;
-            return 0;
-        }
-        catch (...)
-        {
-            return 0;
+            string += static_cast<char>(data[i]);
         }
     }
 
-    void print_progress(size_t current, size_t total)
+    try
     {
-        float progress = static_cast<float>(current) / total;
-        int pos = static_cast<int>(PROGRESS_BAR_WIDTH * progress);
-
-        std::cout << "\r[";
-        for (int i = 0; i < PROGRESS_BAR_WIDTH; ++i)
-            std::cout << (i < pos ? "=" : i == pos ? ">"
-                                                   : " ");
-
-        std::cout << "] " << std::fixed << std::setprecision(1)
-                  << (progress * 100.0) << "% (" << current << "/" << total << ")" << std::flush;
+        int protocol = std::stoi(string.substr(11));
+        if (std::find(std::begin(l2encdec::SUPPORTED_PROTOCOLS), std::end(l2encdec::SUPPORTED_PROTOCOLS), protocol) != std::end(l2encdec::SUPPORTED_PROTOCOLS))
+            return protocol;
+        return 0;
     }
-
-    void process_textures(const std::vector<TextureData> &textures, const std::string &output_path)
+    catch (...)
     {
-        std::atomic<size_t> exported_textures = 0;
-        std::vector<std::thread> threads;
-        WriteQueue write_queue;
-        bool processing_complete = false;
-        std::thread progress_thread([&]()
-                                    {
+        return 0;
+    }
+}
+
+void print_progress(size_t current, size_t total)
+{
+    float progress = static_cast<float>(current) / total;
+    int pos = static_cast<int>(PROGRESS_BAR_WIDTH * progress);
+
+    std::cout << "\r[";
+    for (int i = 0; i < PROGRESS_BAR_WIDTH; ++i)
+        std::cout << (i < pos ? "=" : i == pos ? ">"
+                                               : " ");
+
+    std::cout << "] " << std::fixed << std::setprecision(1)
+              << (progress * 100.0) << "% (" << current << "/" << total << ")" << std::flush;
+}
+
+void process_textures(const std::vector<TextureData> &textures, const std::string &output_path)
+{
+    std::atomic<size_t> exported_textures = 0;
+    std::vector<std::thread> threads;
+    WriteQueue write_queue;
+    bool processing_complete = false;
+    std::thread progress_thread([&]()
+                                {
             while (!processing_complete) {
                 print_progress(exported_textures, textures.size());
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -88,19 +88,19 @@ namespace
             print_progress(exported_textures, textures.size());
             std::cout << std::endl; });
 
-        std::thread writer_thread([&write_queue, &output_path]()
-                                  {
+    std::thread writer_thread([&write_queue, &output_path]()
+                              {
             WriteTask task;
             while (write_queue.pop(task)) {
                 write_file(output_path + "/" + task.filename, task.data);
             } });
 
-        const size_t num_threads = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), textures.size());
-        const size_t textures_per_thread = (textures.size() + num_threads - 1) / num_threads;
-        for (size_t t = 0; t < num_threads; ++t)
-        {
-            threads.emplace_back([&, t]()
-                                 {
+    const size_t num_threads = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), textures.size());
+    const size_t textures_per_thread = (textures.size() + num_threads - 1) / num_threads;
+    for (size_t t = 0; t < num_threads; ++t)
+    {
+        threads.emplace_back([&, t]()
+                             {
                 const size_t start = t * textures_per_thread;
                 const size_t end = std::min(start + textures_per_thread, textures.size());
 
@@ -125,19 +125,19 @@ namespace
                         write_queue.push(texture.name + ".webp", std::move(webp_data));
                     }
                 } });
-        }
-
-        for (auto &thread : threads)
-            thread.join();
-
-        processing_complete = true;
-        progress_thread.join();
-        write_queue.finish();
-        writer_thread.join();
-
-        std::cout << "Exported to " << output_path << std::endl;
     }
+
+    for (auto &thread : threads)
+        thread.join();
+
+    processing_complete = true;
+    progress_thread.join();
+    write_queue.finish();
+    writer_thread.join();
+
+    std::cout << "Exported to " << output_path << std::endl;
 }
+} // namespace
 
 int main(int argc, char **argv)
 {

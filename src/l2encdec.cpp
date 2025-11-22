@@ -1,13 +1,13 @@
+#include "bf.h"
 #include "l2encdec_private.h"
+#include "rsa.h"
+#include "xor.h"
+#include "zlib_utils.h"
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
-#include <string>
 #include <sstream>
-#include "xor.h"
-#include "bf.h"
-#include "rsa.h"
-#include "zlib_utils.h"
+#include <string>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;

@@ -1,17 +1,17 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <string>
-#include "utf.h"
 #include "json.h"
 #include "normalize.h"
+#include "utf.h"
+#include <fstream>
+#include <iostream>
 #include <l2encdec.h>
+#include <string>
+#include <vector>
 
 namespace
 {
-    constexpr int L2_PROTOCOL_VERSION = 211;
-    const std::string DEFAULT_OUTPUT_FILENAME = "output.json";
-}
+constexpr int L2_PROTOCOL_VERSION = 211;
+const std::string DEFAULT_OUTPUT_FILENAME = "output.json";
+} // namespace
 
 inline std::vector<unsigned char> read_file(const std::string &filename)
 {
