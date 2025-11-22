@@ -1,9 +1,8 @@
 #ifndef BF_H
 #define BF_H
 
-#include <iostream>
 #include <vector>
-#include <cstdint>
+#include <cstddef>
 
 namespace BF
 {
