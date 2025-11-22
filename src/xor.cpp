@@ -1,7 +1,7 @@
 #include "xor.h"
 #include <algorithm>
 
-inline int XOR::get_key_by_index(int index)
+int XOR::get_key_by_index(int index)
 {
     int d1 = index & 0xf;
     int d2 = (index >> 4) & 0xf;
@@ -10,7 +10,7 @@ inline int XOR::get_key_by_index(int index)
     return ((d2 ^ d4) << 4) | (d1 ^ d3);
 }
 
-inline int XOR::get_key_by_filename(std::string filename)
+int XOR::get_key_by_filename(std::string filename)
 {
     std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
     int acc = 0;
