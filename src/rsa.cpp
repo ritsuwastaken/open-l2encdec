@@ -2,9 +2,7 @@
 #include <algorithm>
 #include <atomic>
 #include <mbedtls/bignum.h>
-#include <string>
 #include <thread>
-#include <vector>
 
 #define ALIGN_TO_4_BYTES(x) (((x) + 3) & ~3)
 

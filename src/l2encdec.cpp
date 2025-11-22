@@ -3,11 +3,8 @@
 #include "rsa.h"
 #include "xor.h"
 #include "zlib_utils.h"
-#include <algorithm>
-#include <cstdint>
-#include <cstring>
+#include <cstddef>
 #include <sstream>
-#include <string>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
@@ -75,26 +72,11 @@ inline void insert_tail(std::vector<unsigned char> &data, const std::string &tai
     data.insert(data.end(), tail_bytes.begin(), tail_bytes.end());
 }
 
-inline int get_XOR_key_by_index(int index)
-{
-    int d1 = index & 0xf;
-    int d2 = (index >> 4) & 0xf;
-    int d3 = (index >> 8) & 0xf;
-    int d4 = (index >> 12) & 0xf;
-    return ((d2 ^ d4) << 4) | (d1 ^ d3);
-}
-
-inline int get_XOR_key_by_filename(std::string filename)
-{
-    std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
-    int ind = 0;
-    for (char c : filename)
-        ind += static_cast<int>(c);
-    return ind & 0xff;
-}
-
 L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::string filename, bool use_legacy_decrypt_rsa)
 {
+    if (protocol == 121 && filename.empty())
+        return false;
+
     if (auto it = PROTOCOL_CONFIGS.find(protocol); it != PROTOCOL_CONFIGS.end())
     {
         *params = it->second;
@@ -111,9 +93,6 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::strin
     {
         return false;
     }
-
-    if (protocol == 121 && filename.empty())
-        return false;
 
     params->filename = filename;
     params->header = "Lineage2Ver" + std::to_string(protocol);
@@ -140,10 +119,10 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
         XOR::encrypt(input_data, encrypted_data, params.xor_key);
         break;
     case l2encdec::Type::XOR_FILENAME:
-        XOR::encrypt(input_data, encrypted_data, get_XOR_key_by_filename(params.filename));
+        XOR::encrypt(input_data, encrypted_data, XOR::get_key_by_filename(params.filename));
         break;
     case l2encdec::Type::XOR_POSITION:
-        XOR::encrypt(input_data, encrypted_data, params.xor_start_position, get_XOR_key_by_index);
+        XOR::encrypt(input_data, encrypted_data, params.xor_start_position, XOR::get_key_by_index);
         break;
     case l2encdec::Type::BLOWFISH:
     {
@@ -159,7 +138,7 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
         RSA::encrypt(compressed_data, encrypted_data, params.rsa_modulus, params.rsa_public_exponent);
         break;
     }
-    case l2encdec::Type::NONE:
+    default:
         encrypted_data = input_data;
         break;
     }
@@ -189,10 +168,10 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
         XOR::decrypt(data, decrypted_data, params.xor_key);
         break;
     case l2encdec::Type::XOR_POSITION:
-        XOR::decrypt(data, decrypted_data, params.xor_start_position, get_XOR_key_by_index);
+        XOR::decrypt(data, decrypted_data, params.xor_start_position, XOR::get_key_by_index);
         break;
     case l2encdec::Type::XOR_FILENAME:
-        XOR::decrypt(data, decrypted_data, get_XOR_key_by_filename(params.filename));
+        XOR::decrypt(data, decrypted_data, XOR::get_key_by_filename(params.filename));
         break;
     case l2encdec::Type::BLOWFISH:
     {
@@ -209,7 +188,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
             return l2encdec::DecodeResult::DECOMPRESSION_FAILED;
         break;
     }
-    case l2encdec::Type::NONE:
+    default:
         decrypted_data = input_data;
         break;
     }
