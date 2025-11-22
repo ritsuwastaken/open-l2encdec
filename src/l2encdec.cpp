@@ -4,8 +4,6 @@
 #include "xor.h"
 #include "zlib_utils.h"
 #include <cstddef>
-#include <sstream>
-#include <format>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
@@ -29,39 +27,46 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
     .rsa_private_exponent = "1d",
 };
 
-inline void insert_header(std::vector<unsigned char> &data, std::string header)
+inline void insert_header(std::vector<unsigned char> &data, std::string_view header)
 {
+    const size_t wide_size = header.size() * 2;
+    data.reserve(data.size() + wide_size);
+
     std::vector<unsigned char> wide;
-    for (char c : header)
+    wide.resize(wide_size);
+
+    for (size_t i = 0; i < header.size(); i++)
     {
-        wide.push_back(c);
-        wide.push_back(0);
+        wide[i * 2] = static_cast<unsigned char>(header[i]);
+        wide[i * 2 + 1] = 0;
     }
+
     data.insert(data.begin(), wide.begin(), wide.end());
 }
 
-inline void insert_tail(std::vector<unsigned char> &data, int crc)
+inline void insert_tail(std::vector<unsigned char> &data, uint32_t crc)
 {
-    data.insert(data.end(), FOOTER_SIZE, 0x00);
-    *reinterpret_cast<uint32_t *>(data.data() + data.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET) = crc;
+    const size_t start = data.size();
+    data.resize(start + FOOTER_SIZE);
+    unsigned char *footer = data.data() + start;
+    uint32_t *crc_ptr = reinterpret_cast<uint32_t *>(footer + FOOTER_CRC32_OFFSET);
+    std::memcpy(crc_ptr, &crc, sizeof(crc));
 }
 
-inline void insert_tail(std::vector<unsigned char> &data, const std::string &tail)
+inline void insert_tail(std::vector<unsigned char> &data, std::string_view tail)
 {
-    std::string padded = tail;
-    if (padded.size() % 2 != 0) padded = "0" + padded;
+    std::string padded = std::string(tail);
+    if (padded.size() % 2 != 0)
+        padded.insert(padded.begin(), '0');
 
-    std::vector<unsigned char> bytes;
+    const size_t byte_count = padded.size() / 2;
+    data.reserve(data.size() + byte_count);
+
     for (size_t i = 0; i < padded.size(); i += 2)
     {
-        unsigned int byte;
-        std::stringstream ss;
-        ss << std::hex << padded.substr(i, 2);
-        ss >> byte;
-        bytes.push_back((unsigned char)byte);
+        unsigned char value = static_cast<unsigned char>(std::stoi(padded.substr(i, 2), nullptr, 16));
+        data.push_back(value);
     }
-
-    data.insert(data.end(), bytes.begin(), bytes.end());
 }
 
 L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std::string &filename, bool use_legacy_rsa)
@@ -79,7 +84,7 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std:
         *params = MODERN_RSA_PARAMS;
 
     params->filename = filename;
-    params->header = std::format("{}{}", HEADER_PREFIX, protocol);
+    params->header = std::string(HEADER_PREFIX) + std::to_string(protocol);
 
     return true;
 }
