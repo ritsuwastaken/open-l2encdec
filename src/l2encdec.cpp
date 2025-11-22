@@ -1,5 +1,5 @@
 #include "bf.h"
-#include "l2encdec_private.h"
+#include "l2encdec_private.h" // IWYU pragma: keep
 #include "rsa.h"
 #include "xor.h"
 #include "zlib_utils.h"
