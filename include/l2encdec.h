@@ -66,7 +66,7 @@ struct Params
  * @param use_legacy_decrypt_rsa Use original private exponent and modulus for decryption, for protocols 411-414
  * @return `true` if the parameters were initialized successfully, `false` otherwise.
  */
-L2ENCDEC_API bool init_params(Params *params, int protocol, std::string filename = "", bool use_legacy_decrypt_rsa = false);
+L2ENCDEC_API bool init_params(Params *params, int protocol, const std::string &filename = "", bool use_legacy_decrypt_rsa = false);
 
 /**
  * @brief Verify the checksum of the input data.

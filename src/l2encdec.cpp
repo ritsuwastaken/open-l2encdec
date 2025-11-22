@@ -72,7 +72,10 @@ inline void insert_tail(std::vector<unsigned char> &data, const std::string &tai
     data.insert(data.end(), tail_bytes.begin(), tail_bytes.end());
 }
 
-L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::string filename, bool use_legacy_decrypt_rsa)
+L2ENCDEC_API bool l2encdec::init_params(Params *params,
+                                        int protocol,
+                                        const std::string &filename,
+                                        bool use_legacy_decrypt_rsa)
 {
     if (protocol == 121 && filename.empty())
         return false;
@@ -81,13 +84,16 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, std::strin
     {
         *params = it->second;
     }
-    else if (protocol >= 411 && protocol <= 414)
+    else if (RSA_CONFIGS.contains(protocol))
     {
+        const RSAConfig &rsa_cfg =
+            use_legacy_decrypt_rsa ? RSA_CONFIGS.at(protocol)
+                                   : MODERN_RSA_CONFIG;
+
         params->type = l2encdec::Type::RSA;
-        auto rsa_config = use_legacy_decrypt_rsa ? RSA_CONFIGS.at(protocol) : MODERN_RSA_CONFIG;
-        params->rsa_modulus = rsa_config.modulus;
-        params->rsa_private_exponent = rsa_config.private_exponent;
-        params->rsa_public_exponent = rsa_config.public_exponent;
+        params->rsa_modulus = rsa_cfg.modulus;
+        params->rsa_private_exponent = rsa_cfg.private_exponent;
+        params->rsa_public_exponent = rsa_cfg.public_exponent;
     }
     else
     {
