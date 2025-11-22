@@ -2,6 +2,7 @@
 #define BF_H
 
 #include <vector>
+#include <cstddef>
 
 namespace BF
 {
