@@ -9,9 +9,9 @@
 #include "rsa.h"
 #include "zlib_utils.h"
 
-const size_t FOOTER_SIZE = 20;
-const size_t FOOTER_CRC32_OFFSET = 12;
-const int BLOWFISH_KEY_NULL_TERMINATOR = 1;
+constexpr size_t FOOTER_SIZE = 20;
+constexpr size_t FOOTER_CRC32_OFFSET = 12;
+constexpr int BLOWFISH_KEY_NULL_TERMINATOR = 1;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},

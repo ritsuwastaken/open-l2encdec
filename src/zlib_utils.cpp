@@ -1,9 +1,9 @@
 #include "zlib_utils.h"
 #include <miniz.h>
 
-const size_t COMPRESSED_HEADER_SIZE = 4;
-const size_t INFLATE_CHUNK_SIZE = 1024 * 16;
-const size_t DEFLATE_CHUNK_SIZE = 1024 * 1024;
+constexpr size_t COMPRESSED_HEADER_SIZE = 4;
+constexpr size_t INFLATE_CHUNK_SIZE = 1024 * 16;
+constexpr size_t DEFLATE_CHUNK_SIZE = 1024 * 1024;
 
 int ZlibUtils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
