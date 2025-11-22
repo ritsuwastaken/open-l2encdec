@@ -1,5 +1,4 @@
 #ifndef RSA_H
-#include <iostream>
 #include <vector>
 
 namespace RSA

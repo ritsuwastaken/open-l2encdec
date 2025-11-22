@@ -1,7 +1,6 @@
 #ifndef ZLIB_UTILS_H
 #define ZLIB_UTILS_H
 
-#include <iostream>
 #include <vector>
 #include <cstdint>
 
