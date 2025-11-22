@@ -8,7 +8,6 @@
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
-constexpr int BLOWFISH_KEY_NULL_TERMINATOR = 1;
 constexpr std::string HEADER_PREFIX = "Lineage2Ver";
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
@@ -127,8 +126,7 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
         break;
     case l2encdec::Type::BLOWFISH:
     {
-        int key_size = static_cast<int>(params.blowfish_key.length()) + BLOWFISH_KEY_NULL_TERMINATOR;
-        BF::encrypt(input_data, encrypted_data, reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str()), key_size);
+        BF::encrypt(input_data, encrypted_data, params.blowfish_key);
         break;
     }
     case l2encdec::Type::RSA:
@@ -176,8 +174,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
         break;
     case l2encdec::Type::BLOWFISH:
     {
-        int key_size = static_cast<int>(params.blowfish_key.length()) + BLOWFISH_KEY_NULL_TERMINATOR;
-        BF::decrypt(data, decrypted_data, reinterpret_cast<const unsigned char *>(params.blowfish_key.c_str()), key_size);
+        BF::decrypt(data, decrypted_data, params.blowfish_key);
         break;
     }
     case l2encdec::Type::RSA:
