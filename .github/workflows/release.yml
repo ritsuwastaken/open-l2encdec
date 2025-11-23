@@ -58,12 +58,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Abort if tag is not on main
+        shell: bash
         run: |
           git fetch origin main --depth=1
-          TAG_SHA=$(git rev-parse ${{ github.ref_name }})
+          TAG_SHA=$(git rev-parse ${{ github.sha }})
           MAIN_SHA=$(git rev-parse origin/main)
 
-          if [ "$TAG_SHA" != "$MAIN_SHA" ]; then
+          if ! git merge-base --is-ancestor "$TAG_SHA" "$MAIN_SHA"; then
             exit 1
           fi
 
