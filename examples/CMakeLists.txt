@@ -8,7 +8,6 @@ if(NOT L2ENCDEC_DIR)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 
-add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 add_subdirectory(txt211json)
 add_subdirectory(utx121webp)
 add_subdirectory(cli)
