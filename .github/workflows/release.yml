@@ -2,8 +2,8 @@ name: release
 
 on:
   push:
-    tags:
-      - '*'
+    # tags:
+    #   - '*'
 
 permissions:
   contents: write
@@ -67,6 +67,7 @@ jobs:
           CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
+          configurePresetAdditionalArgs: "['-DL2ENCDEC_BUILD_TESTS=OFF']"
           buildPreset: ${{ matrix.build_preset }}
           cmakeListsTxtPath: examples/CMakeLists.txt
 
