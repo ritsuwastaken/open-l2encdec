@@ -1,16 +1,9 @@
-name: build examples
+name: release
 
 on:
   push:
-    paths:
-      - ".github/**"
-      - "cmake/**"
-      - "examples/**"
-      - "include/**"
-      - "src/**"
-      - "extern/**"
-      - "CMakeLists.txt"
-      - "CMakePresets.json"
+    tags:
+      - '*'
 
 permissions:
   contents: write

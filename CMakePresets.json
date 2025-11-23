@@ -14,7 +14,8 @@
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "ON"
+                "L2ENCDEC_BUILD_TESTS": "ON",
+                "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
         },
         {
@@ -29,7 +30,8 @@
             "binaryDir": "${sourceDir}/build_msvc/",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "ON"
+                "L2ENCDEC_BUILD_TESTS": "ON",
+                "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
         },
         {
@@ -63,7 +65,8 @@
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "ON"
+                "L2ENCDEC_BUILD_TESTS": "ON",
+                "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
         },
         {
@@ -79,7 +82,8 @@
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "ON"
+                "L2ENCDEC_BUILD_TESTS": "ON",
+                "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
         }
     ],

@@ -30,6 +30,7 @@ add_subdirectory(extern/blowfish)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
+option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
@@ -73,4 +74,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if(L2ENCDEC_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()

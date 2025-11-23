@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "extern/**"
       - "tests/**"
+      - "examples/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
