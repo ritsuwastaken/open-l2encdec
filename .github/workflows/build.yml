@@ -8,6 +8,7 @@ on:
       - "include/**"
       - "src/**"
       - "extern/**"
+      - "tests/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
@@ -21,22 +22,27 @@ jobs:
         include:
           - os: windows-2025
             configure_preset: msvc-x86
+            test_preset: msvc-x86
             build_preset: msvc-x86-build
           - os: ubuntu-24.04-arm
             configure_preset: unix
+            test_preset: unix
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
           - os: ubuntu-24.04
             configure_preset: unix
+            test_preset: unix
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
           - os: macos-15
             configure_preset: unix
+            test_preset: unix
             build_preset: unix-build
           - os: macos-15-intel
             configure_preset: unix
+            test_preset: unix
             build_preset: unix-build
 
     runs-on: ${{ matrix.os }}
@@ -48,7 +54,7 @@ jobs:
       - name: Setup CMake
         uses: lukka/get-cmake@latest
 
-      - name: Build
+      - name: Configure, build and test
         uses: lukka/run-cmake@v10
         env:
           CC: ${{ matrix.cc }}
@@ -56,3 +62,5 @@ jobs:
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
+          testPreset: ${{ matrix.test_preset }}
+          testPresetAdditionalArgs: "['--output-on-failure']"

@@ -3,6 +3,7 @@ project(l2encdec VERSION 1.1.15 LANGUAGES CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
+include(CTest)
 
 FetchContent_Declare(
     mbedtls
@@ -28,6 +29,7 @@ FetchContent_MakeAvailable(mbedtls miniz)
 add_subdirectory(extern/blowfish)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
@@ -60,10 +62,15 @@ endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)
+
+if(L2ENCDEC_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

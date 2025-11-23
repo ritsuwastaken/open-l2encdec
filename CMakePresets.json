@@ -13,7 +13,8 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "ON"
             }
         },
         {
@@ -27,7 +28,8 @@
             },
             "binaryDir": "${sourceDir}/build_msvc/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "ON"
             }
         },
         {
@@ -60,7 +62,8 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "ON"
             }
         },
         {
@@ -75,7 +78,8 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "ON"
             }
         }
     ],
@@ -112,6 +116,25 @@
             "name": "msvc-arm64-build",
             "configurePreset": "msvc-arm64",
             "configuration": "Release"
+        }
+    ]
+    ,
+    "testPresets": [
+        {
+            "name": "unix",
+            "configurePreset": "unix"
+        },
+        {
+            "name": "msvc-x86",
+            "configurePreset": "msvc-x86"
+        },
+        {
+            "name": "mingw-w64-i686",
+            "configurePreset": "mingw-w64-i686"
+        },
+        {
+            "name": "mingw-w64-x86_64",
+            "configurePreset": "mingw-w64-x86_64"
         }
     ]
 }
