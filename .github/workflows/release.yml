@@ -2,8 +2,8 @@ name: release
 
 on:
   push:
-    # tags:
-    #   - '*'
+    tags:
+      - '*'
 
 permissions:
   contents: write
@@ -67,13 +67,11 @@ jobs:
           CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
-          configurePresetAdditionalArgs: "['-DL2ENCDEC_BUILD_TESTS=OFF']"
           buildPreset: ${{ matrix.build_preset }}
           cmakeListsTxtPath: examples/CMakeLists.txt
 
       - name: Zip utx121webp
         uses: thedoctor0/zip-release@0.7.5
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           type: "zip"
           filename: ${{ matrix.zip_name_utx121webp }}
@@ -82,7 +80,6 @@ jobs:
 
       - name: Zip txt211json
         uses: thedoctor0/zip-release@0.7.5
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           type: "zip"
           filename: ${{ matrix.zip_name_txt211json }}
@@ -91,7 +88,6 @@ jobs:
 
       - name: Zip cli
         uses: thedoctor0/zip-release@0.7.5
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           type: "zip"
           filename: ${{ matrix.zip_name_cli }}
@@ -100,7 +96,6 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             ${{ matrix.output_utx121webp }}/${{ matrix.zip_name_utx121webp }}
