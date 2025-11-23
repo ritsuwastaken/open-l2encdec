@@ -4,13 +4,14 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   build:
-    if: ${{ github.ref == 'refs/heads/main' }}
     strategy:
       matrix:
         include:
