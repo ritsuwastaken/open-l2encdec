@@ -22,27 +22,27 @@ jobs:
         include:
           - os: windows-2025
             configure_preset: msvc-x86
-            test_preset: msvc-x86
+            test_preset: msvc-x86-test
             build_preset: msvc-x86-build
           - os: ubuntu-24.04-arm
             configure_preset: unix
-            test_preset: unix
+            test_preset: unix-test
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
           - os: ubuntu-24.04
             configure_preset: unix
-            test_preset: unix
+            test_preset: unix-test
             build_preset: unix-build
             cc: gcc-12
             cxx: g++-12
           - os: macos-15
             configure_preset: unix
-            test_preset: unix
+            test_preset: unix-test
             build_preset: unix-build
           - os: macos-15-intel
             configure_preset: unix
-            test_preset: unix
+            test_preset: unix-test
             build_preset: unix-build
 
     runs-on: ${{ matrix.os }}

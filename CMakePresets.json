@@ -121,19 +121,19 @@
     ,
     "testPresets": [
         {
-            "name": "unix",
+            "name": "unix-test",
             "configurePreset": "unix"
         },
         {
-            "name": "msvc-x86",
+            "name": "msvc-x86-test",
             "configurePreset": "msvc-x86"
         },
         {
-            "name": "mingw-w64-i686",
+            "name": "mingw-w64-i686-test",
             "configurePreset": "mingw-w64-i686"
         },
         {
-            "name": "mingw-w64-x86_64",
+            "name": "mingw-w64-x86_64-test",
             "configurePreset": "mingw-w64-x86_64"
         }
     ]
