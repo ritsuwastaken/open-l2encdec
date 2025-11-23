@@ -77,5 +77,6 @@ if(L2ENCDEC_BUILD_TESTS)
 endif()
 
 if(L2ENCDEC_BUILD_EXAMPLES)
+    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
     add_subdirectory(examples)
 endif()
