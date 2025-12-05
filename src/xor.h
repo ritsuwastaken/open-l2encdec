@@ -2,8 +2,8 @@
 #define XOR_H
 
 #include <functional>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace XOR
 {

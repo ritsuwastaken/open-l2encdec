@@ -2,8 +2,8 @@
 #define BF_H
 
 #include <cstddef>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace BF
 {
