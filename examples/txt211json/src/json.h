@@ -3,7 +3,6 @@
 
 #include "normalize.h"
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace json
