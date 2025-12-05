@@ -121,8 +121,7 @@
             "configurePreset": "msvc-arm64",
             "configuration": "Release"
         }
-    ]
-    ,
+    ],
     "testPresets": [
         {
             "name": "unix-test",
