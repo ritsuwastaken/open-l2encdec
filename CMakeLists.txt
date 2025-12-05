@@ -17,6 +17,12 @@ FetchContent_Declare(
     GIT_TAG 3.1.0
     GIT_SHALLOW TRUE
 )
+FetchContent_Declare(
+    blowfish
+    GIT_REPOSITORY https://github.com/avinal/blowfish.git
+    GIT_TAG avinal/improve
+    GIT_SHALLOW TRUE
+)
 
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
@@ -24,9 +30,7 @@ set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
 set(MBEDTLS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/configs/mbedtls_config.h" CACHE STRING "" FORCE)
 set(DISABLE_PACKAGE_CONFIG_AND_INSTALL ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(mbedtls miniz)
-
-add_subdirectory(extern/blowfish)
+FetchContent_MakeAvailable(mbedtls miniz blowfish)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
