@@ -1,7 +1,7 @@
-#include "bf.h"
+#include "blowfish.h"
 #include "l2encdec_private.h" // IWYU pragma: keep
 #include "rsa.h"
-#include "xor.h"
+#include "xor_utils.h"
 #include "zlib_utils.h"
 #include <cstddef>
 #include <cstring>
@@ -94,7 +94,7 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
 {
     uint32_t checksum = *reinterpret_cast<const uint32_t *>(input.data() + input.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
     std::vector<unsigned char> nofooter(input.begin(), input.end() - FOOTER_SIZE);
-    uint32_t calc = ZlibUtils::checksum(nofooter);
+    uint32_t calc = zlib_utils::checksum(nofooter);
     return calc == checksum ? ChecksumResult::SUCCESS : ChecksumResult::MISMATCH;
 }
 
@@ -104,23 +104,23 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
     switch (p.type)
     {
     case Type::XOR:
-        XOR::encrypt(input, enc, p.xor_key);
+        xor_utils::encrypt(input, enc, p.xor_key);
         break;
     case Type::XOR_FILENAME:
-        XOR::encrypt(input, enc, XOR::get_key_by_filename(p.filename));
+        xor_utils::encrypt(input, enc, xor_utils::get_key_by_filename(p.filename));
         break;
     case Type::XOR_POSITION:
-        XOR::encrypt(input, enc, p.xor_start_position, XOR::get_key_by_index);
+        xor_utils::encrypt(input, enc, p.xor_start_position, xor_utils::get_key_by_index);
         break;
     case Type::BLOWFISH:
-        BF::encrypt(input, enc, p.blowfish_key);
+        blowfish::encrypt(input, enc, p.blowfish_key);
         break;
     case Type::RSA:
     {
         std::vector<unsigned char> compressed;
-        if (ZlibUtils::pack(input, compressed) != 0)
+        if (zlib_utils::pack(input, compressed) != 0)
             return EncodeResult::COMPRESSION_FAILED;
-        RSA::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent);
+        rsa::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent);
         break;
     }
     default:
@@ -133,7 +133,7 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
     if (!p.skip_tail)
     {
         if (p.tail.empty())
-            insert_tail(enc, ZlibUtils::checksum(enc));
+            insert_tail(enc, zlib_utils::checksum(enc));
         else
             insert_tail(enc, p.tail);
     }
@@ -151,23 +151,23 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
     switch (p.type)
     {
     case Type::XOR:
-        XOR::decrypt(data, dec, p.xor_key);
+        xor_utils::decrypt(data, dec, p.xor_key);
         break;
     case Type::XOR_POSITION:
-        XOR::decrypt(data, dec, p.xor_start_position, XOR::get_key_by_index);
+        xor_utils::decrypt(data, dec, p.xor_start_position, xor_utils::get_key_by_index);
         break;
     case Type::XOR_FILENAME:
-        XOR::decrypt(data, dec, XOR::get_key_by_filename(p.filename));
+        xor_utils::decrypt(data, dec, xor_utils::get_key_by_filename(p.filename));
         break;
     case Type::BLOWFISH:
-        BF::decrypt(data, dec, p.blowfish_key);
+        blowfish::decrypt(data, dec, p.blowfish_key);
         break;
     case Type::RSA:
     {
         std::vector<unsigned char> compressed;
-        if (RSA::decrypt(data, compressed, p.rsa_modulus, p.rsa_private_exponent) != 0)
+        if (rsa::decrypt(data, compressed, p.rsa_modulus, p.rsa_private_exponent) != 0)
             return DecodeResult::DECRYPTION_FAILED;
-        if (ZlibUtils::unpack(compressed, dec) != 0)
+        if (zlib_utils::unpack(compressed, dec) != 0)
             return DecodeResult::DECOMPRESSION_FAILED;
         break;
     }

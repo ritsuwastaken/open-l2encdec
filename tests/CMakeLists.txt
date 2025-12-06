@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(${PROJECT_NAME}
     test_xor.cpp
-    test_bf.cpp
+    test_blowfish.cpp
     test_zlib.cpp
     test_rsa.cpp
 )

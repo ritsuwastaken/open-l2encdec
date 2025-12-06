@@ -1,14 +1,14 @@
-#ifndef BF_H
-#define BF_H
+#ifndef BLOWFISH_H
+#define BLOWFISH_H
 
 #include <cstddef>
 #include <string>
 #include <vector>
 
-namespace BF
+namespace blowfish
 {
 size_t encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &key);
 size_t decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &key);
-} // namespace BF
+} // namespace blowfish
 
-#endif // BF_H
+#endif // BLOWFISH_H
