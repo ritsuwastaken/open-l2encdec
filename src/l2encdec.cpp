@@ -1,3 +1,4 @@
+#include "l2encdec.h"
 #include "blowfish.h"
 #include "l2encdec_private.h" // IWYU pragma: keep
 #include "rsa.h"
@@ -9,6 +10,8 @@
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
 constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
+constexpr size_t PROTOCOL_SIZE = 3;
+constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -70,6 +73,60 @@ inline void insert_tail(std::vector<unsigned char> &data, std::string_view tail)
     }
 }
 
+// TODO: remove
+inline int get_protocol_from_params(const l2encdec::Params &p)
+{
+    if (!p.header.empty() &&
+        p.header.size() >= HEADER_PREFIX.size() + PROTOCOL_SIZE)
+    {
+        std::string digits =
+            p.header.substr(p.header.size() - PROTOCOL_SIZE, PROTOCOL_SIZE);
+
+        if (std::all_of(digits.begin(), digits.end(), ::isdigit))
+            return std::stoi(digits);
+    }
+
+    for (const auto &kv : PROTOCOL_CONFIGS)
+    {
+        int proto = kv.first;
+        const l2encdec::Params &cfg = kv.second;
+
+        if (p.type != cfg.type)
+            continue;
+
+        switch (p.type)
+        {
+        case l2encdec::Type::XOR:
+            if (p.xor_key == cfg.xor_key)
+                return proto;
+            break;
+
+        case l2encdec::Type::XOR_POSITION:
+            if (p.xor_start_position == cfg.xor_start_position)
+                return proto;
+            break;
+
+        case l2encdec::Type::XOR_FILENAME:
+            return proto;
+
+        case l2encdec::Type::BLOWFISH:
+            if (p.blowfish_key == cfg.blowfish_key)
+                return proto;
+            break;
+
+        case l2encdec::Type::RSA:
+            if (p.rsa_modulus == cfg.rsa_modulus)
+                return proto;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return -1;
+}
+
 L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std::string &filename, bool use_legacy_rsa)
 {
     if (protocol == 121 && filename.empty())
@@ -128,7 +185,19 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
         break;
     }
 
-    insert_header(enc, p.header);
+    if (!p.skip_header)
+    {
+        if (p.header.empty())
+        {
+            int protocol = get_protocol_from_params(p);
+            if (protocol == -1)
+                return EncodeResult::INVALID_TYPE;
+            std::string protocol_string = std::string(HEADER_PREFIX) + std::to_string(protocol);
+            insert_header(enc, protocol_string);
+        }
+        else
+            insert_header(enc, p.header);
+    }
 
     if (!p.skip_tail)
     {
@@ -144,8 +213,13 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
 
 L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &p)
 {
-    size_t header_size = p.header.size() * 2;
-    size_t footer_size = p.skip_tail ? 0 : FOOTER_SIZE;
+    size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
+                                                               : HEADER_SIZE;
+    size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size()
+                                                           : FOOTER_SIZE;
+    if (input.size() < header_size + footer_size)
+        return DecodeResult::DECRYPTION_FAILED;
+
     std::vector<unsigned char> data(input.begin() + header_size, input.end() - footer_size);
     std::vector<unsigned char> dec;
     switch (p.type)
@@ -178,4 +252,76 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
 
     output = std::move(dec);
     return DecodeResult::SUCCESS;
+}
+
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const std::string &filename,
+    int protocol,
+    bool skip_header,
+    bool skip_tail,
+    bool use_legacy_rsa)
+{
+    l2encdec::Params p{};
+    if (!l2encdec::init_params(&p, protocol, filename, use_legacy_rsa))
+        return EncodeResult::INVALID_TYPE;
+
+    p.skip_header = skip_header;
+    p.skip_tail = skip_tail;
+
+    return l2encdec::encode(input, output, p);
+}
+
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const std::string &filename,
+    int protocol,
+    bool skip_header,
+    bool skip_tail,
+    bool use_legacy_rsa)
+{
+    if (!skip_header && input.size() >= HEADER_SIZE && protocol == -1)
+    {
+        std::string ascii;
+        ascii.reserve(HEADER_PREFIX.size() + PROTOCOL_SIZE);
+
+        for (size_t i = 0; i < HEADER_SIZE; i += 2)
+            ascii.push_back(static_cast<char>(input[i]));
+
+        if (ascii.compare(0, HEADER_PREFIX.size(), HEADER_PREFIX) == 0)
+        {
+            std::string digits = ascii.substr(HEADER_PREFIX.size(), PROTOCOL_SIZE);
+            if (std::all_of(digits.begin(), digits.end(), ::isdigit))
+                protocol = std::stoi(digits);
+        }
+    }
+
+    l2encdec::Params p{};
+    if (protocol > 0)
+    {
+        if (!l2encdec::init_params(&p, protocol, filename, use_legacy_rsa))
+            return DecodeResult::INVALID_TYPE;
+    }
+    else
+    {
+        bool found = false;
+        for (auto &kv : PROTOCOL_CONFIGS)
+        {
+            if (init_params(&p, kv.first, filename, use_legacy_rsa))
+            {
+                protocol = kv.first;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            return DecodeResult::INVALID_TYPE;
+    }
+
+    p.skip_header = skip_header;
+    p.skip_tail = skip_tail;
+
+    return decode(input, output, p);
 }
