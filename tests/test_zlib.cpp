@@ -9,11 +9,11 @@ TEST(ZlibUtils, PackUnpackRoundTrip)
     std::vector<unsigned char> input(s.begin(), s.end());
     std::vector<unsigned char> packed, unpacked;
 
-    int pack_status = ZlibUtils::pack(input, packed);
+    int pack_status = zlib_utils::pack(input, packed);
     ASSERT_EQ(pack_status, 0);
     ASSERT_GT(packed.size(), 4);
 
-    int unpack_status = ZlibUtils::unpack(packed, unpacked);
+    int unpack_status = zlib_utils::unpack(packed, unpacked);
     ASSERT_EQ(unpack_status, 0);
     std::string out(unpacked.begin(), unpacked.end());
     EXPECT_EQ(out, s);

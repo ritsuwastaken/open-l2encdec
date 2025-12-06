@@ -38,9 +38,9 @@ option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
+    src/blowfish.cpp
     src/rsa.cpp
-    src/xor.cpp
-    src/bf.cpp
+    src/xor_utils.cpp
     src/zlib_utils.cpp
 )
 

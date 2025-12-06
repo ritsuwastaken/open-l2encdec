@@ -5,7 +5,7 @@ constexpr size_t COMPRESSED_HEADER_SIZE = 4;
 constexpr size_t INFLATE_CHUNK_SIZE = 1024 * 16;
 constexpr size_t DEFLATE_CHUNK_SIZE = 1024 * 1024;
 
-int ZlibUtils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
+int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
     size_t compressed_size = input_buffer.size() - COMPRESSED_HEADER_SIZE;
     if (compressed_size <= 0)
@@ -51,7 +51,7 @@ int ZlibUtils::unpack(const std::vector<unsigned char> &input_buffer, std::vecto
     return 0;
 }
 
-int ZlibUtils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
+int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
     size_t uncompressed_size = input_buffer.size();
     output_buffer.clear();
@@ -101,7 +101,7 @@ int ZlibUtils::pack(const std::vector<unsigned char> &input_buffer, std::vector<
     return 0;
 }
 
-uint32_t ZlibUtils::checksum(const std::vector<unsigned char> &buffer, uint32_t checksum)
+uint32_t zlib_utils::checksum(const std::vector<unsigned char> &buffer, uint32_t checksum)
 {
     return mz_crc32(checksum, buffer.data(), buffer.size());
 }

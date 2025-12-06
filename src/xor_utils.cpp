@@ -1,7 +1,7 @@
-#include "xor.h"
+#include "xor_utils.h"
 #include <algorithm>
 
-int XOR::get_key_by_index(int index)
+int xor_utils::get_key_by_index(int index)
 {
     int d1 = index & 0xf;
     int d2 = (index >> 4) & 0xf;
@@ -10,7 +10,7 @@ int XOR::get_key_by_index(int index)
     return ((d2 ^ d4) << 4) | (d1 ^ d3);
 }
 
-int XOR::get_key_by_filename(std::string filename)
+int xor_utils::get_key_by_filename(std::string filename)
 {
     std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
     int acc = 0;
@@ -19,7 +19,7 @@ int XOR::get_key_by_filename(std::string filename)
     return acc & 0xff;
 }
 
-size_t XOR::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
+size_t xor_utils::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
 {
     output.assign(input.begin(), input.end());
     for (auto &byte : output)
@@ -29,7 +29,7 @@ size_t XOR::encrypt(const std::vector<unsigned char> &input, std::vector<unsigne
     return output.size();
 }
 
-size_t XOR::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
+size_t xor_utils::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
 {
     output.assign(input.begin(), input.end());
     for (auto &byte : output)
@@ -40,7 +40,7 @@ size_t XOR::decrypt(const std::vector<unsigned char> &input, std::vector<unsigne
     return output.size();
 }
 
-size_t XOR::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
+size_t xor_utils::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
 {
     int ind = start_index;
     output.assign(input.begin(), input.end());
@@ -51,7 +51,7 @@ size_t XOR::encrypt(const std::vector<unsigned char> &input, std::vector<unsigne
     return output.size();
 }
 
-size_t XOR::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
+size_t xor_utils::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
 {
     int ind = start_index;
     output.assign(input.begin(), input.end());

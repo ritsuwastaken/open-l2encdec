@@ -55,7 +55,7 @@ static void mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
     mbedtls_mpi_read_string(x, 16, hex.c_str());
 }
 
-void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)
+void rsa::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)
 {
     std::vector<unsigned char> padded_buffer;
     size_t total_size = add_padding(padded_buffer, input_data);
@@ -105,7 +105,7 @@ void RSA::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsi
     mbedtls_mpi_free(&public_exp);
 }
 
-int RSA::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &private_exp_hex)
+int rsa::decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &private_exp_hex)
 {
     if (input_data.size() % BLOCK_SIZE != 0)
         return -1;

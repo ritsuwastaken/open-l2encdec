@@ -34,7 +34,7 @@ TEST(RSAEncryptDecrypt, EncryptDecryptRoundTrip)
     };
     std::vector<unsigned char> input = {'D', 'A', 'T', 'A', '1', '2', '3', '4'};
     std::vector<unsigned char> enc, dec;
-    RSA::encrypt(input, enc, params.rsa_modulus, params.rsa_public_exponent);
-    RSA::decrypt(enc, dec, params.rsa_modulus, params.rsa_private_exponent);
+    rsa::encrypt(input, enc, params.rsa_modulus, params.rsa_public_exponent);
+    rsa::decrypt(enc, dec, params.rsa_modulus, params.rsa_private_exponent);
     EXPECT_EQ(dec, input);
 }

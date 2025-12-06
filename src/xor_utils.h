@@ -1,11 +1,11 @@
-#ifndef XOR_H
-#define XOR_H
+#ifndef XOR_UTILS_H
+#define XOR_UTILS_H
 
 #include <functional>
 #include <string>
 #include <vector>
 
-namespace XOR
+namespace xor_utils
 {
 using KeyGenerator = std::function<int(int)>;
 
@@ -15,6 +15,6 @@ size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned cha
 size_t decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
 int get_key_by_index(int index);
 int get_key_by_filename(std::string filename);
-} // namespace XOR
+} // namespace xor_utils
 
-#endif // XOR_H
+#endif // XOR_UTILS_H
