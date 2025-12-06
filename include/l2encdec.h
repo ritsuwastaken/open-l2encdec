@@ -142,9 +142,9 @@ L2ENCDEC_API EncodeResult encode_auto(
     std::vector<unsigned char> &output,
     const std::string &filename, // only used for protocol 121
     int protocol,
-    bool skip_header,
-    bool skip_tail,
-    bool use_legacy_rsa);
+    bool skip_header = false,
+    bool skip_tail = false,
+    bool use_legacy_rsa = false);
 } // namespace l2encdec
 
 #endif // L2ENCDEC_PUBLIC_H
