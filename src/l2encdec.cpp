@@ -4,9 +4,9 @@
 #include "rsa.h"
 #include "xor_utils.h"
 #include "zlib_utils.h"
+#include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <algorithm>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
@@ -216,7 +216,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
 {
     size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
                                                                : HEADER_SIZE;
-    size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size()
+    size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
                                                            : FOOTER_SIZE;
     if (input.size() < header_size + footer_size)
         return DecodeResult::DECRYPTION_FAILED;
