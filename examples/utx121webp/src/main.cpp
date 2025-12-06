@@ -161,11 +161,7 @@ int main(int argc, char **argv)
         std::vector<unsigned char> decoded_package;
         if (protocol != 0)
         {
-            l2encdec::Params params;
-            if (!l2encdec::init_params(&params, protocol, filename))
-                throw std::runtime_error("Failed to initialize L2 protocol parameters");
-
-            if (l2encdec::decode(encrypted_package, decoded_package, params) != l2encdec::DecodeResult::SUCCESS)
+            if (l2encdec::decode_auto(encrypted_package, decoded_package, filename, protocol) != l2encdec::DecodeResult::SUCCESS)
                 throw std::runtime_error("Failed to decode package: " + std::string(argv[1]));
         }
         else
