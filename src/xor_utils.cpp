@@ -19,45 +19,29 @@ int xor_utils::get_key_by_filename(std::string filename)
     return acc & 0xff;
 }
 
-size_t xor_utils::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
+size_t xor_utils::apply(const std::vector<unsigned char> &input,
+                        std::vector<unsigned char> &output,
+                        int xor_key)
 {
-    output.assign(input.begin(), input.end());
+    unsigned char key = static_cast<unsigned char>(xor_key);
+
+    output = input;
     for (auto &byte : output)
-    {
-        byte ^= xor_key;
-    }
+        byte ^= key;
+
     return output.size();
 }
 
-size_t xor_utils::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key)
-{
-    output.assign(input.begin(), input.end());
-    for (auto &byte : output)
-    {
-        if (byte >= 0)
-            byte ^= xor_key;
-    }
-    return output.size();
-}
-
-size_t xor_utils::encrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
+size_t xor_utils::apply(const std::vector<unsigned char> &input,
+                        std::vector<unsigned char> &output,
+                        int start_index,
+                        KeyGenerator key_generator)
 {
     int ind = start_index;
-    output.assign(input.begin(), input.end());
-    for (auto &byte : output)
-    {
-        byte ^= key_generator(ind++);
-    }
-    return output.size();
-}
 
-size_t xor_utils::decrypt(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator)
-{
-    int ind = start_index;
-    output.assign(input.begin(), input.end());
+    output = input;
     for (auto &byte : output)
-    {
-        byte ^= key_generator(ind++);
-    }
+        byte ^= static_cast<unsigned char>(key_generator(ind++));
+
     return output.size();
 }

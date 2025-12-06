@@ -104,13 +104,13 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
     switch (p.type)
     {
     case Type::XOR:
-        xor_utils::encrypt(input, enc, p.xor_key);
+        xor_utils::apply(input, enc, p.xor_key);
         break;
     case Type::XOR_FILENAME:
-        xor_utils::encrypt(input, enc, xor_utils::get_key_by_filename(p.filename));
+        xor_utils::apply(input, enc, xor_utils::get_key_by_filename(p.filename));
         break;
     case Type::XOR_POSITION:
-        xor_utils::encrypt(input, enc, p.xor_start_position, xor_utils::get_key_by_index);
+        xor_utils::apply(input, enc, p.xor_start_position, xor_utils::get_key_by_index);
         break;
     case Type::BLOWFISH:
         blowfish::encrypt(input, enc, p.blowfish_key);
@@ -151,13 +151,13 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
     switch (p.type)
     {
     case Type::XOR:
-        xor_utils::decrypt(data, dec, p.xor_key);
+        xor_utils::apply(data, dec, p.xor_key);
         break;
     case Type::XOR_POSITION:
-        xor_utils::decrypt(data, dec, p.xor_start_position, xor_utils::get_key_by_index);
+        xor_utils::apply(data, dec, p.xor_start_position, xor_utils::get_key_by_index);
         break;
     case Type::XOR_FILENAME:
-        xor_utils::decrypt(data, dec, xor_utils::get_key_by_filename(p.filename));
+        xor_utils::apply(data, dec, xor_utils::get_key_by_filename(p.filename));
         break;
     case Type::BLOWFISH:
         blowfish::decrypt(data, dec, p.blowfish_key);
