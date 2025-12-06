@@ -6,6 +6,7 @@
 #include "zlib_utils.h"
 #include <cstddef>
 #include <cstring>
+#include <algorithm>
 
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
