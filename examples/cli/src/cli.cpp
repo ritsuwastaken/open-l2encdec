@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
     }
 
     int opt;
-    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:vfT:")) != -1)
+    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:vf:T:")) != -1)
     {
         switch (opt)
         {
