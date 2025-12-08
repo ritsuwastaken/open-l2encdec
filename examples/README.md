@@ -8,7 +8,7 @@ In `CMakeLists.txt`
 
 ```cmake
 cmake_minimum_required(VERSION 3.14)
-project(example VERSION 1.3.0 LANGUAGES CXX)
+project(example VERSION 1.0.0 LANGUAGES CXX)
 
 include(FetchContent)
 FetchContent_Declare(
