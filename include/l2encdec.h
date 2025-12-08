@@ -46,6 +46,7 @@ enum class EncodeResult
 struct Params
 {
     Type type;
+    int protocol;                     // `encrypt`: used for header construction, required if `header` is empty
     std::string header;               // `decrypt`: expected header, `encrypt`: header to prepend
     std::string tail;                 // `encode`: custom tail
     bool skip_tail = false;           // `decrypt`: read file without tail; `encrypt`: do not append tail

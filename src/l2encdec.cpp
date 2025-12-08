@@ -32,7 +32,8 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
 };
 
 L2ENCDEC_API bool l2encdec::init_params(
-    Params &params, int protocol,
+    Params &params,
+    int protocol,
     const std::string &filename,
     bool use_legacy_rsa)
 {
@@ -44,12 +45,11 @@ L2ENCDEC_API bool l2encdec::init_params(
         return false;
 
     params = it->second;
-
     if (params.type == Type::RSA && !use_legacy_rsa)
         params = MODERN_RSA_PARAMS;
 
+    params.protocol = protocol;
     params.filename = filename;
-    params.header = std::string(HEADER_PREFIX) + std::to_string(protocol);
 
     return true;
 }
@@ -67,6 +67,9 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     std::vector<unsigned char> &output,
     const Params &p)
 {
+    if (!p.skip_header && p.header.empty() && (p.protocol <= 99 || p.protocol > 999))
+        return EncodeResult::INVALID_TYPE;
+
     std::vector<unsigned char> enc;
     switch (p.type)
     {
@@ -96,7 +99,11 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     }
 
     if (!p.skip_header)
-        utils::add_header(enc, p.header);
+        utils::add_header(
+            enc,
+            !p.header.empty()
+                ? p.header
+                : std::string(HEADER_PREFIX) + std::to_string(p.protocol));
 
     if (!p.skip_tail)
         utils::add_tail(
@@ -122,7 +129,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
                                                            : FOOTER_SIZE;
     if (input.size() < header_size + footer_size)
-        return DecodeResult::DECRYPTION_FAILED;
+        return DecodeResult::INVALID_TYPE;
 
     std::vector<unsigned char> data(input.begin() + header_size, input.end() - footer_size);
     std::vector<unsigned char> dec;
