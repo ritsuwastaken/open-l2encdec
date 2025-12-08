@@ -32,7 +32,7 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
 };
 
 L2ENCDEC_API bool l2encdec::init_params(
-    Params *params, int protocol,
+    Params &params, int protocol,
     const std::string &filename,
     bool use_legacy_rsa)
 {
@@ -43,13 +43,13 @@ L2ENCDEC_API bool l2encdec::init_params(
     if (it == PROTOCOL_CONFIGS.end())
         return false;
 
-    *params = it->second;
+    params = it->second;
 
-    if (params->type == Type::RSA && !use_legacy_rsa)
-        *params = MODERN_RSA_PARAMS;
+    if (params.type == Type::RSA && !use_legacy_rsa)
+        params = MODERN_RSA_PARAMS;
 
-    params->filename = filename;
-    params->header = std::string(HEADER_PREFIX) + std::to_string(protocol);
+    params.filename = filename;
+    params.header = std::string(HEADER_PREFIX) + std::to_string(protocol);
 
     return true;
 }
@@ -156,7 +156,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     return DecodeResult::SUCCESS;
 }
 
-L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     const std::vector<unsigned char> &input,
     std::vector<unsigned char> &output,
     int protocol,
@@ -164,13 +164,13 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
     bool use_legacy_rsa)
 {
     l2encdec::Params p{};
-    if (!l2encdec::init_params(&p, protocol, filename, use_legacy_rsa))
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
         return EncodeResult::INVALID_TYPE;
 
     return l2encdec::encode(input, output, p);
 }
 
-L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     const std::vector<unsigned char> &input,
     std::vector<unsigned char> &output,
     int protocol,
@@ -178,7 +178,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
     bool use_legacy_rsa)
 {
     l2encdec::Params p{};
-    if (!l2encdec::init_params(&p, protocol, filename, use_legacy_rsa))
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
         return DecodeResult::INVALID_TYPE;
 
     return l2encdec::decode(input, output, p);

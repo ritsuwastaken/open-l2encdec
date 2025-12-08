@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         auto encrypted_meta_content = read_file(argv[2]);
 
         l2encdec::Params params;
-        if (!l2encdec::init_params(&params, L2_PROTOCOL_VERSION))
+        if (!l2encdec::init_params(params, L2_PROTOCOL_VERSION))
             throw std::runtime_error("Failed to initialize L2 protocol parameters");
 
         std::vector<unsigned char> main_content;

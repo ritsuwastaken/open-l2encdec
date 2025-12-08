@@ -28,8 +28,8 @@ std::vector<unsigned char> input;
 std::string filename = "";
 int protocol_version = 121;
 
-l2encdec::Params params;
-l2encdec::init_params(&params, protocol_version, filename);
+l2encdec::Params params{};
+l2encdec::init_params(params, protocol_version, filename);
 std::vector<unsigned char> output;
 l2encdec::decode(input, output, params);
 // or
@@ -69,7 +69,7 @@ struct Params {
 ---
 
 ```cpp
-bool init_params(Params* params, int protocol, std::string filename = "", bool use_legacy_decrypt_rsa = false);
+bool init_params(Params &params, int protocol, std::string filename = "", bool use_legacy_decrypt_rsa = false);
 ```
 
 Initialize default parameters for the specified protocol.
