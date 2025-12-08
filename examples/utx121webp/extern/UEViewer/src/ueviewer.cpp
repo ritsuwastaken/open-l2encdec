@@ -1,10 +1,12 @@
+// clang-format off
 #include <ueviewer.h>
-#include "Core.h"
+#include "Core.h" // IWYU pragma: keep
 #include "UnCore.h"
 #include "UnObject.h"
 #include "UnMaterial.h"
 #include "UnMaterial2.h"
 #include "UnPackage.h"
+// clang-format on
 
 static TextureData extract_texture_data(UTexture *texture)
 {

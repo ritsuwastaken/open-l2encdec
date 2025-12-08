@@ -1,6 +1,7 @@
 #include "blowfish.h"
 #include "l2encdec_private.h" // IWYU pragma: keep
 #include "rsa.h"
+#include "utils.h"
 #include "xor_utils.h"
 #include "zlib_utils.h"
 #include <cstddef>
@@ -9,6 +10,8 @@
 constexpr size_t FOOTER_SIZE = 20;
 constexpr size_t FOOTER_CRC32_OFFSET = 12;
 constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
+constexpr size_t PROTOCOL_SIZE = 3;
+constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -28,49 +31,10 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
     .rsa_private_exponent = "1d",
 };
 
-inline void insert_header(std::vector<unsigned char> &data, std::string_view header)
-{
-    const size_t wide_size = header.size() * 2;
-    data.reserve(data.size() + wide_size);
-
-    std::vector<unsigned char> wide;
-    wide.resize(wide_size);
-
-    for (size_t i = 0; i < header.size(); i++)
-    {
-        wide[i * 2] = static_cast<unsigned char>(header[i]);
-        wide[i * 2 + 1] = 0;
-    }
-
-    data.insert(data.begin(), wide.begin(), wide.end());
-}
-
-inline void insert_tail(std::vector<unsigned char> &data, uint32_t crc)
-{
-    const size_t start = data.size();
-    data.resize(start + FOOTER_SIZE);
-    unsigned char *footer = data.data() + start;
-    uint32_t *crc_ptr = reinterpret_cast<uint32_t *>(footer + FOOTER_CRC32_OFFSET);
-    std::memcpy(crc_ptr, &crc, sizeof(crc));
-}
-
-inline void insert_tail(std::vector<unsigned char> &data, std::string_view tail)
-{
-    std::string padded = std::string(tail);
-    if (padded.size() % 2 != 0)
-        padded.insert(padded.begin(), '0');
-
-    const size_t byte_count = padded.size() / 2;
-    data.reserve(data.size() + byte_count);
-
-    for (size_t i = 0; i < padded.size(); i += 2)
-    {
-        unsigned char value = static_cast<unsigned char>(std::stoi(padded.substr(i, 2), nullptr, 16));
-        data.push_back(value);
-    }
-}
-
-L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std::string &filename, bool use_legacy_rsa)
+L2ENCDEC_API bool l2encdec::init_params(
+    Params &params, int protocol,
+    const std::string &filename,
+    bool use_legacy_rsa)
 {
     if (protocol == 121 && filename.empty())
         return false;
@@ -79,13 +43,13 @@ L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std:
     if (it == PROTOCOL_CONFIGS.end())
         return false;
 
-    *params = it->second;
+    params = it->second;
 
-    if (params->type == Type::RSA && !use_legacy_rsa)
-        *params = MODERN_RSA_PARAMS;
+    if (params.type == Type::RSA && !use_legacy_rsa)
+        params = MODERN_RSA_PARAMS;
 
-    params->filename = filename;
-    params->header = std::string(HEADER_PREFIX) + std::to_string(protocol);
+    params.filename = filename;
+    params.header = std::string(HEADER_PREFIX) + std::to_string(protocol);
 
     return true;
 }
@@ -98,7 +62,10 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
     return calc == checksum ? ChecksumResult::SUCCESS : ChecksumResult::MISMATCH;
 }
 
-L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &p)
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const Params &p)
 {
     std::vector<unsigned char> enc;
     switch (p.type)
@@ -128,24 +95,33 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
         break;
     }
 
-    insert_header(enc, p.header);
+    if (!p.skip_header)
+        utils::add_header(enc, p.header);
 
     if (!p.skip_tail)
     {
         if (p.tail.empty())
-            insert_tail(enc, zlib_utils::checksum(enc));
+            utils::add_tail(enc, zlib_utils::checksum(enc), FOOTER_CRC32_OFFSET, FOOTER_SIZE);
         else
-            insert_tail(enc, p.tail);
+            utils::add_tail(enc, p.tail);
     }
 
     output = std::move(enc);
     return EncodeResult::SUCCESS;
 }
 
-L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &p)
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const Params &p)
 {
-    size_t header_size = p.header.size() * 2;
-    size_t footer_size = p.skip_tail ? 0 : FOOTER_SIZE;
+    size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
+                                                               : HEADER_SIZE;
+    size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
+                                                           : FOOTER_SIZE;
+    if (input.size() < header_size + footer_size)
+        return DecodeResult::DECRYPTION_FAILED;
+
     std::vector<unsigned char> data(input.begin() + header_size, input.end() - footer_size);
     std::vector<unsigned char> dec;
     switch (p.type)
@@ -178,4 +154,32 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
 
     output = std::move(dec);
     return DecodeResult::SUCCESS;
+}
+
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    int protocol,
+    const std::string &filename,
+    bool use_legacy_rsa)
+{
+    l2encdec::Params p{};
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
+        return EncodeResult::INVALID_TYPE;
+
+    return l2encdec::encode(input, output, p);
+}
+
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    int protocol,
+    const std::string &filename,
+    bool use_legacy_rsa)
+{
+    l2encdec::Params p{};
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
+        return DecodeResult::INVALID_TYPE;
+
+    return l2encdec::decode(input, output, p);
 }

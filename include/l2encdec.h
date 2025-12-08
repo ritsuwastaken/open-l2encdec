@@ -48,7 +48,8 @@ struct Params
     Type type;
     std::string header;               // `decrypt`: expected header, `encrypt`: header to prepend
     std::string tail;                 // `encode`: custom tail
-    bool skip_tail;                   // `decrypt`: read file without tail; `encrypt`: do not append tail
+    bool skip_tail = false;           // `decrypt`: read file without tail; `encrypt`: do not append tail
+    bool skip_header = false;         // `decrypt`: ignore/prevent header handling; `encrypt`: do not prepend header
     std::string filename;             // for l2encdec::Type::XOR_FILENAME
     int xor_key;                      // for l2encdec::Type::XOR
     int xor_start_position;           // for l2encdec::Type::XOR_POSITION
@@ -66,7 +67,7 @@ struct Params
  * @param use_legacy_decrypt_rsa Use original private exponent and modulus for decryption, for protocols 411-414
  * @return `true` if the parameters were initialized successfully, `false` otherwise.
  */
-L2ENCDEC_API bool init_params(Params *params, int protocol, const std::string &filename = "", bool use_legacy_decrypt_rsa = false);
+L2ENCDEC_API bool init_params(Params &params, int protocol, const std::string &filename = "", bool use_legacy_decrypt_rsa = false);
 
 /**
  * @brief Verify the checksum of the input data.
@@ -74,18 +75,36 @@ L2ENCDEC_API bool init_params(Params *params, int protocol, const std::string &f
 L2ENCDEC_API ChecksumResult verify_checksum(const std::vector<unsigned char> &input_data);
 
 /**
- * @brief Encode the input data using the specified protocol.
+ * @brief Encode the input data using params.
  */
 L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input_data,
                                  std::vector<unsigned char> &output_data,
                                  const Params &params);
 
 /**
- * @brief Decode the input data using the specified protocol.
+ * @brief Decode the input data using params.
  */
 L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input_data,
                                  std::vector<unsigned char> &output_data,
                                  const Params &params);
+
+/**
+ * @brief Decode input data using protocol-derived parameters.
+ */
+L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
+                                 std::vector<unsigned char> &output,
+                                 int protocol,
+                                 const std::string &filename = "", // only needed for protocol 121
+                                 bool use_legacy_rsa = false);
+
+/**
+ * @brief Encode input data using protocol-derived parameters.
+ */
+L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input,
+                                 std::vector<unsigned char> &output,
+                                 int protocol,
+                                 const std::string &filename = "", // only used for protocol 121
+                                 bool use_legacy_rsa = false);
 } // namespace l2encdec
 
 #endif // L2ENCDEC_PUBLIC_H

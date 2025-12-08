@@ -364,8 +364,8 @@ int main(int argc, char *argv[])
                           : read_protocol_from_input_file_name(input_file_name))
                    : protocol;
 
-    l2encdec::Params params;
-    if (protocol != 0 && !l2encdec::init_params(&params, protocol, input_file_name, use_legacy_decrypt_rsa))
+    l2encdec::Params params{};
+    if (protocol != 0 && !l2encdec::init_params(params, protocol, input_file_name, use_legacy_decrypt_rsa))
         std::cerr << "Warning: unsupported protocol" << std::endl;
 
     params.skip_tail = skip_tail;
