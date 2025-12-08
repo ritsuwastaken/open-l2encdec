@@ -1,6 +1,6 @@
 #include "utils.h"
 #include <cstring>
-#include <string>
+#include <format>
 
 void utils::add_header(std::vector<unsigned char> &data, std::string_view header)
 {
@@ -19,13 +19,18 @@ void utils::add_header(std::vector<unsigned char> &data, std::string_view header
     data.insert(data.begin(), wide.begin(), wide.end());
 }
 
-void utils::add_tail(std::vector<unsigned char> &data, uint32_t crc, size_t crc32_offset, size_t footer_size)
+std::string utils::make_tail(uint32_t crc, size_t crc32_offset, size_t footer_size)
 {
-    const size_t start = data.size();
-    data.resize(start + footer_size);
-    unsigned char *footer = data.data() + start;
-    uint32_t *crc_ptr = reinterpret_cast<uint32_t *>(footer + crc32_offset);
-    std::memcpy(crc_ptr, &crc, sizeof(crc));
+    std::vector<unsigned char> footer(footer_size, 0);
+    std::memcpy(footer.data() + crc32_offset, &crc, sizeof(crc));
+
+    std::string result;
+    result.reserve(footer_size * 2);
+
+    for (unsigned char b : footer)
+        result += std::format("{:02X}", b);
+
+    return result;
 }
 
 void utils::add_tail(std::vector<unsigned char> &data, std::string_view tail)

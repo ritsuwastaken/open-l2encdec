@@ -99,12 +99,14 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
         utils::add_header(enc, p.header);
 
     if (!p.skip_tail)
-    {
-        if (p.tail.empty())
-            utils::add_tail(enc, zlib_utils::checksum(enc), FOOTER_CRC32_OFFSET, FOOTER_SIZE);
-        else
-            utils::add_tail(enc, p.tail);
-    }
+        utils::add_tail(
+            enc,
+            !p.tail.empty()
+                ? p.tail
+                : utils::make_tail(
+                      zlib_utils::checksum(enc),
+                      FOOTER_CRC32_OFFSET,
+                      FOOTER_SIZE));
 
     output = std::move(enc);
     return EncodeResult::SUCCESS;
