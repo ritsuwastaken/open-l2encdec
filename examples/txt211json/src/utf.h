@@ -16,4 +16,4 @@ class utf
     static constexpr size_t BYTES_PER_UTF16_CHAR = 2;
 };
 
-#endif
+#endif // UTF_H
