@@ -18,7 +18,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(l2encdec)
 
-add_library(${PROJECT_NAME} src/main.cpp) // or add_executable(${PROJECT_NAME} src/main.cpp)
+add_library(${PROJECT_NAME} src/main.cpp) # or add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 ```
 
