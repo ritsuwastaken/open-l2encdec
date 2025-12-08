@@ -58,8 +58,9 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
 {
     uint32_t checksum = *reinterpret_cast<const uint32_t *>(input.data() + input.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
     std::vector<unsigned char> nofooter(input.begin(), input.end() - FOOTER_SIZE);
-    uint32_t calc = zlib_utils::checksum(nofooter);
-    return calc == checksum ? ChecksumResult::SUCCESS : ChecksumResult::MISMATCH;
+    return zlib_utils::checksum(nofooter) == checksum
+               ? ChecksumResult::SUCCESS
+               : ChecksumResult::MISMATCH;
 }
 
 L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
