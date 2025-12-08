@@ -161,7 +161,7 @@ int main(int argc, char **argv)
         std::vector<unsigned char> decoded_package;
         if (protocol != 0)
         {
-            if (l2encdec::decode_auto(encrypted_package, decoded_package, filename, protocol) != l2encdec::DecodeResult::SUCCESS)
+            if (l2encdec::decode_auto(encrypted_package, decoded_package, protocol, filename) != l2encdec::DecodeResult::SUCCESS)
                 throw std::runtime_error("Failed to decode package: " + std::string(argv[1]));
         }
         else

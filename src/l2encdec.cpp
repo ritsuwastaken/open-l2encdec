@@ -257,8 +257,8 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned 
 L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
     const std::vector<unsigned char> &input,
     std::vector<unsigned char> &output,
-    const std::string &filename,
     int protocol,
+    const std::string &filename,
     bool use_legacy_rsa)
 {
     l2encdec::Params p{};
@@ -271,8 +271,8 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
 L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
     const std::vector<unsigned char> &input,
     std::vector<unsigned char> &output,
-    const std::string &filename,
     int protocol,
+    const std::string &filename,
     bool use_legacy_rsa)
 {
     if (input.size() >= HEADER_SIZE && protocol == -1)

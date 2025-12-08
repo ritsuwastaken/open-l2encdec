@@ -94,8 +94,8 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input_data,
  */
 L2ENCDEC_API DecodeResult decode_auto(const std::vector<unsigned char> &input,
                                       std::vector<unsigned char> &output,
-                                      const std::string &filename, // only needed for protocol 121
                                       int protocol = -1,
+                                      const std::string &filename = "", // only needed for protocol 121
                                       bool use_legacy_rsa = false);
 
 /**
@@ -103,8 +103,8 @@ L2ENCDEC_API DecodeResult decode_auto(const std::vector<unsigned char> &input,
  */
 L2ENCDEC_API EncodeResult encode_auto(const std::vector<unsigned char> &input,
                                       std::vector<unsigned char> &output,
-                                      const std::string &filename, // only used for protocol 121
                                       int protocol,
+                                      const std::string &filename = "", // only used for protocol 121
                                       bool use_legacy_rsa = false);
 } // namespace l2encdec
 
