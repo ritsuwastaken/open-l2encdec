@@ -25,14 +25,24 @@ In your code
 #include <l2encdec.h>
 // ...
 std::vector<unsigned char> input;
-std::string filename = "";
+std::string filename = "l2_skilltime";
 int protocol_version = 121;
 
-l2encdec::Params params{};
-l2encdec::init_params(params, protocol_version, filename);
 std::vector<unsigned char> output;
-l2encdec::decode(input, output, params);
+l2encdec::decode(input, output, protocol_version, filename);
+// ...
+l2encdec::encode(input, output, protocol_version, filename);
+
 // or
+bool use_legacy_decrypt_rsa = false;
+
+l2encdec::Params params{};
+l2encdec::init_params(&params, protocol_version, filename, use_legacy_decrypt_rsa);
+
+params.tail = "000000000000000000000000deadbeaf00000000";
+
+l2encdec::decode(input, output, params);
+// ...
 l2encdec::encode(input, output, params);
 ```
 
