@@ -1,6 +1,7 @@
 #include "blowfish.h"
 #include "l2encdec_private.h" // IWYU pragma: keep
 #include "rsa.h"
+#include "utils.h"
 #include "xor_utils.h"
 #include "zlib_utils.h"
 #include <cstddef>
@@ -29,48 +30,6 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
     .rsa_public_exponent = "30b4c2d798d47086145c75063c8e841e719776e400291d7838d3e6c4405b504c6a07f8fca27f32b86643d2649d1d5f124cdd0bf272f0909dd7352fe10a77b34d831043d9ae541f8263c6fe3d1c14c2f04e43a7253a6dda9a8c1562cbd493c1b631a1957618ad5dfe5ca28553f746e2fc6f2db816c7db223ec91e955081c1de65",
     .rsa_private_exponent = "1d",
 };
-
-inline void insert_header(std::vector<unsigned char> &data, std::string_view header)
-{
-    const size_t wide_size = header.size() * 2;
-    data.reserve(data.size() + wide_size);
-
-    std::vector<unsigned char> wide;
-    wide.resize(wide_size);
-
-    for (size_t i = 0; i < header.size(); i++)
-    {
-        wide[i * 2] = static_cast<unsigned char>(header[i]);
-        wide[i * 2 + 1] = 0;
-    }
-
-    data.insert(data.begin(), wide.begin(), wide.end());
-}
-
-inline void insert_tail(std::vector<unsigned char> &data, uint32_t crc)
-{
-    const size_t start = data.size();
-    data.resize(start + FOOTER_SIZE);
-    unsigned char *footer = data.data() + start;
-    uint32_t *crc_ptr = reinterpret_cast<uint32_t *>(footer + FOOTER_CRC32_OFFSET);
-    std::memcpy(crc_ptr, &crc, sizeof(crc));
-}
-
-inline void insert_tail(std::vector<unsigned char> &data, std::string_view tail)
-{
-    std::string padded = std::string(tail);
-    if (padded.size() % 2 != 0)
-        padded.insert(padded.begin(), '0');
-
-    const size_t byte_count = padded.size() / 2;
-    data.reserve(data.size() + byte_count);
-
-    for (size_t i = 0; i < padded.size(); i += 2)
-    {
-        unsigned char value = static_cast<unsigned char>(std::stoi(padded.substr(i, 2), nullptr, 16));
-        data.push_back(value);
-    }
-}
 
 L2ENCDEC_API bool l2encdec::init_params(
     Params *params, int protocol,
@@ -137,14 +96,14 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     }
 
     if (!p.skip_header)
-        insert_header(enc, p.header);
+        utils::add_header(enc, p.header);
 
     if (!p.skip_tail)
     {
         if (p.tail.empty())
-            insert_tail(enc, zlib_utils::checksum(enc));
+            utils::add_tail(enc, zlib_utils::checksum(enc), FOOTER_CRC32_OFFSET, FOOTER_SIZE);
         else
-            insert_tail(enc, p.tail);
+            utils::add_tail(enc, p.tail);
     }
 
     output = std::move(enc);

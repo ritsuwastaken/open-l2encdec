@@ -40,6 +40,7 @@ add_library(${PROJECT_NAME}
     src/l2encdec.cpp
     src/blowfish.cpp
     src/rsa.cpp
+    src/utils.cpp
     src/xor_utils.cpp
     src/zlib_utils.cpp
 )
