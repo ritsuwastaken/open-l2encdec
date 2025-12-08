@@ -1,6 +1,5 @@
 #include "utils.h"
 #include <cstring>
-#include <format>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
@@ -35,17 +34,10 @@ TEST(UtilsTail, MakeTailBasic)
 
     std::string tail = utils::make_tail(crc, offset, size);
 
-    ASSERT_EQ(tail.size(), 16u);
-
-    std::vector<unsigned char> raw(size, 0);
-    std::memcpy(raw.data() + offset, &crc, sizeof(crc));
-
-    std::string expected;
-    expected.reserve(size * 2);
-    for (unsigned char b : raw)
-        expected += std::format("{:02X}", b);
-
-    EXPECT_EQ(tail, expected);
+    // Memory layout (little-endian assumed):
+    // Bytes: 00 00 78 56 34 12 00 00
+    // Hex:   0000785634120000
+    EXPECT_EQ(tail, "0000785634120000");
 }
 
 TEST(UtilsTail, AddTailBasic)
@@ -63,7 +55,7 @@ TEST(UtilsTail, AddTailBasic)
 TEST(UtilsTail, AddTailOddLengthPadding)
 {
     std::vector<unsigned char> data;
-    utils::add_tail(data, "A"); // padded to "0A"
+    utils::add_tail(data, "A");
 
     std::vector<unsigned char> expected = {0x0A};
     EXPECT_EQ(data, expected);
@@ -76,14 +68,15 @@ TEST(UtilsTail, MakeTailAddTailRoundTrip)
     constexpr size_t size = 16;
 
     std::vector<unsigned char> data;
+    utils::add_tail(data, utils::make_tail(crc, offset, size));
 
-    std::string tail = utils::make_tail(crc, offset, size);
-    utils::add_tail(data, tail);
+    ASSERT_EQ(data.size(), 16u);
 
-    ASSERT_EQ(data.size(), size);
+    std::vector<unsigned char> expected = {
+        0x00, 0x00, 0x00, 0x00,
+        0xEF, 0xBE, 0xAD, 0xDE,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00};
 
-    uint32_t extracted = 0;
-    std::memcpy(&extracted, data.data() + offset, sizeof(extracted));
-
-    EXPECT_EQ(extracted, crc);
+    EXPECT_EQ(data, expected);
 }
