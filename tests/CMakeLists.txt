@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
     test_blowfish.cpp
     test_zlib.cpp
     test_rsa.cpp
+    test_utils.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
