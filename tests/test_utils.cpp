@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <cstring>
+#include <format>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
