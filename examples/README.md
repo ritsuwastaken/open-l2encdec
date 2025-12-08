@@ -7,8 +7,10 @@ See [`txt211json`](./txt211json), [`utx121webp`](./utx121webp) or [`cli`](./cli)
 In `CMakeLists.txt`
 
 ```cmake
-include(FetchContent)
+cmake_minimum_required(VERSION 3.14)
+project(example VERSION 1.3.0 LANGUAGES CXX)
 
+include(FetchContent)
 FetchContent_Declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
@@ -16,10 +18,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(l2encdec)
 
+add_library(${PROJECT_NAME} src/main.cpp) // or add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 ```
 
-In your code
+In `src/main.cpp`
 
 ```cpp
 #include <l2encdec.h>
