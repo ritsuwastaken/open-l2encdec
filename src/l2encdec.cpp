@@ -259,16 +259,11 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode_auto(
     std::vector<unsigned char> &output,
     const std::string &filename,
     int protocol,
-    bool skip_header,
-    bool skip_tail,
     bool use_legacy_rsa)
 {
     l2encdec::Params p{};
     if (!l2encdec::init_params(&p, protocol, filename, use_legacy_rsa))
         return EncodeResult::INVALID_TYPE;
-
-    p.skip_header = skip_header;
-    p.skip_tail = skip_tail;
 
     return l2encdec::encode(input, output, p);
 }
@@ -278,11 +273,9 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
     std::vector<unsigned char> &output,
     const std::string &filename,
     int protocol,
-    bool skip_header,
-    bool skip_tail,
     bool use_legacy_rsa)
 {
-    if (!skip_header && input.size() >= HEADER_SIZE && protocol == -1)
+    if (input.size() >= HEADER_SIZE && protocol == -1)
     {
         std::string ascii;
         ascii.reserve(HEADER_PREFIX.size() + PROTOCOL_SIZE);
@@ -319,9 +312,6 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode_auto(
         if (!found)
             return DecodeResult::INVALID_TYPE;
     }
-
-    p.skip_header = skip_header;
-    p.skip_tail = skip_tail;
 
     return decode(input, output, p);
 }
