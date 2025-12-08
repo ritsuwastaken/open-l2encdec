@@ -1,5 +1,5 @@
 #include "utils.h"
-#include <cstring>
+#include <cstddef>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
@@ -34,7 +34,7 @@ TEST(UtilsTail, MakeTailBasic)
 
     std::string tail = utils::make_tail(crc, offset, size);
 
-    // Memory layout (little-endian assumed):
+    // Memory layout (little-endian):
     // Bytes: 00 00 78 56 34 12 00 00
     // Hex:   0000785634120000
     EXPECT_EQ(tail, "0000785634120000");
