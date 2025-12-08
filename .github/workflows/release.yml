@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2022
+          - os: windows-2025
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
             output_txt211json: examples/build_msvc/txt211json/Release
@@ -25,7 +25,7 @@ jobs:
             zip_name_utx121webp: utx121webp_windows.zip
             zip_name_txt211json: txt211json_windows.zip
             zip_name_cli: l2encdec_windows.zip
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-13
@@ -39,7 +39,7 @@ jobs:
             zip_name_utx121webp: utx121webp_linux.zip
             zip_name_txt211json: txt211json_linux.zip
             zip_name_cli: l2encdec_linux.zip
-          - os: macos-14
+          - os: macos-15
             configure_preset: unix
             build_preset: unix-build
             output_utx121webp: examples/build_unix/utx121webp
