@@ -29,14 +29,14 @@ jobs:
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-            cc: gcc-12
-            cxx: g++-12
+            cc: gcc-13
+            cxx: g++-13
           - os: ubuntu-24.04
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-            cc: gcc-12
-            cxx: g++-12
+            cc: gcc-13
+            cxx: g++-13
           - os: macos-15
             configure_preset: unix
             test_preset: unix-test

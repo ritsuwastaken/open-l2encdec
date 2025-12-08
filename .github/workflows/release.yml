@@ -28,8 +28,8 @@ jobs:
           - os: ubuntu-22.04
             configure_preset: unix
             build_preset: unix-build
-            cc: gcc-12
-            cxx: g++-12
+            cc: gcc-13
+            cxx: g++-13
             output_utx121webp: examples/build_unix/utx121webp
             output_txt211json: examples/build_unix/txt211json
             output_cli: examples/build_unix/cli
