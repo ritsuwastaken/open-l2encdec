@@ -18,6 +18,8 @@ add_executable(${PROJECT_NAME}
     test_zlib.cpp
     test_rsa.cpp
     test_utils.cpp
+    test_l2encdec_init_params.cpp
+    test_l2encdec_verify_checksum.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
