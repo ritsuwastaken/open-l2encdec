@@ -132,7 +132,7 @@ void print_usage(const char *name)
               << "  -f <filename>         force different filename for `xor_filename` - protocol 121\n"
               << "  -s <start_index_hex>  custom start index for `xor_position` - protocol 120\n"
               << "  -w <header>           custom wide char header; default: Lineage2Ver<protocol>\n"
-              << "  -T <tail_hex>         custom tail for encoding, e.g. 000000000000000000000000deadbeaf00000000; contains checksum by default\n"
+              << "  -T <tail_hex>         custom tail for encoding, e.g. 000000000000000000000000deadbeef00000000; contains checksum by default\n"
               << "  <input_file>          path to input file\n\n"
               << "Example:\n"
               << "  " << name << " -c decode filename.ini\n"

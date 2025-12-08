@@ -29,7 +29,7 @@ Drag and drop file(s) onto the executable or use command line options
 - -x _string_ - custom key for `xor` in hex
 - -s _string_ - custom start index for `xor_position` in hex
 - -w _string_ - custom wide char header; default: Lineage2Ver + protocol
-- -T _string_ - custom tail for encoding, must be exactly 40 characters (20 bytes), e.g., `000000000000000000000000deadbeaf00000000`; contains checksum by default
+- -T _string_ - custom tail for encoding, must be exactly 40 characters (20 bytes), e.g., `000000000000000000000000deadbeef00000000`; contains checksum by default
 </details>
 
 #### Examples
