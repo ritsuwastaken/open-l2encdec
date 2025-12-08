@@ -64,6 +64,7 @@ struct Params {
     std::string header;
     std::string tail;
     bool skip_tail;
+    bool skip_header;
     std::string filename;
     int xor_key;
     int xor_start_position;
