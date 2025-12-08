@@ -72,7 +72,10 @@ inline void insert_tail(std::vector<unsigned char> &data, std::string_view tail)
     }
 }
 
-L2ENCDEC_API bool l2encdec::init_params(Params *params, int protocol, const std::string &filename, bool use_legacy_rsa)
+L2ENCDEC_API bool l2encdec::init_params(
+    Params *params, int protocol,
+    const std::string &filename,
+    bool use_legacy_rsa)
 {
     if (protocol == 121 && filename.empty())
         return false;
@@ -100,7 +103,10 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
     return calc == checksum ? ChecksumResult::SUCCESS : ChecksumResult::MISMATCH;
 }
 
-L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &p)
+L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const Params &p)
 {
     std::vector<unsigned char> enc;
     switch (p.type)
@@ -145,7 +151,10 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(const std::vector<unsigned 
     return EncodeResult::SUCCESS;
 }
 
-L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &p)
+L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
+    const std::vector<unsigned char> &input,
+    std::vector<unsigned char> &output,
+    const Params &p)
 {
     size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
                                                                : HEADER_SIZE;
