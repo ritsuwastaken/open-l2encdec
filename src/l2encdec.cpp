@@ -56,7 +56,15 @@ L2ENCDEC_API bool l2encdec::init_params(
 
 L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input)
 {
-    uint32_t checksum = *reinterpret_cast<const uint32_t *>(input.data() + input.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET);
+    if (input.size() < FOOTER_SIZE || FOOTER_CRC32_OFFSET + sizeof(uint32_t) * 2 != FOOTER_SIZE)
+        return ChecksumResult::MISMATCH;
+
+    uint32_t checksum;
+    std::memcpy(
+        &checksum,
+        input.data() + input.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET,
+        sizeof(uint32_t));
+
     std::vector<unsigned char> nofooter(input.begin(), input.end() - FOOTER_SIZE);
     return zlib_utils::checksum(nofooter) == checksum
                ? ChecksumResult::SUCCESS
