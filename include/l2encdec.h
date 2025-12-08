@@ -89,8 +89,7 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input_data,
                                  const Params &params);
 
 /**
- * @brief Decode input data.
- *
+ * @brief Decode input data using protocol-derived parameters.
  */
 L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
                                  std::vector<unsigned char> &output,
@@ -99,7 +98,7 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
                                  bool use_legacy_rsa = false);
 
 /**
- * @brief Encode input data.
+ * @brief Encode input data using protocol-derived parameters.
  */
 L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input,
                                  std::vector<unsigned char> &output,
