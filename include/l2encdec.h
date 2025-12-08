@@ -89,7 +89,7 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input_data,
                                  const Params &params);
 
 /**
- * @brief Decode input data using automatic protocol detection.
+ * @brief Decode input data.
  *
  */
 L2ENCDEC_API DecodeResult decode_auto(const std::vector<unsigned char> &input,
@@ -99,7 +99,7 @@ L2ENCDEC_API DecodeResult decode_auto(const std::vector<unsigned char> &input,
                                       bool use_legacy_rsa = false);
 
 /**
- * @brief Encode input data using automatic parameter initialization.
+ * @brief Encode input data.
  */
 L2ENCDEC_API EncodeResult encode_auto(const std::vector<unsigned char> &input,
                                       std::vector<unsigned char> &output,
