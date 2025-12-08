@@ -19,7 +19,7 @@ TEST(L2InitParams, XORBasic)
     ASSERT_TRUE(l2encdec::init_params(p, 111, "", false));
     EXPECT_EQ(p.type, l2encdec::Type::XOR);
     EXPECT_EQ(p.xor_key, 0xAC);
-    EXPECT_EQ(p.header, "Lineage2Ver111");
+    EXPECT_EQ(p.protocol, 111);
 }
 
 TEST(L2InitParams, RSAOverridesLegacy)
