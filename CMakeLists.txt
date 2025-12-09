@@ -20,7 +20,7 @@ FetchContent_Declare(
 FetchContent_Declare(
     blowfish
     GIT_REPOSITORY https://github.com/avinal/blowfish.git
-    GIT_TAG 54482712989ef129929b9ba375a404bf2707a477
+    GIT_TAG 2b4c5a2a6f4933a5b48844f72a5861dde00d0fb7
 )
 
 set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
