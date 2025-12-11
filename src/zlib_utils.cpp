@@ -1,5 +1,6 @@
 #include "zlib_utils.h"
 #include <miniz.h>
+#include <cstring>
 
 constexpr size_t COMPRESSED_HEADER_SIZE = 4;
 constexpr size_t INFLATE_CHUNK_SIZE = 1024 * 16;
@@ -7,13 +8,11 @@ constexpr size_t DEFLATE_CHUNK_SIZE = 1024 * 1024;
 
 int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
-    size_t compressed_size = input_buffer.size() - COMPRESSED_HEADER_SIZE;
-    if (compressed_size <= 0)
-    {
+    if (input_buffer.size() < COMPRESSED_HEADER_SIZE)
         return -1;
-    }
 
-    int expected_decompressed_size = *(reinterpret_cast<const int *>(input_buffer.data()));
+    uint32_t expected_decompressed_size = 0;
+    std::memcpy(&expected_decompressed_size, input_buffer.data(), sizeof(expected_decompressed_size));
 
     tinfl_decompressor decomp;
     tinfl_init(&decomp);
@@ -45,7 +44,7 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
         }
     }
 
-    if (out_pos != expected_decompressed_size)
+    if (out_pos != static_cast<size_t>(expected_decompressed_size))
         return -1;
 
     return 0;
@@ -53,12 +52,12 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
 
 int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
-    size_t uncompressed_size = input_buffer.size();
+    uint32_t uncompressed_size = static_cast<uint32_t>(input_buffer.size());
     output_buffer.clear();
     output_buffer.reserve(uncompressed_size);
     output_buffer.insert(output_buffer.end(),
                          reinterpret_cast<const unsigned char *>(&uncompressed_size),
-                         reinterpret_cast<const unsigned char *>(&uncompressed_size) + sizeof(int));
+                         reinterpret_cast<const unsigned char *>(&uncompressed_size) + sizeof(uncompressed_size));
 
     mz_stream stream = {};
     int status = mz_deflateInit(&stream, MZ_BEST_COMPRESSION);
