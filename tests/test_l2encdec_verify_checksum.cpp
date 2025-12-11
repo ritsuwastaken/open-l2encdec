@@ -4,7 +4,7 @@
 #include <l2encdec.h>
 
 constexpr size_t CRC32_OFFSET = 12;
-constexpr size_t FOOTER_SIZE = 20;
+constexpr size_t TAIL_SIZE = 20;
 
 TEST(L2Checksum, VerifySuccess)
 {
@@ -13,7 +13,7 @@ TEST(L2Checksum, VerifySuccess)
     std::string tail = utils::make_tail(
         zlib_utils::checksum(data),
         CRC32_OFFSET,
-        FOOTER_SIZE);
+        TAIL_SIZE);
 
     utils::add_tail(data, tail);
 
@@ -28,11 +28,11 @@ TEST(L2Checksum, VerifyMismatch)
     std::string tail = utils::make_tail(
         zlib_utils::checksum(data),
         CRC32_OFFSET,
-        FOOTER_SIZE);
+        TAIL_SIZE);
 
     utils::add_tail(data, tail);
 
-    const size_t base = data.size() - FOOTER_SIZE + CRC32_OFFSET;
+    const size_t base = data.size() - TAIL_SIZE + CRC32_OFFSET;
     data[base + 0] ^= 0xFF;
     data[base + 1] ^= 0xFF;
     data[base + 2] ^= 0xFF;

@@ -84,9 +84,9 @@ TEST(L2Encode, HeaderAndTailApplied)
     ASSERT_EQ(l2encdec::encode(input, enc, 111, "", false),
               l2encdec::EncodeResult::SUCCESS);
 
-    int footer_size = 20;
+    int tail_size = 20;
     const std::string header = "Lineage2Ver111";
-    ASSERT_GE(enc.size(), header.size() * 2 + footer_size);
+    ASSERT_GE(enc.size(), header.size() * 2 + tail_size);
 
     for (size_t i = 0; i < header.size(); ++i)
     {

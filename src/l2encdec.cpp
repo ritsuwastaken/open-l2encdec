@@ -7,8 +7,8 @@
 #include <cstddef>
 #include <cstring>
 
-constexpr size_t FOOTER_SIZE = 20;
-constexpr size_t FOOTER_CRC32_OFFSET = 12;
+constexpr size_t TAIL_SIZE = 20;
+constexpr size_t TAIL_CRC32_OFFSET = 12;
 constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
 constexpr size_t PROTOCOL_SIZE = 3;
 constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
@@ -56,17 +56,17 @@ L2ENCDEC_API bool l2encdec::init_params(
 
 L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input)
 {
-    if (input.size() < FOOTER_SIZE || FOOTER_CRC32_OFFSET + sizeof(uint32_t) * 2 != FOOTER_SIZE)
+    if (input.size() < TAIL_SIZE || TAIL_CRC32_OFFSET + sizeof(uint32_t) * 2 != TAIL_SIZE)
         return ChecksumResult::MISMATCH;
 
     uint32_t checksum;
     std::memcpy(
         &checksum,
-        input.data() + input.size() - FOOTER_SIZE + FOOTER_CRC32_OFFSET,
+        input.data() + input.size() - TAIL_SIZE + TAIL_CRC32_OFFSET,
         sizeof(uint32_t));
 
-    std::vector<unsigned char> nofooter(input.begin(), input.end() - FOOTER_SIZE);
-    return zlib_utils::checksum(nofooter) == checksum
+    std::vector<unsigned char> notail(input.begin(), input.end() - TAIL_SIZE);
+    return zlib_utils::checksum(notail) == checksum
                ? ChecksumResult::SUCCESS
                : ChecksumResult::MISMATCH;
 }
@@ -121,8 +121,8 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
                 ? p.tail
                 : utils::make_tail(
                       zlib_utils::checksum(enc),
-                      FOOTER_CRC32_OFFSET,
-                      FOOTER_SIZE));
+                      TAIL_CRC32_OFFSET,
+                      TAIL_SIZE));
 
     output = std::move(enc);
     return EncodeResult::SUCCESS;
@@ -135,12 +135,12 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
 {
     size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
                                                                : HEADER_SIZE;
-    size_t footer_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
-                                                           : FOOTER_SIZE;
-    if (input.size() < header_size + footer_size)
+    size_t tail_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
+                                                           : TAIL_SIZE;
+    if (input.size() < header_size + tail_size)
         return DecodeResult::INVALID_TYPE;
 
-    std::vector<unsigned char> data(input.begin() + header_size, input.end() - footer_size);
+    std::vector<unsigned char> data(input.begin() + header_size, input.end() - tail_size);
     std::vector<unsigned char> dec;
     switch (p.type)
     {
