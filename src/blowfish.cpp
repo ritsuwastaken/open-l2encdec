@@ -24,17 +24,14 @@ size_t process(const std::vector<unsigned char> &input_data,
                std::vector<unsigned char> &output_data,
                std::string key)
 {
+    output_data = input_data;
+
     if (key.empty() || key.back() != '\0')
         key.push_back('\0');
 
-    Blowfish bf;
-    bf.initialize(reinterpret_cast<const unsigned char *>(key.data()),
-                  key.size());
+    Blowfish bf(key);
 
     size_t full_blocks = input_data.size() / BLOWFISH_BLOCK;
-
-    output_data = input_data;
-
     for (size_t i = 0; i < full_blocks * BLOWFISH_BLOCK; i += BLOWFISH_BLOCK)
     {
         uint32_t left = read_u32(&output_data[i]);
