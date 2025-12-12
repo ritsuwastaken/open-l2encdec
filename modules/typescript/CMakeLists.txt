@@ -14,18 +14,18 @@ set(CMAKE_EXECUTABLE_SUFFIX ".js")
 set(TS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/dist)
 file(MAKE_DIRECTORY ${TS_OUTPUT_DIR})
 
-add_executable(l2encdec_wasm bindings.cpp)
+add_executable(${PROJECT_NAME} bindings.cpp)
 
-target_include_directories(l2encdec_wasm PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE
     ${L2ENCDEC_DIR}/include
     ${L2ENCDEC_DIR}/src
 )
 
-target_link_libraries(l2encdec_wasm PRIVATE l2encdec)
+target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 
-target_compile_options(l2encdec_wasm PRIVATE -O3)
+target_compile_options(${PROJECT_NAME} PRIVATE -O3)
 
-target_link_options(l2encdec_wasm PRIVATE
+target_link_options(${PROJECT_NAME} PRIVATE
     "-lembind"
     "-sMODULARIZE"
     "-sEXPORT_ES6"
@@ -34,7 +34,7 @@ target_link_options(l2encdec_wasm PRIVATE
     "--no-entry"
 )
 
-set_target_properties(l2encdec_wasm PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${TS_OUTPUT_DIR}
     OUTPUT_NAME "l2encdec"
     CXX_STANDARD 20
