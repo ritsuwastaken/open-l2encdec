@@ -10,10 +10,10 @@ if(NOT DEFINED L2ENCDEC_DIR)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 
-set(TSD_FILE ${TS_OUTPUT_DIR}/interface.d.ts)
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 set(TS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/dist)
 file(MAKE_DIRECTORY ${TS_OUTPUT_DIR})
+set(TSD_FILE ${TS_OUTPUT_DIR}/interface.d.ts)
 
 add_executable(${PROJECT_NAME} bindings.cpp)
 
