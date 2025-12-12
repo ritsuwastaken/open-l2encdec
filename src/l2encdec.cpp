@@ -7,11 +7,11 @@
 #include <cstddef>
 #include <cstring>
 
-constexpr size_t TAIL_SIZE = 20;
-constexpr size_t TAIL_CRC32_OFFSET = 12;
-constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
-constexpr size_t PROTOCOL_SIZE = 3;
-constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
+static constexpr size_t TAIL_SIZE = 20;
+static constexpr size_t TAIL_CRC32_OFFSET = 12;
+static constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
+static constexpr size_t PROTOCOL_SIZE = 3;
+static constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -136,7 +136,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
                                                                : HEADER_SIZE;
     size_t tail_size = p.skip_tail ? 0 : !p.tail.empty() ? p.tail.size() / 2
-                                                           : TAIL_SIZE;
+                                                         : TAIL_SIZE;
     if (input.size() < header_size + tail_size)
         return DecodeResult::INVALID_TYPE;
 
