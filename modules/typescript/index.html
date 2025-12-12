@@ -1,10 +1,14 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>l2encdec WASM Demo</title>
+</head>
 
 <body>
-
     <h2>l2encdec WASM Demo</h2>
-
     <label>Protocol:</label>
     <select id="protocol">
         <option value="111">111 (XOR)</option>
@@ -17,21 +21,15 @@
         <option value="413">413 (RSA)</option>
         <option value="414">414 (RSA)</option>
     </select>
-
     <label style="margin-left:20px;">
         <input type="checkbox" id="legacy"> use_legacy_rsa
     </label>
-
     <br><br>
-
     <input type="file" id="fileInput">
     <br><br>
-
     <button id="encodeBtn">Encode</button>
     <button id="decodeBtn">Decode</button>
-
     <pre id="log" style="white-space:pre-wrap;"></pre>
-
     <script type="module">
         import createModule from "./build-wasm/dist/l2encdec.js";
         const l2encdec = await createModule();
@@ -94,7 +92,6 @@
         document.getElementById("encodeBtn").onclick = () => process(true);
         document.getElementById("decodeBtn").onclick = () => process(false);
     </script>
-
 </body>
 
 </html>
