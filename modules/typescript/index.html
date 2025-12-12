@@ -69,7 +69,8 @@
             const params = new l2encdec.Params();
             l2encdec.init_params(params, protocol, file.name, use_legacy);
 
-            params.tail = "000000000000000000000000deadbeef00000000";
+            if (isEncode)
+                params.tail = "000000000000000000000000deadbeef00000000";
 
             const rawOutput = isEncode
                 ? l2encdec.encode(input, params)
