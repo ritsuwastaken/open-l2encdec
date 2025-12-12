@@ -19,12 +19,15 @@ static inline void write_u32(uint32_t v, unsigned char *p)
 
 size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
-                         const std::string &key)
+                         std::string key)
 {
+    if (key.back() != '\0')
+        key.push_back('\0');
+
     Blowfish bf;
     bf.initialize(
         reinterpret_cast<const unsigned char *>(key.data()),
-        key.size() + 1);
+        key.size());
 
     size_t len = input_data.size();
     size_t block = 8;
@@ -46,12 +49,15 @@ size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
 
 size_t blowfish::decrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
-                         const std::string &key)
+                         std::string key)
 {
+    if (key.back() != '\0')
+        key.push_back('\0');
+
     Blowfish bf;
     bf.initialize(
         reinterpret_cast<const unsigned char *>(key.data()),
-        key.size() + 1);
+        key.size());
 
     size_t len = input_data.size();
     size_t block = 8;

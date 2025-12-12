@@ -7,8 +7,8 @@
 
 namespace blowfish
 {
-size_t encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &key);
-size_t decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &key);
+size_t encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, std::string key);
+size_t decrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, std::string key);
 } // namespace blowfish
 
 #endif // BLOWFISH_H
