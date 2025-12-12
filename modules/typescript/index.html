@@ -34,7 +34,7 @@
 
     <script type="module">
         import createModule from "./build-wasm/dist/l2encdec.js";
-        const Module = await createModule();
+        const l2encdec = await createModule();
 
         function log(msg) {
             document.getElementById("log").textContent += msg + "\n";
@@ -74,14 +74,12 @@
 
             const input = await readFileAsUint8Array(file);
 
-            const params = new Module.Params();
-            Module.init_params(params, protocol, file.name, use_legacy);
+            const params = new l2encdec.Params();
+            l2encdec.init_params(params, protocol, file.name, use_legacy);
 
             const rawOutput = isEncode
-                ? Module.encode(input, params)
-                : Module.decode(input, params);
-
-            let finalText;
+                ? l2encdec.encode(input, params)
+                : l2encdec.decode(input, params);
 
             saveTextFile(file.name, bytesToText(rawOutput));
 
