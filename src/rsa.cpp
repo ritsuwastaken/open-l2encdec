@@ -6,11 +6,19 @@
 
 #define ALIGN_TO_4_BYTES(x) (((x) + 3) & ~3)
 
-static constexpr size_t NUM_THREADS = 4;
-static constexpr size_t BLOCK_SIZE = 128;
-static constexpr size_t BLOCK_BODY_SIZE = 124;
+namespace
+{
+constexpr size_t NUM_THREADS = 4;
+constexpr size_t BLOCK_SIZE = 128;
+constexpr size_t BLOCK_BODY_SIZE = 124;
 
-size_t add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
+static void mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
+{
+    mbedtls_mpi_read_string(x, 16, hex.c_str());
+}
+} // namespace
+
+size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
 {
     size_t input_offset = 0;
     size_t num_blocks = (input.size() + BLOCK_BODY_SIZE - 1) / BLOCK_BODY_SIZE;
@@ -31,7 +39,7 @@ size_t add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &inp
     return output.size();
 }
 
-size_t remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
+size_t rsa::remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
 {
     output.clear();
 
@@ -48,11 +56,6 @@ size_t remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &
     }
 
     return output.size();
-}
-
-static void mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
-{
-    mbedtls_mpi_read_string(x, 16, hex.c_str());
 }
 
 void rsa::encrypt(const std::vector<unsigned char> &input_data, std::vector<unsigned char> &output_data, const std::string &modulus_hex, const std::string &public_exp_hex)

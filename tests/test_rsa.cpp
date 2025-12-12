@@ -5,9 +5,6 @@
 #include <string>
 #include <vector>
 
-extern size_t add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input);
-extern size_t remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input);
-
 TEST(RSABasic, AddRemovePaddingRoundTrip)
 {
     std::string plain = "hello RSA test";
@@ -15,11 +12,11 @@ TEST(RSABasic, AddRemovePaddingRoundTrip)
     std::vector<uint8_t> padded;
     std::vector<uint8_t> out;
 
-    size_t padded_size = add_padding(padded, input);
+    size_t padded_size = rsa::add_padding(padded, input);
     ASSERT_GT(padded_size, 0u);
     ASSERT_EQ(padded.size() % 128, 0u);
 
-    size_t out_size = remove_padding(out, padded);
+    size_t out_size = rsa::remove_padding(out, padded);
     EXPECT_EQ(out_size, input.size());
     std::string result(out.begin(), out.end());
     EXPECT_EQ(result, plain);

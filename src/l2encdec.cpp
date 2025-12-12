@@ -7,11 +7,13 @@
 #include <cstddef>
 #include <cstring>
 
-static constexpr size_t TAIL_SIZE = 20;
-static constexpr size_t TAIL_CRC32_OFFSET = 12;
-static constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
-static constexpr size_t PROTOCOL_SIZE = 3;
-static constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
+namespace
+{
+constexpr size_t TAIL_SIZE = 20;
+constexpr size_t TAIL_CRC32_OFFSET = 12;
+constexpr std::string_view HEADER_PREFIX = "Lineage2Ver";
+constexpr size_t PROTOCOL_SIZE = 3;
+constexpr size_t HEADER_SIZE = (HEADER_PREFIX.size() + PROTOCOL_SIZE) * 2;
 
 const std::unordered_map<int, l2encdec::Params> PROTOCOL_CONFIGS = {
     {111, {.type = l2encdec::Type::XOR, .xor_key = 0xAC}},
@@ -30,6 +32,7 @@ const l2encdec::Params MODERN_RSA_PARAMS = {
     .rsa_public_exponent = "30b4c2d798d47086145c75063c8e841e719776e400291d7838d3e6c4405b504c6a07f8fca27f32b86643d2649d1d5f124cdd0bf272f0909dd7352fe10a77b34d831043d9ae541f8263c6fe3d1c14c2f04e43a7253a6dda9a8c1562cbd493c1b631a1957618ad5dfe5ca28553f746e2fc6f2db816c7db223ec91e955081c1de65",
     .rsa_private_exponent = "1d",
 };
+} // namespace
 
 L2ENCDEC_API bool l2encdec::init_params(
     Params &params,

@@ -1,9 +1,11 @@
 #include "blowfish.h"
 #include <blowfish/blowfish.h>
 
-static constexpr size_t BLOWFISH_BLOCK = 8;
+namespace
+{
+constexpr size_t BLOWFISH_BLOCK = 8;
 
-static inline uint32_t read_u32(const unsigned char *p)
+inline uint32_t read_u32(const unsigned char *p)
 {
     return (uint32_t(p[0])) |
            (uint32_t(p[1]) << 8) |
@@ -11,7 +13,7 @@ static inline uint32_t read_u32(const unsigned char *p)
            (uint32_t(p[3]) << 24);
 }
 
-static inline void write_u32(uint32_t v, unsigned char *p)
+inline void write_u32(uint32_t v, unsigned char *p)
 {
     p[0] = (v >> 0) & 0xFF;
     p[1] = (v >> 8) & 0xFF;
@@ -45,6 +47,7 @@ size_t process(const std::vector<unsigned char> &input_data,
 
     return output_data.size();
 }
+} // namespace
 
 size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
