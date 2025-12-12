@@ -2,10 +2,15 @@
 
 ### Build
 
-[CMake](https://cmake.org/)
-[Emscripten](https://emscripten.org/)
+- [CMake](https://cmake.org/) >= 3.14
+- [Emscripten](https://emscripten.org/)
 
 ```sh
 $ npm install
 $ npm run dev
+
+# or
+
+$ npm run build:wasm
+# check for output in ./build-wasm/dist
 ```
