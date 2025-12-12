@@ -6,9 +6,9 @@
 
 #define ALIGN_TO_4_BYTES(x) (((x) + 3) & ~3)
 
-constexpr size_t NUM_THREADS = 4;
-constexpr size_t BLOCK_SIZE = 128;
-constexpr size_t BLOCK_BODY_SIZE = 124;
+static constexpr size_t NUM_THREADS = 4;
+static constexpr size_t BLOCK_SIZE = 128;
+static constexpr size_t BLOCK_BODY_SIZE = 124;
 
 size_t add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
 {
