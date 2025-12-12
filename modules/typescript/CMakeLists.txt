@@ -7,7 +7,7 @@ endif()
 
 if(NOT DEFINED L2ENCDEC_DIR)
     set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-    add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec EXCLUDE_FROM_ALL)
+    add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 
 set(TSD_FILE ${TS_OUTPUT_DIR}/interface.d.ts)
