@@ -1,6 +1,5 @@
 #include "rsa.h"
 #include <algorithm>
-#include <atomic>
 #include <mbedtls/bignum.h>
 
 namespace
@@ -27,13 +26,7 @@ int mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
 {
     return mbedtls_mpi_read_string(x, 16, hex.c_str());
 }
-
-inline void store_first_error(std::atomic<int> &err, int rc)
-{
-    int expected = 0;
-    err.compare_exchange_strong(expected, rc);
 }
-} // namespace
 
 size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
 {
