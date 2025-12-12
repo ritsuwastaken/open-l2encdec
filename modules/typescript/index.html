@@ -38,7 +38,7 @@
             document.getElementById("log").textContent += msg + "\n";
         }
 
-        async function readFileAsUint8Array(file) {
+        async function readFile(file) {
             return new Uint8Array(await file.arrayBuffer());
         }
 
@@ -64,7 +64,7 @@
             const protocol = parseInt(document.getElementById("protocol").value);
             const use_legacy = document.getElementById("legacy").checked;
 
-            const input = await readFileAsUint8Array(file);
+            const input = await readFile(file);
 
             const params = new l2encdec.Params();
             l2encdec.init_params(params, protocol, file.name, use_legacy);
