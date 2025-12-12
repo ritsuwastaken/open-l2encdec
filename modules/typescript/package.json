@@ -6,7 +6,7 @@
     "types": "index.d.ts",
     "scripts": {
         "build:wasm": "emcmake cmake -B build-wasm -S . && cmake --build build-wasm",
-        "dev": "build:wasm && npx serve ."
+        "dev": "npm run build:wasm && npx serve ."
     },
     "dependencies": {
         "typescript": "^5.9.3"
