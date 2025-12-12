@@ -1,0 +1,14 @@
+{
+    "name": "l2encdec-wasm",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "build:wasm": "emcmake cmake -B build-wasm -S . && cmake --build build-wasm",
+        "dev": "build:wasm && npx serve ."
+    },
+    "dependencies": {
+        "typescript": "^5.9.3"
+    }
+}

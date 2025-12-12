@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+
+<body>
+
+    <h2>l2encdec WASM Demo (All Text Output)</h2>
+
+    <label>Protocol:</label>
+    <select id="protocol">
+        <option value="111">111 (XOR)</option>
+        <option value="120">120 (XOR_POSITION)</option>
+        <option value="121">121 (XOR_FILENAME)</option>
+        <option value="211">211 (BLOWFISH)</option>
+        <option value="212">212 (BLOWFISH)</option>
+        <option value="411">411 (RSA)</option>
+        <option value="412">412 (RSA)</option>
+        <option value="413">413 (RSA)</option>
+        <option value="414">414 (RSA)</option>
+    </select>
+
+    <label style="margin-left:20px;">
+        <input type="checkbox" id="legacy"> use_legacy_rsa
+    </label>
+
+    <br><br>
+
+    <input type="file" id="fileInput">
+    <br><br>
+
+    <button id="encodeBtn">Encode</button>
+    <button id="decodeBtn">Decode</button>
+
+    <pre id="log" style="white-space:pre-wrap;"></pre>
+
+    <script type="module">
+        import createModule from "./build-wasm/dist/l2encdec.js";
+        const Module = await createModule();
+
+        function log(msg) {
+            document.getElementById("log").textContent += msg + "\n";
+        }
+
+        async function readFileAsUint8Array(file) {
+            const buf = await file.arrayBuffer();
+            return new Uint8Array(buf);
+        }
+
+        function bytesToText(bytes) {
+            let s = "";
+            for (let i = 0; i < bytes.length; i++) {
+                s += String.fromCharCode(bytes[i]);
+            }
+            return s;
+        }
+
+
+        function bytesToBase64(bytes) {
+            let binary = "";
+            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            return btoa(binary);
+        }
+
+        function saveTextFile(filename, text) {
+            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+        }
+
+        async function process(isEncode) {
+            const file = document.getElementById("fileInput").files[0];
+            if (!file) {
+                log("No file selected.");
+                return;
+            }
+
+            const protocol = parseInt(document.getElementById("protocol").value);
+            const use_legacy = document.getElementById("legacy").checked;
+
+            const input = await readFileAsUint8Array(file);
+
+            const params = new Module.Params();
+            Module.init_params(params, protocol, file.name, use_legacy);
+
+            const rawOutput = isEncode
+                ? Module.encode(input, params)
+                : Module.decode(input, params);
+
+            let finalText;
+
+            saveTextFile(file.name, bytesToText(rawOutput));
+
+            log(
+                (isEncode ? "Encoded" : "Decoded") +
+                " " + file.name +
+                " → " + file.name +
+                " (Protocol " + protocol + ", Legacy=" + use_legacy + ")"
+            );
+        }
+
+        document.getElementById("encodeBtn").onclick = () => process(true);
+        document.getElementById("decodeBtn").onclick = () => process(false);
+    </script>
+
+</body>
+
+</html>
