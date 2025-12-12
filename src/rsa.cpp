@@ -4,8 +4,6 @@
 #include <mbedtls/bignum.h>
 #include <thread>
 
-#define ALIGN_TO_4_BYTES(x) (((x) + 3) & ~3)
-
 namespace
 {
 constexpr size_t NUM_THREADS = 4;
@@ -20,6 +18,11 @@ struct Mpi
     Mpi(const Mpi &) = delete;
     Mpi &operator=(const Mpi &) = delete;
 };
+
+constexpr size_t align_to_4_bytes(size_t x)
+{
+    return (x + 3) & ~size_t(3);
+}
 
 int mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
 {
@@ -44,7 +47,7 @@ size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t>
         size_t chunk_size = std::min(input.size() - input_offset, BLOCK_BODY_SIZE);
         std::fill(output.begin() + output_offset, output.begin() + output_offset + BLOCK_SIZE, 0);
         output[output_offset + 3] = static_cast<uint8_t>(chunk_size);
-        size_t data_offset = output_offset + BLOCK_SIZE - ALIGN_TO_4_BYTES(chunk_size);
+        size_t data_offset = output_offset + BLOCK_SIZE - align_to_4_bytes(chunk_size);
         std::copy(input.begin() + input_offset, input.begin() + input_offset + chunk_size,
                   output.begin() + data_offset);
         input_offset += chunk_size;
@@ -61,7 +64,7 @@ size_t rsa::remove_padding(std::vector<uint8_t> &output, const std::vector<uint8
     {
         size_t size_byte = input[offset + 3];
         size_t chunk_size = std::min(size_byte, BLOCK_BODY_SIZE);
-        size_t data_offset = offset + BLOCK_SIZE - ALIGN_TO_4_BYTES(chunk_size);
+        size_t data_offset = offset + BLOCK_SIZE - align_to_4_bytes(chunk_size);
         if (data_offset + chunk_size > input.size()) break;
         output.insert(output.end(), input.begin() + data_offset,
                       input.begin() + data_offset + chunk_size);
