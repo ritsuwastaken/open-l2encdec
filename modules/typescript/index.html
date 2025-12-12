@@ -43,22 +43,18 @@
             return new Uint8Array(buf);
         }
 
-        function bytesToText(bytes) {
-            let s = "";
-            for (let i = 0; i < bytes.length; i++) {
-                s += String.fromCharCode(bytes[i]);
-            }
-            return s;
-        }
-
-        function saveTextFile(filename, text) {
-            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        function writeFile(filename, bytes) {
+            const blob = new Blob([Uint8Array.from(bytes)]);
             const url = URL.createObjectURL(blob);
+
             const a = document.createElement("a");
             a.href = url;
             a.download = filename;
             a.click();
+
+            URL.revokeObjectURL(url);
         }
+
 
         async function process(isEncode) {
             const file = document.getElementById("fileInput").files[0];
@@ -79,7 +75,7 @@
                 ? l2encdec.encode(input, params)
                 : l2encdec.decode(input, params);
 
-            saveTextFile(file.name, bytesToText(rawOutput));
+            writeFile(file.name, rawOutput);
 
             log(
                 (isEncode ? "Encoded" : "Decoded") +
