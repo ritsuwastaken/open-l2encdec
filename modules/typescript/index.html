@@ -53,13 +53,6 @@
             return s;
         }
 
-
-        function bytesToBase64(bytes) {
-            let binary = "";
-            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-            return btoa(binary);
-        }
-
         function saveTextFile(filename, text) {
             const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
             const url = URL.createObjectURL(blob);
