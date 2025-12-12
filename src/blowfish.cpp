@@ -1,6 +1,8 @@
 #include "blowfish.h"
 #include <blowfish/blowfish.h>
 
+static constexpr size_t BLOWFISH_BLOCK = 8;
+
 static inline uint32_t read_u32(const unsigned char *p)
 {
     return (uint32_t(p[0])) |
@@ -17,29 +19,29 @@ static inline void write_u32(uint32_t v, unsigned char *p)
     p[3] = (v >> 24) & 0xFF;
 }
 
-size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
-                         std::vector<unsigned char> &output_data,
-                         std::string key)
+template <void (Blowfish::*Func)(uint32_t &, uint32_t &)>
+size_t process(const std::vector<unsigned char> &input_data,
+               std::vector<unsigned char> &output_data,
+               std::string key)
 {
-    if (key.back() != '\0')
+    if (key.empty() || key.back() != '\0')
         key.push_back('\0');
 
     Blowfish bf;
-    bf.initialize(
-        reinterpret_cast<const unsigned char *>(key.data()),
-        key.size());
+    bf.initialize(reinterpret_cast<const unsigned char *>(key.data()),
+                  key.size());
 
-    size_t len = input_data.size();
-    size_t block = 8;
-    size_t full_blocks = len / block;
+    size_t full_blocks = input_data.size() / BLOWFISH_BLOCK;
 
     output_data = input_data;
 
-    for (size_t i = 0; i < full_blocks * block; i += block)
+    for (size_t i = 0; i < full_blocks * BLOWFISH_BLOCK; i += BLOWFISH_BLOCK)
     {
         uint32_t left = read_u32(&output_data[i]);
         uint32_t right = read_u32(&output_data[i + 4]);
-        bf.encrypt(left, right);
+
+        (bf.*Func)(left, right);
+
         write_u32(left, &output_data[i]);
         write_u32(right, &output_data[i + 4]);
     }
@@ -47,32 +49,16 @@ size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
     return output_data.size();
 }
 
+size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
+                         std::vector<unsigned char> &output_data,
+                         std::string key)
+{
+    return process<&Blowfish::encrypt>(input_data, output_data, key);
+}
+
 size_t blowfish::decrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
                          std::string key)
 {
-    if (key.back() != '\0')
-        key.push_back('\0');
-
-    Blowfish bf;
-    bf.initialize(
-        reinterpret_cast<const unsigned char *>(key.data()),
-        key.size());
-
-    size_t len = input_data.size();
-    size_t block = 8;
-    size_t full_blocks = len / block;
-
-    output_data = input_data;
-
-    for (size_t i = 0; i < full_blocks * block; i += block)
-    {
-        uint32_t left = read_u32(&input_data[i]);
-        uint32_t right = read_u32(&input_data[i + 4]);
-        bf.decrypt(left, right);
-        write_u32(left, &output_data[i]);
-        write_u32(right, &output_data[i + 4]);
-    }
-
-    return output_data.size();
+    return process<&Blowfish::decrypt>(input_data, output_data, key);
 }
