@@ -10,6 +10,7 @@ if(NOT DEFINED L2ENCDEC_DIR)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec EXCLUDE_FROM_ALL)
 endif()
 
+set(TSD_FILE ${TS_OUTPUT_DIR}/interface.d.ts)
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 set(TS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/dist)
 file(MAKE_DIRECTORY ${TS_OUTPUT_DIR})
@@ -21,7 +22,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${L2ENCDEC_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
+target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--whole-archive l2encdec -Wl,--no-whole-archive)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -O3)
 
@@ -32,6 +33,7 @@ target_link_options(${PROJECT_NAME} PRIVATE
     "-sASSERTIONS"
     "-sALLOW_MEMORY_GROWTH"
     "--no-entry"
+    "--emit-tsd=${TSD_FILE}"
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
