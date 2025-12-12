@@ -41,6 +41,7 @@ enum class EncodeResult
     SUCCESS = 0,
     INVALID_TYPE = -1,
     COMPRESSION_FAILED = -2,
+    ENCRYPTION_FAILED = -3,
 };
 
 struct Params

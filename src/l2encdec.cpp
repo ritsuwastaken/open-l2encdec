@@ -102,7 +102,8 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
         std::vector<unsigned char> compressed;
         if (zlib_utils::pack(input, compressed) != 0)
             return EncodeResult::COMPRESSION_FAILED;
-        rsa::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent);
+        if (rsa::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent) != 0)
+            return EncodeResult::ENCRYPTION_FAILED;
         break;
     }
     default:

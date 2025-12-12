@@ -15,7 +15,8 @@
 
 std::map<l2encdec::EncodeResult, const char *> ENCODE_ERRORS = {
     {l2encdec::EncodeResult::INVALID_TYPE, "Invalid protocol"},
-    {l2encdec::EncodeResult::COMPRESSION_FAILED, "Failed to compress file"}};
+    {l2encdec::EncodeResult::COMPRESSION_FAILED, "Failed to compress file"},
+    {l2encdec::EncodeResult::ENCRYPTION_FAILED, "Failed to encrypt file"}};
 
 std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::INVALID_TYPE, "Invalid protocol"},
