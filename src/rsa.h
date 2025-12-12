@@ -1,9 +1,9 @@
 #ifndef RSA_H
 #define RSA_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 namespace rsa
 {
