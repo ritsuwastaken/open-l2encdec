@@ -17,11 +17,6 @@ set(TSD_FILE ${TS_OUTPUT_DIR}/interface.d.ts)
 
 add_executable(${PROJECT_NAME} bindings.cpp)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-    ${L2ENCDEC_DIR}/include
-    ${L2ENCDEC_DIR}/src
-)
-
 target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--whole-archive l2encdec -Wl,--no-whole-archive)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -O3)
@@ -30,7 +25,6 @@ target_link_options(${PROJECT_NAME} PRIVATE
     "-lembind"
     "-sMODULARIZE"
     "-sEXPORT_ES6"
-    "-sASSERTIONS"
     "-sALLOW_MEMORY_GROWTH"
     "--no-entry"
     "--emit-tsd=${TSD_FILE}"
