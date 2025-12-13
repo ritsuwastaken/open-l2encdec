@@ -26,7 +26,7 @@ int mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
 {
     return mbedtls_mpi_read_string(x, 16, hex.c_str());
 }
-}
+} // namespace
 
 size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
 {
