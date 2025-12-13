@@ -5,7 +5,7 @@
     "main": "dist/l2encdec.js",
     "types": "dist/interface.d.ts",
     "scripts": {
-        "build:wasm": "emcmake cmake -B build-wasm -S . && cmake --build build-wasm",
+        "build:wasm": "emcmake cmake -B build_wasm -S . && cmake --build build_wasm",
         "dev": "npm run build:wasm && npx serve ."
     }
 }
