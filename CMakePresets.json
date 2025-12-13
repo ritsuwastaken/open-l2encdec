@@ -85,6 +85,19 @@
                 "L2ENCDEC_BUILD_TESTS": "OFF",
                 "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
+        },
+        {
+            "name": "emscripten",
+            "displayName": "Emscripten (WASM)",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_wasm",
+            "toolchainFile": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "OFF",
+                "L2ENCDEC_BUILD_EXAMPLES": "OFF",
+                "L2ENCDEC_BUILD_TS_BINDINGS": "ON"
+            }
         }
     ],
     "buildPresets": [
@@ -120,6 +133,11 @@
             "name": "msvc-arm64-build",
             "configurePreset": "msvc-arm64",
             "configuration": "Release"
+        },
+        {
+            "name": "emscripten-build",
+            "displayName": "Emscripten Build",
+            "configurePreset": "emscripten"
         }
     ],
     "testPresets": [
@@ -138,6 +156,10 @@
         {
             "name": "mingw-w64-x86_64-test",
             "configurePreset": "mingw-w64-x86_64"
+        },
+        {
+            "name": "emscripten-test",
+            "configurePreset": "emscripten"
         }
     ]
 }

@@ -1,8 +1,6 @@
 #include "rsa.h"
 #include <algorithm>
-#include <atomic>
 #include <mbedtls/bignum.h>
-#include <thread>
 
 namespace
 {
@@ -27,12 +25,6 @@ constexpr size_t align_to_4_bytes(size_t x)
 int mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
 {
     return mbedtls_mpi_read_string(x, 16, hex.c_str());
-}
-
-inline void store_first_error(std::atomic<int> &err, int rc)
-{
-    int expected = 0;
-    err.compare_exchange_strong(expected, rc);
 }
 } // namespace
 
@@ -93,63 +85,32 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
         return -2;
     }
 
-    size_t hw = std::thread::hardware_concurrency();
-    size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
-    if (num_threads == 0) num_threads = 1;
+    Mpi block, encrypted_block;
+    std::vector<unsigned char> temp(BLOCK_SIZE);
 
-    std::vector<Mpi> thread_mods(num_threads);
-    std::vector<Mpi> thread_exps(num_threads);
-
-    for (size_t i = 0; i < num_threads; ++i)
+    for (size_t i = 0; i < total_blocks; ++i)
     {
-        int rc = mbedtls_mpi_copy(&thread_mods[i].v, &modulus.v);
+        size_t offset = i * BLOCK_SIZE;
+
+        int rc = mbedtls_mpi_read_binary(&block.v,
+                                         padded_buffer.data() + offset,
+                                         BLOCK_SIZE);
         if (rc != 0) return rc;
-        rc = mbedtls_mpi_copy(&thread_exps[i].v, &public_exp.v);
+
+        rc = mbedtls_mpi_exp_mod(&encrypted_block.v,
+                                 &block.v,
+                                 &public_exp.v,
+                                 &modulus.v,
+                                 nullptr);
         if (rc != 0) return rc;
-    }
 
-    std::atomic<size_t> next_block(0);
-    std::atomic<int> error(0);
+        rc = mbedtls_mpi_write_binary(&encrypted_block.v,
+                                      temp.data(),
+                                      BLOCK_SIZE);
+        if (rc != 0) return rc;
 
-    std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-
-    for (size_t t = 0; t < num_threads; ++t)
-    {
-        threads.emplace_back([&, t]()
-                             {
-            Mpi block, encrypted_block;
-            std::vector<unsigned char> temp(BLOCK_SIZE);
-
-            while (true) {
-                size_t i = next_block.fetch_add(1);
-                if (i >= total_blocks) break;
-                if (error.load() != 0) break;
-
-                size_t offset = i * BLOCK_SIZE;
-
-                int rc = mbedtls_mpi_read_binary(&block.v, padded_buffer.data() + offset, BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mbedtls_mpi_exp_mod(&encrypted_block.v, &block.v,
-                                         &thread_exps[t].v, &thread_mods[t].v, nullptr);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mbedtls_mpi_write_binary(&encrypted_block.v, temp.data(), BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                std::copy(temp.begin(), temp.end(), output_data.begin() + offset);
-            } });
-    }
-
-    for (auto &th : threads)
-        th.join();
-
-    int rc = error.load();
-    if (rc != 0)
-    {
-        output_data.clear();
-        return rc;
+        std::copy(temp.begin(), temp.end(),
+                  output_data.begin() + offset);
     }
 
     return 0;
@@ -160,7 +121,8 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
                  const std::string &modulus_hex,
                  const std::string &private_exp_hex)
 {
-    if (input_data.size() % BLOCK_SIZE != 0) return -1;
+    if (input_data.size() % BLOCK_SIZE != 0)
+        return -1;
 
     size_t total_blocks = input_data.size() / BLOCK_SIZE;
     std::vector<unsigned char> decrypted_buffer(input_data.size());
@@ -172,60 +134,33 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
         return -2;
     }
 
-    size_t hw = std::thread::hardware_concurrency();
-    size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
-    if (num_threads == 0) num_threads = 1;
+    Mpi block, decrypted_block;
+    std::vector<unsigned char> temp(BLOCK_SIZE);
 
-    std::vector<Mpi> thread_mods(num_threads);
-    std::vector<Mpi> thread_privs(num_threads);
-
-    for (size_t i = 0; i < num_threads; ++i)
+    for (size_t i = 0; i < total_blocks; ++i)
     {
-        int rc = mbedtls_mpi_copy(&thread_mods[i].v, &modulus.v);
+        size_t offset = i * BLOCK_SIZE;
+
+        int rc = mbedtls_mpi_read_binary(&block.v,
+                                         input_data.data() + offset,
+                                         BLOCK_SIZE);
         if (rc != 0) return rc;
-        rc = mbedtls_mpi_copy(&thread_privs[i].v, &private_exp.v);
+
+        rc = mbedtls_mpi_exp_mod(&decrypted_block.v,
+                                 &block.v,
+                                 &private_exp.v,
+                                 &modulus.v,
+                                 nullptr);
         if (rc != 0) return rc;
+
+        rc = mbedtls_mpi_write_binary(&decrypted_block.v,
+                                      temp.data(),
+                                      BLOCK_SIZE);
+        if (rc != 0) return rc;
+
+        std::copy(temp.begin(), temp.end(),
+                  decrypted_buffer.begin() + offset);
     }
-
-    std::atomic<size_t> next_block(0);
-    std::atomic<int> error(0);
-
-    std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-
-    for (size_t t = 0; t < num_threads; ++t)
-    {
-        threads.emplace_back([&, t]()
-                             {
-            Mpi block, decrypted_block;
-            std::vector<unsigned char> temp(BLOCK_SIZE);
-
-            while (true) {
-                size_t i = next_block.fetch_add(1);
-                if (i >= total_blocks) break;
-                if (error.load() != 0) break;
-
-                size_t offset = i * BLOCK_SIZE;
-
-                int rc = mbedtls_mpi_read_binary(&block.v, input_data.data() + offset, BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mbedtls_mpi_exp_mod(&decrypted_block.v, &block.v,
-                                         &thread_privs[t].v, &thread_mods[t].v, nullptr);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mbedtls_mpi_write_binary(&decrypted_block.v, temp.data(), BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                std::copy(temp.begin(), temp.end(), decrypted_buffer.begin() + offset);
-            } });
-    }
-
-    for (auto &th : threads)
-        th.join();
-
-    int rc = error.load();
-    if (rc != 0) return rc;
 
     output_data.clear();
     remove_padding(output_data, decrypted_buffer);

@@ -1,0 +1,11 @@
+{
+    "name": "l2encdec-typescript",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "dist/l2encdec.js",
+    "types": "dist/interface.d.ts",
+    "scripts": {
+        "build:wasm": "emcmake cmake -B build_wasm -S . && cmake --build build_wasm",
+        "dev": "npm run build:wasm && npx serve ."
+    }
+}
