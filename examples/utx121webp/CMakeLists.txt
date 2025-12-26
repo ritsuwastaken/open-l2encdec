@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(utx121webp VERSION 1.0.0 LANGUAGES CXX)
 
+include(CPack)
 include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -35,3 +36,5 @@ set(WEBP_BUILD_WEBPMUX OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(webp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec UEViewer webp)
+
+install(TARGETS ${PROJECT_NAME} COMPONENT utx121webp)
