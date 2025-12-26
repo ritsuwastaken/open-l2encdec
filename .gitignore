@@ -6,3 +6,4 @@ build_unix
 build_msvc
 build_mingw_i686
 build_mingw_x86_64
+build_wasm
