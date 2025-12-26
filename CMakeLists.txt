@@ -35,6 +35,9 @@ fetchcontent_makeavailable(mbedtls miniz blowfish)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
+option(L2ENCDEC_BUILD_TS_BINDINGS "Build typescript bindings" OFF)
+
+set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -76,6 +79,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if(L2ENCDEC_BUILD_TS_BINDINGS)
+    add_subdirectory(modules/typescript)
 endif()
 
 if(L2ENCDEC_BUILD_EXAMPLES)
