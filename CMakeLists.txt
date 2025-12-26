@@ -35,6 +35,9 @@ FetchContent_MakeAvailable(mbedtls miniz blowfish)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
+option(L2ENCDEC_BUILD_TS_BINDINGS "Build typescript bindings" OFF)
+
+set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
@@ -81,7 +84,14 @@ if(L2ENCDEC_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+if(L2ENCDEC_BUILD_TS_BINDINGS)
+    add_subdirectory(modules/typescript)
+endif()
+
 if(L2ENCDEC_BUILD_EXAMPLES)
-    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-    add_subdirectory(examples)
+    add_subdirectory(examples/cli)
+    add_subdirectory(examples/txt211json)
+    if(NOT MINGW)
+        add_subdirectory(examples/utx121webp)
+    endif()
 endif()

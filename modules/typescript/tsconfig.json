@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
+    "types": ["node"],
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "checkJs": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "noImplicitAny": false,
+    "incremental": false,
+    "noEmitOnError": false
+  },
+  "include": [
+    "index.ts",
+    "index.web.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "scripts",
+    "*.d.ts",
+    "*.js"
+  ]
+}
