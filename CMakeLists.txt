@@ -4,9 +4,15 @@ project(l2encdec VERSION 2.0.0 LANGUAGES C CXX)
 include(FetchContent)
 include(GenerateExportHeader)
 
+set(L2ENCDEC_THREADS_DEFAULT ON)
+if(EMSCRIPTEN)
+    set(L2ENCDEC_THREADS_DEFAULT OFF)
+endif()
+option(L2ENCDEC_ENABLE_THREADS "Process RSA blocks in parallel" ${L2ENCDEC_THREADS_DEFAULT})
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_CLI "Build the command-line tool" ${PROJECT_IS_TOP_LEVEL})
 option(L2ENCDEC_BUILD_TESTS "Build tests" ${PROJECT_IS_TOP_LEVEL})
+option(L2ENCDEC_BUILD_TS_BINDINGS "Build typescript bindings" OFF)
 
 fetchcontent_declare(
     libtomcrypt
@@ -73,10 +79,21 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE libtomcrypt libtommath zlib-ng::zlib)
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    L2ENCDEC_ENABLE_THREADS=$<BOOL:${L2ENCDEC_ENABLE_THREADS}>
+)
+if(L2ENCDEC_ENABLE_THREADS)
+    find_package(Threads REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+endif()
 
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if(L2ENCDEC_BUILD_TS_BINDINGS)
+    add_subdirectory(modules/typescript)
 endif()
 
 if(L2ENCDEC_BUILD_CLI)

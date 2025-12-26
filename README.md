@@ -59,6 +59,10 @@ int main()
 See [`include/l2encdec.h`](./include/l2encdec.h) for the public API.  
 See [`cli`](./cli) for extended usage examples.
 
+## Bindings
+
+- [javascript/typescript](/modules/typescript/)
+
 ## Credits
 
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
