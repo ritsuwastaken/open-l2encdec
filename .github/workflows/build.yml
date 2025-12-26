@@ -7,9 +7,10 @@ on:
       - "cmake/**"
       - "include/**"
       - "src/**"
-      - "extern/**"
       - "tests/**"
-      - "examples/**"
+      - "examples/cli/**"
+      - "examples/utx121webp/**"
+      - "examples/txt211json/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
