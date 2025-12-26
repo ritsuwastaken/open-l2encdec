@@ -1,12 +1,14 @@
 #include "rsa.h"
 #include <algorithm>
 #include <atomic>
-#include <thread>
 #include <tommath.h>
+
+#if L2ENCDEC_ENABLE_THREADS
+#include <thread>
+#endif
 
 namespace
 {
-constexpr size_t NUM_THREADS = 4;
 constexpr size_t BLOCK_SIZE = 128;
 constexpr size_t BLOCK_BODY_SIZE = 124;
 
@@ -42,12 +44,6 @@ int mpi_write_block(const mp_int &x, std::vector<unsigned char> &buffer)
     return mp_to_ubin(&x, buffer.data() + buffer.size() - size, size, nullptr);
 }
 
-void store_first_error(std::atomic<int> &err, int rc)
-{
-    int expected = 0;
-    err.compare_exchange_strong(expected, rc);
-}
-
 int transform_blocks(const std::vector<unsigned char> &input,
                      std::vector<unsigned char> &output,
                      const std::string &modulus_hex,
@@ -60,16 +56,19 @@ int transform_blocks(const std::vector<unsigned char> &input,
         return -2;
 
     output.resize(input.size());
-    if (input.empty()) return 0;
-
     const size_t total_blocks = input.size() / BLOCK_SIZE;
     std::atomic<size_t> next_block{0};
     std::atomic<int> error{0};
     auto worker = [&]()
     {
+        auto fail = [&](int rc)
+        {
+            int expected = 0;
+            error.compare_exchange_strong(expected, rc);
+        };
         Mpi block, result;
-        if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
-        if (result.status != MP_OKAY) { store_first_error(error, result.status); return; }
+        if (block.status != MP_OKAY) { fail(block.status); return; }
+        if (result.status != MP_OKAY) { fail(result.status); return; }
         std::vector<unsigned char> buffer(BLOCK_SIZE);
 
         while (error.load() == 0)
@@ -82,20 +81,23 @@ int transform_blocks(const std::vector<unsigned char> &input,
                 rc = mp_exptmod(&block.v, &exponent.v, &modulus.v, &result.v);
             if (rc == MP_OKAY)
                 rc = mpi_write_block(result.v, buffer);
-            if (rc != MP_OKAY) { store_first_error(error, rc); return; }
+            if (rc != MP_OKAY) { fail(rc); return; }
             std::copy(buffer.begin(), buffer.end(), output.begin() + offset);
         }
     };
 
-    const size_t hw = std::thread::hardware_concurrency();
-    const size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
+#if L2ENCDEC_ENABLE_THREADS
     {
+        const size_t hw = std::thread::hardware_concurrency();
+        const size_t count = std::min({hw ? hw : size_t(4), size_t(4), total_blocks});
         std::vector<std::jthread> threads;
-        threads.reserve(num_threads - 1);
-        for (size_t i = 1; i < num_threads; ++i)
+        for (size_t i = 1; i < count; ++i)
             threads.emplace_back(worker);
         worker();
     }
+#else
+    worker();
+#endif
     return error.load();
 }
 } // namespace

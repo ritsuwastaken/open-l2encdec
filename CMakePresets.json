@@ -62,6 +62,22 @@
             "name": "msvc-arm64",
             "inherits": "msvc",
             "architecture": "ARM64"
+        },
+        {
+            "name": "emscripten",
+            "inherits": "base",
+            "displayName": "Emscripten (WASM)",
+            "generator": "Unix Makefiles",
+            "toolchainFile": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "L2ENCDEC_BUILD_CLI": "OFF",
+                "L2ENCDEC_ENABLE_THREADS": "OFF"
+            }
         }
     ],
     "buildPresets": [
@@ -94,6 +110,11 @@
             "name": "msvc-arm64",
             "inherits": "base",
             "configurePreset": "msvc-arm64"
+        },
+        {
+            "name": "emscripten",
+            "inherits": "base",
+            "configurePreset": "emscripten"
         }
     ],
     "testPresets": [
@@ -124,6 +145,11 @@
             "name": "msvc-x86",
             "inherits": "base",
             "configurePreset": "msvc-x86"
+        },
+        {
+            "name": "emscripten",
+            "inherits": "base",
+            "configurePreset": "emscripten"
         }
     ],
     "packagePresets": [
@@ -156,6 +182,11 @@
             "name": "msvc-x86",
             "inherits": "base",
             "configurePreset": "msvc-x86"
+        },
+        {
+            "name": "emscripten",
+            "inherits": "base",
+            "configurePreset": "emscripten"
         }
     ]
 }
