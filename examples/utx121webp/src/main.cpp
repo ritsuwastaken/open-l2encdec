@@ -181,6 +181,16 @@ int main(int argc, char **argv)
         std::cerr << e.what() << std::endl;
         return 1;
     }
+    catch (int err)
+    {
+        fprintf(stderr, "Unknown exception (int): %d\n", err);
+        return 1;
+    }
+    catch (...)
+    {
+        fprintf(stderr, "Unknown exception\n");
+        return 1;
+    }
 
     return 0;
 }
