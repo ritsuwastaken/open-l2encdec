@@ -94,7 +94,7 @@ void appError(const char *fmt, ...)
 #endif
 
 #if DO_GUARD
-//	appNotify("ERROR: %s\n", buf);
+	appNotify("ERROR: %s\n", buf);
 	strcpy(GError.History, buf);
 	appStrcatn(ARRAY_ARG(GError.History), "\n");
 	THROW;
