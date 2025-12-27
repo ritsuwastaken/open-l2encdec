@@ -65,6 +65,10 @@ l2encdec::encode(input, output, params);
 
 See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](https://github.com/ritsuwastaken/utx121webp) or [`cli`](./cli) for more examples
 
+## Bindings
+
+- [javascript/typescript](/modules/typescript/)
+
 ## Credits
 
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
