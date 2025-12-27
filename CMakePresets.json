@@ -28,6 +28,7 @@
                 "rhs": "Windows"
             },
             "binaryDir": "${sourceDir}/build_msvc/",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/msvc-static-mt.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "ON",
@@ -85,6 +86,24 @@
                 "L2ENCDEC_BUILD_TESTS": "OFF",
                 "L2ENCDEC_BUILD_EXAMPLES": "ON"
             }
+        },
+        {
+            "name": "emscripten",
+            "displayName": "Emscripten (WASM)",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build_wasm",
+            "toolchainFile": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "L2ENCDEC_BUILD_TESTS": "ON",
+                "L2ENCDEC_BUILD_EXAMPLES": "OFF",
+                "L2ENCDEC_BUILD_TS_BINDINGS": "ON"
+            }
         }
     ],
     "buildPresets": [
@@ -120,6 +139,11 @@
             "name": "msvc-arm64-build",
             "configurePreset": "msvc-arm64",
             "configuration": "Release"
+        },
+        {
+            "name": "emscripten-build",
+            "displayName": "Emscripten Build",
+            "configurePreset": "emscripten"
         }
     ],
     "testPresets": [
@@ -138,6 +162,40 @@
         {
             "name": "mingw-w64-x86_64-test",
             "configurePreset": "mingw-w64-x86_64"
+        },
+        {
+            "name": "emscripten-test",
+            "configurePreset": "emscripten"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "unix-package",
+            "generators": [
+                "ZIP"
+            ],
+            "configurePreset": "unix"
+        },
+        {
+            "name": "msvc-x64-package",
+            "generators": [
+                "ZIP"
+            ],
+            "configurePreset": "msvc-x64"
+        },
+        {
+            "name": "msvc-x86-package",
+            "generators": [
+                "ZIP"
+            ],
+            "configurePreset": "msvc-x86"
+        },
+        {
+            "name": "msvc-arm64-package",
+            "generators": [
+                "ZIP"
+            ],
+            "configurePreset": "msvc-arm64"
         }
     ]
 }
