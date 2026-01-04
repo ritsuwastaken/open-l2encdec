@@ -16,6 +16,16 @@ async function main() {
         type: "string",
         short: "c",
         default: "decode"
+      },
+      filename: {
+        type: "string",
+        short: "f",
+        default: "",
+      },
+      legacy: {
+        type: "boolean",
+        short: "l",
+        default: false,
       }
     },
     allowPositionals: true
@@ -35,7 +45,7 @@ Usage:
   await initL2EncDec();
   const [input, params] = await Promise.all([
     fs.readFile(positionals[0]),
-    initParams(parseInt(values.protocol))
+    initParams(parseInt(values.protocol), values.filename, values.legacy)
   ]);
 
   let result: Uint8Array;
