@@ -27,6 +27,7 @@
   "include": [
     "index.ts",
     "index.web.ts",
+    "cli.ts"
   ],
   "exclude": [
     "node_modules",

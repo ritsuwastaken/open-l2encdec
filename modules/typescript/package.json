@@ -1,8 +1,11 @@
 {
     "name": "open-l2encdec",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "TypeScript/JavaScript bindings for open-l2encdec - Lineage 2 encryption library",
     "type": "module",
+    "bin": {
+        "l2encdec": "./dist/cli.js"
+    },
     "main": "./dist/index.js",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
