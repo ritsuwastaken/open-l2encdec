@@ -1,5 +1,11 @@
 # open-l2encdec typescript bindings
 
+## CLI
+```bash
+$ npx open-l2encdec -c encode -p 413 input.bin output.bin
+$ npx open-l2encdec -c decode -p 413 output.bin input.bin
+```
+
 ## Installation
 
 ```bash
