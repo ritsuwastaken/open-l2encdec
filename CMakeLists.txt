@@ -14,7 +14,7 @@ FetchContent_Declare(
 FetchContent_Declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG 3.1.0
+    GIT_TAG 3.1.1
     GIT_SHALLOW TRUE
 )
 FetchContent_Declare(
