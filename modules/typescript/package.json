@@ -1,0 +1,55 @@
+{
+    "name": "open-l2encdec",
+    "version": "0.0.22",
+    "description": "TypeScript/JavaScript bindings for open-l2encdec - Lineage 2 encryption library",
+    "type": "module",
+    "bin": {
+        "open-l2encdec": "./dist/cli.js"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        },
+        "./web": {
+            "types": "./dist/index.web.d.ts",
+            "import": "./dist/index.web.js",
+            "default": "./dist/index.web.js"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "l2encdec",
+        "lineage2",
+        "encryption",
+        "decryption",
+        "wasm",
+        "typescript",
+        "javascript"
+    ],
+    "author": "ritsuwastaken",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ritsuwastaken/open-l2encdec.git",
+        "directory": "modules/typescript"
+    },
+    "scripts": {
+        "wasm:build": "cd ../.. && cmake --preset emscripten && cmake --build --preset emscripten-build",
+        "wasm:copy": "node scripts/copy-wasm.js",
+        "ts:build": "npm run wasm:copy && tsc -p tsconfig.json",
+        "build": "npm run wasm:build && npm run ts:build"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.3",
+        "typescript": "^5.9.3"
+    }
+}

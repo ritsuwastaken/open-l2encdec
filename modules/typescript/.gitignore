@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+*.log
+
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+dist
+l2encdec.js.d.ts
+LICENSE
