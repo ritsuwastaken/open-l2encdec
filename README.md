@@ -23,7 +23,7 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 ## Credits
 
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
-- **Hint** - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
+- [Hint](https://github.com/Hint-ru) - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
 - **Trusted Firmware** - [MbedTLS](https://github.com/Mbed-TLS/mbedtls)
