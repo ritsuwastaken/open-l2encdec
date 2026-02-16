@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(txt211json VERSION 1.0.0 LANGUAGES CXX)
 
+include(CPack)
 include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -34,3 +35,5 @@ FetchContent_MakeAvailable(utfcpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec nlohmann_json::nlohmann_json)
 target_include_directories(${PROJECT_NAME} PRIVATE ${utfcpp_SOURCE_DIR}/source)
+
+install(TARGETS ${PROJECT_NAME} COMPONENT txt211json)

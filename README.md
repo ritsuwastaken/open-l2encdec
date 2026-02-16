@@ -15,6 +15,9 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 ### [Basic usage and other examples](/examples/)
 
+## Bindings
+- [javascript/typescript](/modules/typescript/)
+
 ## Known issues
 
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
