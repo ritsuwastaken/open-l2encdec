@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(l2encdec VERSION 1.3.4 LANGUAGES CXX)
+project(l2encdec VERSION 1.3.5 LANGUAGES CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
@@ -8,7 +8,7 @@ include(CTest)
 FetchContent_Declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
-    GIT_TAG v3.6.5
+    GIT_TAG v3.6.6
     GIT_SHALLOW TRUE
 )
 FetchContent_Declare(
