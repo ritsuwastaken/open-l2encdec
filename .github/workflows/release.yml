@@ -79,7 +79,6 @@ jobs:
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
-          cmakeListsTxtPath: examples/CMakeLists.txt
 
       - name: Zip utx121webp
         uses: thedoctor0/zip-release@0.7.5

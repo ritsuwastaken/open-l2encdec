@@ -5,19 +5,19 @@ include(FetchContent)
 include(GenerateExportHeader)
 include(CTest)
 
-FetchContent_Declare(
+fetchcontent_declare(
     mbedtls
     GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
     GIT_TAG v3.6.6
     GIT_SHALLOW TRUE
 )
-FetchContent_Declare(
+fetchcontent_declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
     GIT_TAG 3.1.1
     GIT_SHALLOW TRUE
 )
-FetchContent_Declare(
+fetchcontent_declare(
     blowfish
     GIT_REPOSITORY https://github.com/avinal/blowfish.git
     GIT_TAG 2b4c5a2a6f4933a5b48844f72a5861dde00d0fb7
@@ -30,11 +30,13 @@ set(MBEDTLS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/configs/mbedtls_confi
 set(DISABLE_PACKAGE_CONFIG_AND_INSTALL ON CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(mbedtls miniz blowfish)
+fetchcontent_makeavailable(mbedtls miniz blowfish)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
+
+set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
@@ -82,6 +84,9 @@ if(L2ENCDEC_BUILD_TESTS)
 endif()
 
 if(L2ENCDEC_BUILD_EXAMPLES)
-    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-    add_subdirectory(examples)
+    add_subdirectory(examples/cli)
+    add_subdirectory(examples/txt211json)
+    if(NOT MINGW)
+        add_subdirectory(examples/utx121webp)
+    endif()
 endif()

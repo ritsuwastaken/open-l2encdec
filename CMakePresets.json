@@ -28,6 +28,7 @@
                 "rhs": "Windows"
             },
             "binaryDir": "${sourceDir}/build_msvc/",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/msvc-static-mt.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "ON",
