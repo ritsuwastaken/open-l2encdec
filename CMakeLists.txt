@@ -39,8 +39,6 @@ option(L2ENCDEC_BUILD_TS_BINDINGS "Build typescript bindings" OFF)
 
 set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
     src/blowfish.cpp
