@@ -80,8 +80,4 @@ endif()
 
 if(L2ENCDEC_BUILD_EXAMPLES)
     add_subdirectory(examples/cli)
-    add_subdirectory(examples/txt211json)
-    if(NOT MINGW)
-        add_subdirectory(examples/utx121webp)
-    endif()
 endif()
