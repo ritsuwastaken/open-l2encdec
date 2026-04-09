@@ -56,14 +56,6 @@ $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
 
-#### Docker / Podman
-
-|                                                    | [Docker](https://docs.docker.com/get-started/get-docker/) >= 27.2.0                                                                               | [Podman](https://podman.io/docs/installation) >= 1.17.2                                                                                           |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Build container image                              | `docker build -f examples/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                      | `podman build -f examples/cli/docker/win64.Dockerfile -t l2encdec-builder .`                                                                      |
-| Either extract executable to host                  | `mkdir -p build && docker run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`                                                             | `mkdir -p build && podman run --rm -v "$(pwd)/build:/mounted-build" l2encdec-builder`                                                             |
-| Or run tool directly on files in current directory | `docker run --rm -v "$(pwd):/app/data" --entrypoint "/build/l2encdec.exe" l2encdec-builder -c decode -o /app/data/output.dat /app/data/input.dat` | `podman run --rm -v "$(pwd):/app/data" --entrypoint "/build/l2encdec.exe" l2encdec-builder -c decode -o /app/data/output.dat /app/data/input.dat` |
-
 #### Visual Studio (as CMake project)
 
 - [Visual Studio 17 2022 or newer](https://visualstudio.microsoft.com/downloads/)
