@@ -15,22 +15,22 @@ if(NOT L2ENCDEC_DIR)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 
-FetchContent_Declare(
+fetchcontent_declare(
     json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG v3.12.0
 )
-FetchContent_MakeAvailable(json)
+fetchcontent_makeavailable(json)
 
 # not the intended way to install utfcpp, but it works for this version
-FetchContent_Declare(
+fetchcontent_declare(
     utfcpp
     GIT_REPOSITORY https://github.com/nemtrif/utfcpp.git
     GIT_TAG v4.0.8
 )
 set(UTF8_TESTS OFF CACHE BOOL "" FORCE)
 set(UTF8_SAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(utfcpp)
+fetchcontent_makeavailable(utfcpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec nlohmann_json::nlohmann_json)
 target_include_directories(${PROJECT_NAME} PRIVATE ${utfcpp_SOURCE_DIR}/source)

@@ -3,14 +3,14 @@ project(l2encdec_tests LANGUAGES CXX)
 
 include(FetchContent)
 
-FetchContent_Declare(
+fetchcontent_declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG v1.17.0
     GIT_SHALLOW TRUE
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+fetchcontent_makeavailable(googletest)
 
 add_executable(${PROJECT_NAME}
     test_xor.cpp

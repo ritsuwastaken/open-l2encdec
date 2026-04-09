@@ -17,7 +17,7 @@ endif()
 
 add_subdirectory(extern/UEViewer)
 
-FetchContent_Declare(
+fetchcontent_declare(
     webp
     GIT_REPOSITORY https://github.com/webmproject/libwebp.git
     GIT_TAG v1.6.0
@@ -32,6 +32,6 @@ set(WEBP_BUILD_VWEBP OFF CACHE BOOL "" FORCE)
 set(WEBP_BUILD_WEBPINFO OFF CACHE BOOL "" FORCE)
 set(WEBP_BUILD_LIBWEBPMUX OFF CACHE BOOL "" FORCE)
 set(WEBP_BUILD_WEBPMUX OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(webp)
+fetchcontent_makeavailable(webp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec UEViewer webp)
