@@ -26,7 +26,7 @@ fetchcontent_makeavailable(json)
 fetchcontent_declare(
     utfcpp
     GIT_REPOSITORY https://github.com/nemtrif/utfcpp.git
-    GIT_TAG v4.0.8
+    GIT_TAG v4.0.9
 )
 set(UTF8_TESTS OFF CACHE BOOL "" FORCE)
 set(UTF8_SAMPLES OFF CACHE BOOL "" FORCE)
