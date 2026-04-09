@@ -111,7 +111,23 @@ Encode (compress/encrypt) input data using the specified parameters.
 ---
 
 ```cpp
+EncodeResult encode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int protocol, const std::string &filename);
+```
+
+Encode (compress/encrypt) input data using the specified protocol.
+
+---
+
+```cpp
 DecodeResult decode(const std::vector<unsigned char>& input_data, std::vector<unsigned char>& output_data, const Params& params);
 ```
 
 Decode (decrypt/decompress) input data using the specified parameters.
+
+---
+
+```cpp
+DecodeResult decode(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int protocol, const std::string &filename = "", bool use_legacy_rsa);
+```
+
+Decode (decrypt/decompress) input data using the specified protocol.
