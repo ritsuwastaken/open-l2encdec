@@ -15,7 +15,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "ON",
-                "L2ENCDEC_BUILD_EXAMPLES": "ON"
+                "L2ENCDEC_BUILD_CLI": "ON"
             }
         },
         {
@@ -32,7 +32,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "ON",
-                "L2ENCDEC_BUILD_EXAMPLES": "ON"
+                "L2ENCDEC_BUILD_CLI": "ON"
             }
         },
         {
@@ -67,7 +67,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "OFF",
-                "L2ENCDEC_BUILD_EXAMPLES": "ON"
+                "L2ENCDEC_BUILD_CLI": "ON"
             }
         },
         {
@@ -84,7 +84,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "L2ENCDEC_BUILD_TESTS": "OFF",
-                "L2ENCDEC_BUILD_EXAMPLES": "ON"
+                "L2ENCDEC_BUILD_CLI": "ON"
             }
         }
     ],

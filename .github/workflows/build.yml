@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - ".github/**"
+      - "src/**"
+      - "cli/extern/**"
+      - "cli/cli.cpp"
+      - "cli/CMakeLists.txt"
       - "cmake/**"
       - "include/**"
-      - "src/**"
       - "tests/**"
-      - "examples/cli/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
