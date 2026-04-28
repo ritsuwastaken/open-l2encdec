@@ -11,9 +11,57 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
-### [CLI usage and build options](/examples/cli/)
+### [CLI usage and build options](/cli)
 
-### [Basic usage and other examples](/examples/)
+### [API](/API.md)
+
+## Usage
+
+In `CMakeLists.txt`
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(example VERSION 1.0.0 LANGUAGES CXX)
+
+include(FetchContent)
+
+fetchcontent_declare(
+    l2encdec
+    GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
+    GIT_TAG 1.3.5
+)
+fetchcontent_makeavailable(l2encdec)
+
+add_library(${PROJECT_NAME} main.cpp) # or add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
+```
+
+In `main.cpp`
+
+```cpp
+#include <l2encdec.h>
+// ...
+std::vector<unsigned char> input;
+std::string filename = "l2_skilltime";
+int protocol_version = 121;
+bool use_legacy_decrypt_rsa = false;
+std::vector<unsigned char> output;
+
+// basic usage
+l2encdec::decode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
+// ...
+l2encdec::encode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
+
+// advanced usage
+l2encdec::Params params{};
+l2encdec::init_params(&params, protocol_version, filename, use_legacy_decrypt_rsa);
+params.tail = "000000000000000000000000deadbeef00000000";
+l2encdec::decode(input, output, params);
+// ...
+l2encdec::encode(input, output, params);
+```
+
+See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](https://github.com/ritsuwastaken/utx121webp) or [`cli`](./cli) for more examples
 
 ## Known issues
 
