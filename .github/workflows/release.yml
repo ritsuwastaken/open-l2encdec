@@ -48,17 +48,18 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Build
-        uses: lukka/run-cmake@v10
+        uses: lukka/run-cmake@v11
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
-          # add matrix_output.name
+          configurePresetAdditionalArgs: >
+            -DL2ENCDEC_OUTPUT_NAME=${{ matrix.output_name }}
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             build_*/*.zip
