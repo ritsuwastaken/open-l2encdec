@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - ".github/**"
+      - "src/**"
+      - "cli/extern/**"
+      - "cli/cli.cpp"
+      - "cli/CMakeLists.txt"
       - "cmake/**"
       - "include/**"
-      - "src/**"
       - "tests/**"
-      - "examples/cli/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
@@ -20,7 +22,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2025
+          - os: windows-2025-vs2026
             configure_preset: msvc-x86
             test_preset: msvc-x86-test
             build_preset: msvc-x86-build
@@ -36,11 +38,11 @@ jobs:
             build_preset: unix-build
             cc: gcc-13
             cxx: g++-13
-          - os: macos-15
+          - os: macos-26
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-          - os: macos-15-intel
+          - os: macos-26-intel
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
@@ -49,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest

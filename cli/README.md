@@ -1,4 +1,4 @@
-# examples/cli
+# cli
 
 l2encdec-like CLI
 

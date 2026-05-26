@@ -34,7 +34,7 @@ fetchcontent_makeavailable(mbedtls miniz blowfish)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
-option(L2ENCDEC_BUILD_EXAMPLES "Build examples" OFF)
+option(L2ENCDEC_BUILD_CLI "Build examples" OFF)
 
 set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -78,6 +78,6 @@ if(L2ENCDEC_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-if(L2ENCDEC_BUILD_EXAMPLES)
-    add_subdirectory(examples/cli)
+if(L2ENCDEC_BUILD_CLI)
+    add_subdirectory(cli)
 endif()
