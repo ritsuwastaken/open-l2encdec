@@ -48,7 +48,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Build
-        uses: lukka/run-cmake@v11
+        uses: lukka/run-cmake@v10
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
