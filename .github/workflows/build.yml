@@ -51,13 +51,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest
 
       - name: Configure, build and test
-        uses: lukka/run-cmake@v10
+        uses: lukka/run-cmake@v11
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
