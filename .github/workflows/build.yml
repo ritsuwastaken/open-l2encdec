@@ -38,11 +38,11 @@ jobs:
             build_preset: unix-build
             cc: gcc-13
             cxx: g++-13
-          - os: macos-15
+          - os: macos-26
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-          - os: macos-15-intel
+          - os: macos-26-intel
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build

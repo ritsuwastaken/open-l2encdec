@@ -23,7 +23,7 @@ jobs:
             cc: gcc-13
             cxx: g++-13
             output_name: l2encdec_linux
-          - os: macos-15
+          - os: macos-26
             configure_preset: unix
             build_preset: unix-build
             output_name: l2encdec_mac
