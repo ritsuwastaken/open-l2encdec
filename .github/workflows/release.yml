@@ -55,9 +55,6 @@ jobs:
 
       - name: Build
         uses: lukka/run-cmake@v10
-        env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
