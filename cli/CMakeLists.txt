@@ -8,7 +8,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(${PROJECT_NAME} cli.cpp)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
-option(L2ENCDEC_OUTPUT_NAME "Output name" "l2encdec")
+
+set(L2ENCDEC_OUTPUT_NAME
+    "l2encdec"
+    CACHE STRING "Output name"
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${L2ENCDEC_OUTPUT_NAME}
