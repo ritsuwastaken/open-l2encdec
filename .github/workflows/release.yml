@@ -16,7 +16,7 @@ jobs:
           - os: windows-2025-vs2026
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-            output_cli: examples/build_msvc/cli/Release
+            output_cli: build_msvc/examples/cli/Release
             executable_cli: l2encdec_win.exe
             zip_name_cli: l2encdec_windows.zip
           - os: ubuntu-24.04
@@ -30,7 +30,7 @@ jobs:
           - os: macos-15
             configure_preset: unix
             build_preset: unix-build
-            output_cli: examples/build_unix/cli
+            output_cli: build_unix/examples/cli
             executable_cli: l2encdec_osx
             zip_name_cli: l2encdec_macos.zip
     runs-on: ${{ matrix.os }}
