@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(l2encdec VERSION 1.3.5 LANGUAGES CXX)
+project(l2encdec VERSION 1.3.6 LANGUAGES CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
@@ -14,7 +14,7 @@ fetchcontent_declare(
 fetchcontent_declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG 3.1.1
+    GIT_TAG 3.1.2
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
