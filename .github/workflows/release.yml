@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2025
+          - os: windows-2025-vs2026
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
             output_cli: examples/build_msvc/cli/Release
