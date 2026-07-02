@@ -6,6 +6,8 @@
 #include "zlib_utils.h"
 #include <cstddef>
 #include <cstring>
+#include <string_view>
+#include <unordered_map>
 
 namespace
 {
@@ -170,7 +172,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
         break;
     }
     default:
-        dec = input;
+        dec = std::move(data);
         break;
     }
 
