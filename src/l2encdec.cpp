@@ -40,7 +40,7 @@ L2ENCDEC_API bool l2encdec::init_params(
     Params &params,
     int protocol,
     const std::string &filename,
-    bool use_legacy_rsa)
+    bool use_legacy_decrypt_rsa)
 {
     if (protocol == 121 && filename.empty())
         return false;
@@ -50,7 +50,7 @@ L2ENCDEC_API bool l2encdec::init_params(
         return false;
 
     params = it->second;
-    if (params.type == Type::RSA && !use_legacy_rsa)
+    if (params.type == Type::RSA && !use_legacy_decrypt_rsa)
         params = MODERN_RSA_PARAMS;
 
     params.protocol = protocol;
@@ -185,10 +185,10 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     std::vector<unsigned char> &output,
     int protocol,
     const std::string &filename,
-    bool use_legacy_rsa)
+    bool use_legacy_decrypt_rsa)
 {
     l2encdec::Params p{};
-    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_decrypt_rsa))
         return EncodeResult::INVALID_TYPE;
 
     return l2encdec::encode(input, output, p);
@@ -199,10 +199,10 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     std::vector<unsigned char> &output,
     int protocol,
     const std::string &filename,
-    bool use_legacy_rsa)
+    bool use_legacy_decrypt_rsa)
 {
     l2encdec::Params p{};
-    if (!l2encdec::init_params(p, protocol, filename, use_legacy_rsa))
+    if (!l2encdec::init_params(p, protocol, filename, use_legacy_decrypt_rsa))
         return DecodeResult::INVALID_TYPE;
 
     return l2encdec::decode(input, output, p);

@@ -66,7 +66,9 @@ struct Params
  * @param params Struct to populate with parameters
  * @param protocol Last three digits of the file header
  * @param filename Filename used to calculate the XOR key for protocol 121
- * @param use_legacy_decrypt_rsa Use original private exponent and modulus for decryption, for protocols 411-414
+ * @param use_legacy_decrypt_rsa For protocols 411-414, use the original per-protocol RSA modulus and private
+ *        exponent. When false (default), modern RSA parameters are used. Legacy parameters have no public
+ *        exponent and are decrypt-only.
  * @return `true` if the parameters were initialized successfully, `false` otherwise.
  */
 L2ENCDEC_API bool init_params(Params &params, int protocol, const std::string &filename = "", bool use_legacy_decrypt_rsa = false);
@@ -97,16 +99,17 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
                                  std::vector<unsigned char> &output,
                                  int protocol,
                                  const std::string &filename = "", // only needed for protocol 121
-                                 bool use_legacy_rsa = false);
+                                 bool use_legacy_decrypt_rsa = false);
 
 /**
  * @brief Encode input data using protocol-derived parameters.
+ * @param use_legacy_decrypt_rsa Ignored for encryption; modern RSA parameters are always used for 411-414.
  */
 L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input,
                                  std::vector<unsigned char> &output,
                                  int protocol,
                                  const std::string &filename = "", // only used for protocol 121
-                                 bool use_legacy_rsa = false);
+                                 bool use_legacy_decrypt_rsa = false);
 } // namespace l2encdec
 
 #endif // L2ENCDEC_PUBLIC_H
