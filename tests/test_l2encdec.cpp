@@ -95,6 +95,20 @@ TEST(L2Encode, HeaderAndTailApplied)
     }
 }
 
+TEST(L2EncodeDecode, NoneTypePassthrough)
+{
+    auto input = make_input();
+    std::vector<unsigned char> enc, dec;
+
+    l2encdec::Params params{};
+    params.type = l2encdec::Type::NONE;
+    params.protocol = 111;
+
+    ASSERT_EQ(l2encdec::encode(input, enc, params), l2encdec::EncodeResult::SUCCESS);
+    ASSERT_EQ(l2encdec::decode(enc, dec, params), l2encdec::DecodeResult::SUCCESS);
+    EXPECT_EQ(dec, input);
+}
+
 TEST(L2DecodeFail, TooSmallInput)
 {
     std::vector<unsigned char> input = {1, 2};
