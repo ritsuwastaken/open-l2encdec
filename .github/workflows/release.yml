@@ -24,7 +24,7 @@ jobs:
             build_preset: unix-build
             cc: gcc-13
             cxx: g++-13
-            output_cli: examples/build_unix/cli
+            output_cli: build_unix/examples/cli
             executable_cli: l2encdec_linux
             zip_name_cli: l2encdec_linux.zip
           - os: macos-15
