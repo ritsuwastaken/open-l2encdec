@@ -16,23 +16,17 @@ jobs:
           - os: windows-2025-vs2026
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-            output_cli: build_msvc/examples/cli/Release
-            executable_cli: l2encdec_win.exe
-            zip_name_cli: l2encdec_windows.zip
+            output_name: l2encdec_windows
           - os: ubuntu-24.04
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-13
             cxx: g++-13
-            output_cli: build_unix/examples/cli
-            executable_cli: l2encdec_linux
-            zip_name_cli: l2encdec_linux.zip
-          - os: macos-15
+            output_name: l2encdec_linux
+          - os: macos-26
             configure_preset: unix
             build_preset: unix-build
-            output_cli: build_unix/examples/cli
-            executable_cli: l2encdec_osx
-            zip_name_cli: l2encdec_macos.zip
+            output_name: l2encdec_mac
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -61,17 +55,11 @@ jobs:
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
-
-      - name: Zip cli
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: "zip"
-          filename: ${{ matrix.zip_name_cli }}
-          directory: ${{ matrix.output_cli }}
-          path: ${{ matrix.executable_cli }}
+          configurePresetAdditionalArgs: >
+            -DL2ENCDEC_OUTPUT_NAME=${{ matrix.output_name }}
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
-            ${{ matrix.output_cli }}/${{ matrix.zip_name_cli }}
+            build_*/*.zip
