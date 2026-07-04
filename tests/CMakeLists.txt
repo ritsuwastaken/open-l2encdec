@@ -9,11 +9,7 @@ fetchcontent_declare(
     GIT_TAG v1.17.0
     GIT_SHALLOW TRUE
 )
-if(MSVC)
-    set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
-else()
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-endif()
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 fetchcontent_makeavailable(googletest)
 
 add_executable(${PROJECT_NAME}
