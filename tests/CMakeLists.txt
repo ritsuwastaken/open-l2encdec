@@ -41,6 +41,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME}
-    DISCOVERY_MODE PRE_TEST
-)
+gtest_add_tests(TARGET ${PROJECT_NAME})
