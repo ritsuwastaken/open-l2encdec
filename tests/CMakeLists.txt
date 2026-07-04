@@ -9,7 +9,11 @@ fetchcontent_declare(
     GIT_TAG v1.17.0
     GIT_SHALLOW TRUE
 )
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+if(MSVC)
+    set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
+else()
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+endif()
 fetchcontent_makeavailable(googletest)
 
 add_executable(${PROJECT_NAME}
@@ -41,4 +45,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME})
+gtest_discover_tests(${PROJECT_NAME}
+    DISCOVERY_MODE PRE_TEST
+)
