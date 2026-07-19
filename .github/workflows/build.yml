@@ -42,10 +42,6 @@ jobs:
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-          - os: macos-26-intel
-            configure_preset: unix
-            test_preset: unix-test
-            build_preset: unix-build
 
     runs-on: ${{ matrix.os }}
 

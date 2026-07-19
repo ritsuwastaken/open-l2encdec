@@ -57,4 +57,4 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            build_*/l2encdec_*.zip
+            build_*/l2encdec-*-*.zip
