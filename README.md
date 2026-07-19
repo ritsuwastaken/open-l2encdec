@@ -3,7 +3,7 @@
 A tool for encrypting and decrypting Lineage 2 game files across multiple protocols and platforms.  
 Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
-#### Supporteƒd protocol headers (Lineage2Ver###)
+#### Supported protocol headers (Lineage2Ver###)
 
 - **XOR**: 111, 120, 121
 - **Blowfish**: 211, 212
