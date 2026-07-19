@@ -10,6 +10,8 @@ fetchcontent_declare(
     GIT_SHALLOW TRUE
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+set(INSTALL_GMOCK OFF CACHE BOOL "" FORCE)
 fetchcontent_makeavailable(googletest)
 
 add_executable(${PROJECT_NAME}
