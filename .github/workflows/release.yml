@@ -19,8 +19,6 @@ jobs:
           - os: ubuntu-24.04
             configure_preset: unix
             build_preset: unix-build
-            cc: gcc-13
-            cxx: g++-13
           - os: macos-26
             configure_preset: unix
             build_preset: unix-build
@@ -46,9 +44,6 @@ jobs:
 
       - name: Build
         uses: lukka/run-cmake@v10
-        env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
