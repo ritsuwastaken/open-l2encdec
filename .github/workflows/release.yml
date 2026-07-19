@@ -56,7 +56,7 @@ jobs:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
           configurePresetAdditionalArgs: >
-            -DL2ENCDEC_OUTPUT_NAME=${{ matrix.output_name }}
+            ['-DL2ENCDEC_OUTPUT_NAME=${{ matrix.output_name }}']
 
       - name: Release
         uses: softprops/action-gh-release@v3
