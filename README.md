@@ -63,6 +63,9 @@ l2encdec::encode(input, output, params);
 
 See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](https://github.com/ritsuwastaken/utx121webp) or [`cli`](./cli) for more examples
 
+## Bindings
+- [javascript/typescript](/modules/typescript/)
+
 ## Known issues
 
 - Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
