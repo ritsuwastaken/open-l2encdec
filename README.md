@@ -3,7 +3,7 @@
 A tool for encrypting and decrypting Lineage 2 game files across multiple protocols and platforms.  
 Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
-#### Supported protocol headers (Lineage2Ver###)
+#### Supporteƒd protocol headers (Lineage2Ver###)
 
 - **XOR**: 111, 120, 121
 - **Blowfish**: 211, 212
@@ -28,7 +28,7 @@ include(FetchContent)
 fetchcontent_declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
-    GIT_TAG 1.3.11
+    GIT_TAG 1.3.9
 )
 fetchcontent_makeavailable(l2encdec)
 
