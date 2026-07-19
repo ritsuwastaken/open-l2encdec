@@ -16,17 +16,14 @@ jobs:
           - os: windows-2025-vs2026
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
-            output_name: l2encdec_windows
           - os: ubuntu-24.04
             configure_preset: unix
             build_preset: unix-build
             cc: gcc-13
             cxx: g++-13
-            output_name: l2encdec_linux
           - os: macos-26
             configure_preset: unix
             build_preset: unix-build
-            output_name: l2encdec_mac
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -55,11 +52,9 @@ jobs:
         with:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
-          configurePresetAdditionalArgs: >
-            ['-DL2ENCDEC_OUTPUT_NAME=${{ matrix.output_name }}']
 
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            build_*/*.zip
+            build_*/l2encdec_*.zip
