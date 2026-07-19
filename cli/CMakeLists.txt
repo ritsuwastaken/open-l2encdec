@@ -23,7 +23,7 @@ if(MINGW AND NOT BUILD_SHARED_LIBS)
 endif()
 
 if(NOT L2ENCDEC_DIR)
-    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 if(MSVC)
@@ -31,3 +31,20 @@ if(MSVC)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec $<$<BOOL:${MSVC}>:getopt>)
+
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
+)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/../README.md
+    ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE
+    DESTINATION .
+)
+
+set(CPACK_GENERATOR ZIP)
+set(CPACK_PACKAGE_NAME "l2encdec")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+
+include(CPack)
