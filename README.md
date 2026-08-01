@@ -5,9 +5,11 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 
 #### Supported protocol headers (Lineage2Ver###)
 
-- **XOR**: 111, 120, 121
+- **XOR**: 111, 120, 121*
 - **Blowfish**: 211, 212
 - **RSA**: 411, 412, 413, 414 - **l2encdec** key by default
+
+\* protocol 121 requires the correct filename
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
@@ -62,11 +64,6 @@ l2encdec::encode(input, output, params);
 ```
 
 See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](https://github.com/ritsuwastaken/utx121webp) or [`cli`](./cli) for more examples
-
-## Known issues
-
-- Metadata is missing in `111`, `120` and `121` tails when encrypting - original `l2encdec` bug
-- Protocol `121` encryption and decryption require the original filename - specify the filename via options
 
 ## Credits
 
