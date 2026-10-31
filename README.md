@@ -22,7 +22,7 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 In `CMakeLists.txt`
 
 ```cmake
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.28)
 project(example VERSION 1.0.0 LANGUAGES CXX)
 
 include(FetchContent)
