@@ -36,8 +36,6 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 option(L2ENCDEC_BUILD_CLI "Build examples" OFF)
 
-set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
     src/blowfish.cpp

@@ -16,9 +16,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${L2ENCDEC_OUTPUT_NAME}
 )
 
-if(NOT L2ENCDEC_DIR)
-    set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-    add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
+if(NOT TARGET l2encdec)
+    set(L2ENCDEC_BUILD_CLI OFF)
+    add_subdirectory(.. l2encdec-build)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
