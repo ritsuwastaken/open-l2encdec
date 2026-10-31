@@ -56,7 +56,7 @@ l2encdec::decode(input, output, params);
 l2encdec::encode(input, output, params);
 ```
 
-See [`include/l2encdec.h`](./include/l2encdec.h) for the public API.
+See [`include/l2encdec.h`](./include/l2encdec.h) for the public API.  
 See [`cli`](./cli) for extended usage examples.
 
 ## Credits
