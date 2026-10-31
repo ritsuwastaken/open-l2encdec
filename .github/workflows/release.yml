@@ -18,7 +18,7 @@ jobs:
             build_preset: msvc-x86-build
             test_preset: msvc-x86-test
             build_dir: build_msvc
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
             configure_preset: unix
             build_preset: unix-build
             test_preset: unix-test

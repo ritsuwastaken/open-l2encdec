@@ -26,11 +26,11 @@ jobs:
             configure_preset: msvc-x86
             test_preset: msvc-x86-test
             build_preset: msvc-x86-build
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
             configure_preset: unix
             test_preset: unix-test
             build_preset: unix-build
