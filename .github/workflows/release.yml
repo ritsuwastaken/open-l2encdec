@@ -46,7 +46,6 @@ jobs:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
           testPreset: ${{ matrix.test_preset }}
-          testPresetAdditionalArgs: "['--output-on-failure']"
           packagePreset: ${{ matrix.package_preset }}
 
       - name: Release
