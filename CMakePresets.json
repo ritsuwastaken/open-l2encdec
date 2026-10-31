@@ -81,12 +81,18 @@
     "testPresets": [
         {
             "name": "unix-test",
-            "configurePreset": "unix"
+            "configurePreset": "unix",
+            "output": {
+                "outputOnFailure": true
+            }
         },
         {
             "name": "msvc-x86-test",
             "configurePreset": "msvc-x86",
-            "configuration": "Release"
+            "configuration": "Release",
+            "output": {
+                "outputOnFailure": true
+            }
         }
     ],
     "packagePresets": [

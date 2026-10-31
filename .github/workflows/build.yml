@@ -3,13 +3,14 @@ name: build
 on:
   push:
     paths:
-      - ".github/**"
       - "src/**"
-      - "cli/extern/**"
+      - "tests/**"
+      - ".github/workflows/build.yml"
+      - ".github/workflows/release.yml"
+      - "cli/extern/optparse.h"
       - "cli/cli.cpp"
       - "cli/CMakeLists.txt"
-      - "include/**"
-      - "tests/**"
+      - "include/l2encdec.h"
       - "CMakeLists.txt"
       - "CMakePresets.json"
 
@@ -53,4 +54,3 @@ jobs:
           configurePreset: ${{ matrix.configure_preset }}
           buildPreset: ${{ matrix.build_preset }}
           testPreset: ${{ matrix.test_preset }}
-          testPresetAdditionalArgs: "['--output-on-failure']"
