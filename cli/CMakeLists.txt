@@ -23,11 +23,9 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION . COMPONENT cli)
-install(FILES README.md ../LICENSE DESTINATION . COMPONENT cli)
+install(TARGETS ${PROJECT_NAME} DESTINATION .)
+install(FILES README.md ../LICENSE DESTINATION .)
 
 get_target_property(CPACK_PACKAGE_VERSION l2encdec VERSION)
-
-set(CPACK_COMPONENTS_ALL cli)
 
 include(CPack)
