@@ -36,17 +36,6 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - -w _string_ - custom wide char header; default: Lineage2Ver + protocol
 - -T _string_ - custom tail for encoding, must be exactly 40 characters (20 bytes), e.g., `000000000000000000000000deadbeef00000000`; contains checksum by default
 
-## Build
-
-- [CMake](https://cmake.org/download/) >= 3.28
-- [Git](https://git-scm.com/downloads)
-
-```shell
-$ cd cli
-$ cmake . --preset unix
-$ cmake --build --preset unix-build
-```
-
 ## Credits
 
 - **skeeto** - [optparse](https://github.com/skeeto/optparse)
