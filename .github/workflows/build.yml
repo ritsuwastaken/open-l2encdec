@@ -8,7 +8,6 @@ on:
       - "cli/extern/**"
       - "cli/cli.cpp"
       - "cli/CMakeLists.txt"
-      - "cmake/**"
       - "include/**"
       - "tests/**"
       - "CMakeLists.txt"
