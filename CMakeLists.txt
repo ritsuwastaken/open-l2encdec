@@ -27,10 +27,10 @@ set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # libtomcrypt, libtommath
 set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
 fetchcontent_makeavailable(libtomcrypt libtommath miniz)
 
-set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 
-set_target_properties(libtommath miniz libtomcrypt PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(libtomcrypt libtommath miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
@@ -71,7 +71,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE libtommath miniz libtomcrypt)
+target_link_libraries(${PROJECT_NAME} PRIVATE libtomcrypt libtommath miniz)
 
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()
