@@ -28,9 +28,10 @@
                 "rhs": "Windows"
             },
             "binaryDir": "${sourceDir}/build_msvc/",
-            "toolchainFile": "${sourceDir}/cmake/msvc-static-mt.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_SYSTEM_NAME": "Windows",
+                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "BUILD_SHARED_LIBS": "OFF",
                 "L2ENCDEC_BUILD_TESTS": "ON",
                 "L2ENCDEC_BUILD_CLI": "ON"
