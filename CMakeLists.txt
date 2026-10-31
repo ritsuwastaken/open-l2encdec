@@ -3,7 +3,6 @@ project(l2encdec VERSION 1.5.0 LANGUAGES C CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
-include(CTest)
 
 fetchcontent_declare(
     libtomcrypt
