@@ -42,7 +42,7 @@ $ ./l2encdec -c decode -a rsa -m 75b4d6...e2039 -d 1d -w Lineage2Ver413 -o dec-f
 - [Git](https://git-scm.com/downloads)
 
 ```shell
-$ cd examples/cli
+$ cd cli
 $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
