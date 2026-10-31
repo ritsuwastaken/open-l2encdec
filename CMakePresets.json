@@ -4,7 +4,6 @@
         {
             "name": "unix",
             "displayName": "Unix preset",
-            "description": "Sets Unix Makefiles generator and build directory",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build_unix/",
             "condition": {
@@ -60,7 +59,6 @@
     "buildPresets": [
         {
             "name": "unix-build",
-            "description": "Build using Unix Makefiles generator",
             "displayName": "Unix Build",
             "configurePreset": "unix"
         },
