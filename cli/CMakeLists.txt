@@ -7,6 +7,6 @@ target_link_libraries(l2encdec_cli PRIVATE l2encdec)
 set_target_properties(l2encdec_cli PROPERTIES OUTPUT_NAME ${CPACK_PACKAGE_NAME})
 
 install(TARGETS l2encdec_cli DESTINATION .)
-install(FILES README.md ../LICENSE DESTINATION .)
+install(FILES README.md DESTINATION .)
 
 include(CPack)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(l2encdec VERSION 1.4.1 LANGUAGES C CXX)
+project(l2encdec VERSION 1.5.0 LANGUAGES C CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
@@ -10,27 +10,27 @@ fetchcontent_declare(
     GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
     GIT_TAG develop
     GIT_SHALLOW TRUE
+    EXCLUDE_FROM_ALL
 )
 fetchcontent_declare(
     libtommath
     GIT_REPOSITORY https://github.com/libtom/libtommath.git
     GIT_TAG develop
     GIT_SHALLOW TRUE
+    EXCLUDE_FROM_ALL
 )
 fetchcontent_declare(
-    miniz
-    GIT_REPOSITORY https://github.com/richgel999/miniz.git
-    GIT_TAG 3.1.2
+    zlibng
+    GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
+    GIT_TAG 2.3.3
+    EXCLUDE_FROM_ALL
     GIT_SHALLOW TRUE
 )
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # libtomcrypt, libtommath
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # dependencies
 set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
-fetchcontent_makeavailable(libtomcrypt libtommath miniz)
+fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
 
-set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
-set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
-
-set_target_properties(libtomcrypt libtommath miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(libtomcrypt libtommath zlib-ng PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
@@ -69,7 +69,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE libtomcrypt libtommath miniz)
+target_link_libraries(${PROJECT_NAME} PRIVATE libtomcrypt libtommath zlib-ng::zlib)
 
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()

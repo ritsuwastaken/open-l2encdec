@@ -1,6 +1,8 @@
 #include "zlib_utils.h"
+#include <algorithm>
 #include <cstring>
-#include <miniz.h>
+#include <limits>
+#include <zlib-ng.h>
 
 namespace
 {
@@ -17,35 +19,39 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
     uint32_t expected_decompressed_size = 0;
     std::memcpy(&expected_decompressed_size, input_buffer.data(), sizeof(expected_decompressed_size));
 
-    tinfl_decompressor decomp;
-    tinfl_init(&decomp);
+    zng_stream stream{};
+    if (zng_inflateInit(&stream) != Z_OK)
+        return -1;
+
     output_buffer.clear();
     size_t in_pos = COMPRESSED_HEADER_SIZE;
     size_t out_pos = 0;
+    int status;
 
-    while (in_pos < input_buffer.size())
+    do
     {
-        output_buffer.resize(out_pos + INFLATE_CHUNK_SIZE);
-        size_t in_bytes = input_buffer.size() - in_pos;
-        size_t out_bytes = output_buffer.size() - out_pos;
-        tinfl_status status = tinfl_decompress(&decomp,
-                                               input_buffer.data() + in_pos, &in_bytes,
-                                               output_buffer.data(), output_buffer.data() + out_pos, &out_bytes,
-                                               TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF | TINFL_FLAG_PARSE_ZLIB_HEADER);
-
-        in_pos += in_bytes;
-        out_pos += out_bytes;
-
-        if (status == TINFL_STATUS_DONE)
+        if (stream.avail_in == 0)
         {
-            output_buffer.resize(out_pos);
-            break;
+            stream.avail_in = static_cast<uint32_t>(std::min(INFLATE_CHUNK_SIZE, input_buffer.size() - in_pos));
+            stream.next_in = input_buffer.data() + in_pos;
+            in_pos += stream.avail_in;
         }
-        else if (status < 0)
+
+        output_buffer.resize(out_pos + INFLATE_CHUNK_SIZE);
+        stream.next_out = output_buffer.data() + out_pos;
+        stream.avail_out = INFLATE_CHUNK_SIZE;
+        status = zng_inflate(&stream, Z_NO_FLUSH);
+        out_pos += INFLATE_CHUNK_SIZE - stream.avail_out;
+
+        if ((status != Z_OK && status != Z_STREAM_END) || out_pos > expected_decompressed_size)
         {
+            zng_inflateEnd(&stream);
             return -1;
         }
-    }
+    } while (status != Z_STREAM_END);
+
+    zng_inflateEnd(&stream);
+    output_buffer.resize(out_pos);
 
     if (out_pos != static_cast<size_t>(expected_decompressed_size))
         return -1;
@@ -55,6 +61,9 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
 
 int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
 {
+    if (input_buffer.size() > std::numeric_limits<uint32_t>::max())
+        return -1;
+
     uint32_t uncompressed_size = static_cast<uint32_t>(input_buffer.size());
     output_buffer.clear();
     output_buffer.reserve(uncompressed_size);
@@ -62,30 +71,30 @@ int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector
                          reinterpret_cast<const unsigned char *>(&uncompressed_size),
                          reinterpret_cast<const unsigned char *>(&uncompressed_size) + sizeof(uncompressed_size));
 
-    mz_stream stream = {};
-    int status = mz_deflateInit(&stream, MZ_BEST_COMPRESSION);
-    if (status != MZ_OK)
+    zng_stream stream = {};
+    int status = zng_deflateInit(&stream, Z_BEST_COMPRESSION);
+    if (status != Z_OK)
         return -1;
 
-    const unsigned char *in = input_buffer.data();
     std::vector<unsigned char> out(DEFLATE_CHUNK_SIZE);
     size_t input_pos = 0;
 
     do
     {
-        stream.avail_in = static_cast<unsigned int>(std::min(DEFLATE_CHUNK_SIZE, input_buffer.size() - input_pos));
-        stream.next_in = const_cast<unsigned char *>(&in[input_pos]);
+        size_t chunk_size = std::min(DEFLATE_CHUNK_SIZE, input_buffer.size() - input_pos);
+        stream.avail_in = static_cast<uint32_t>(chunk_size);
+        stream.next_in = input_buffer.empty() ? nullptr : input_buffer.data() + input_pos;
+        int flush = input_pos + chunk_size == input_buffer.size() ? Z_FINISH : Z_NO_FLUSH;
 
         do
         {
             stream.avail_out = DEFLATE_CHUNK_SIZE;
             stream.next_out = out.data();
 
-            bool is_last_chunk = (input_pos + stream.avail_in == input_buffer.size());
-            status = mz_deflate(&stream, is_last_chunk ? MZ_FINISH : MZ_NO_FLUSH);
-            if (status != MZ_OK && status != MZ_STREAM_END)
+            status = zng_deflate(&stream, flush);
+            if (status != Z_OK && status != Z_STREAM_END)
             {
-                mz_deflateEnd(&stream);
+                zng_deflateEnd(&stream);
                 return -1;
             }
 
@@ -93,11 +102,11 @@ int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector
             output_buffer.insert(output_buffer.end(), out.data(), out.data() + have);
         } while (stream.avail_out == 0);
 
-        input_pos += DEFLATE_CHUNK_SIZE - stream.avail_in;
+        input_pos += chunk_size - stream.avail_in;
     } while (input_pos < input_buffer.size());
 
-    mz_deflateEnd(&stream);
-    if (status != MZ_STREAM_END)
+    zng_deflateEnd(&stream);
+    if (status != Z_STREAM_END)
         return -1;
 
     return 0;
@@ -105,5 +114,5 @@ int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector
 
 uint32_t zlib_utils::checksum(const std::vector<unsigned char> &buffer, uint32_t checksum)
 {
-    return mz_crc32(checksum, buffer.data(), buffer.size());
+    return zng_crc32_z(checksum, buffer.data(), buffer.size());
 }

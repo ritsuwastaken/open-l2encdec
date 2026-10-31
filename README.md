@@ -64,5 +64,5 @@ See [`cli`](./cli) for extended usage examples.
 - **DStuff** - [l2encdec](https://web.archive.org/web/20111021065705/http://dstuff.luftbrandzlung.org/l2.php)
 - [Hint](https://github.com/Hint-ru) - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
-- **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
 - **LibTom Projects** - [LibTomMath](https://github.com/libtom/libtommath) and [LibTomCrypt](https://github.com/libtom/libtomcrypt)
+- **[zlib-ng](https://github.com/zlib-ng/zlib-ng)**
