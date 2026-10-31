@@ -16,29 +16,41 @@ jobs:
           - os: windows-2025-vs2026
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
+            test_preset: msvc-x86-test
+            build_dir: build_msvc
           - os: ubuntu-24.04
             configure_preset: unix
             build_preset: unix-build
+            test_preset: unix-test
+            build_dir: build_unix
           - os: macos-26
             configure_preset: unix
             build_preset: unix-build
+            test_preset: unix-test
+            build_dir: build_unix
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest
 
-      - name: Build
+      - name: Configure, build and test
         uses: lukka/run-cmake@v10
         with:
           configurePreset: ${{ matrix.configure_preset }}
+          configurePresetAdditionalArgs: "['-DBUILD_SHARED_LIBS=OFF']"
           buildPreset: ${{ matrix.build_preset }}
+          testPreset: ${{ matrix.test_preset }}
+          testPresetAdditionalArgs: "['--output-on-failure']"
+
+      - name: Package
+        run: cpack --config "${{ matrix.build_dir }}/CPackConfig.cmake" -C Release -B "${{ matrix.build_dir }}"
 
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
-          files: |
-            build_*/l2encdec-*-*.zip
+          fail_on_unmatched_files: true
+          files: ${{ matrix.build_dir }}/l2encdec-*-*.zip

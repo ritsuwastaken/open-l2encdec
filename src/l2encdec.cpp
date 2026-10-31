@@ -97,7 +97,8 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
         xor_utils::apply(input, enc, p.xor_start_position, xor_utils::get_key_by_index);
         break;
     case Type::BLOWFISH:
-        blowfish::encrypt(input, enc, p.blowfish_key);
+        if (blowfish::encrypt(input, enc, p.blowfish_key) != input.size())
+            return EncodeResult::ENCRYPTION_FAILED;
         break;
     case Type::RSA:
     {
@@ -160,7 +161,8 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
         xor_utils::apply(data, dec, xor_utils::get_key_by_filename(p.filename));
         break;
     case Type::BLOWFISH:
-        blowfish::decrypt(data, dec, p.blowfish_key);
+        if (blowfish::decrypt(data, dec, p.blowfish_key) != data.size())
+            return DecodeResult::DECRYPTION_FAILED;
         break;
     case Type::RSA:
     {

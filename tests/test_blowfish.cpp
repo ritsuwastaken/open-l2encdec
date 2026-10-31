@@ -17,3 +17,12 @@ TEST(BFEncryptDecrypt, EncryptDecryptRoundTrip)
     ASSERT_EQ(dec_size, dec.size());
     EXPECT_EQ(dec, input);
 }
+
+TEST(BFEncryptDecrypt, RejectsOversizedKey)
+{
+    std::vector<unsigned char> input(8), output = {1, 2, 3};
+    EXPECT_EQ(blowfish::encrypt(input, output, std::string(56, 'a')), size_t(-1));
+    EXPECT_TRUE(output.empty());
+    EXPECT_EQ(blowfish::decrypt(input, output, std::string(56, 'a')), size_t(-1));
+    EXPECT_TRUE(output.empty());
+}

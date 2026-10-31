@@ -31,7 +31,35 @@ TEST(RSAEncryptDecrypt, EncryptDecryptRoundTrip)
     };
     std::vector<unsigned char> input = {'D', 'A', 'T', 'A', '1', '2', '3', '4'};
     std::vector<unsigned char> enc, dec;
-    rsa::encrypt(input, enc, params.rsa_modulus, params.rsa_public_exponent);
-    rsa::decrypt(enc, dec, params.rsa_modulus, params.rsa_private_exponent);
+    ASSERT_EQ(rsa::encrypt(input, enc, params.rsa_modulus, params.rsa_public_exponent), 0);
+    ASSERT_EQ(rsa::decrypt(enc, dec, params.rsa_modulus, params.rsa_private_exponent), 0);
     EXPECT_EQ(dec, input);
+}
+
+TEST(RSAEncryptDecrypt, PadsSmallResultsToFullBlock)
+{
+    std::vector<unsigned char> encrypted;
+    ASSERT_EQ(rsa::encrypt({'A'}, encrypted, "101", "1"), 0);
+    std::vector<unsigned char> expected(128, 0);
+    expected.back() = 193;
+    EXPECT_EQ(encrypted, expected);
+
+    ASSERT_EQ(rsa::encrypt({'A'}, encrypted, "1", "1"), 0);
+    EXPECT_EQ(encrypted, std::vector<unsigned char>(128, 0));
+}
+
+TEST(RSAEncryptDecrypt, RejectsInvalidKeys)
+{
+    const struct
+    {
+        std::string modulus;
+        std::string exponent;
+    } cases[] = {{"not hex", "1"}, {"101", "1\n"}, {"101", "-1"}, {"0", "1"}, {"100", "1"}, {"-101", "1"}, {"", "1"}};
+    for (const auto &c : cases)
+    {
+        SCOPED_TRACE(c.modulus + "/" + c.exponent);
+        std::vector<unsigned char> output;
+        EXPECT_NE(rsa::encrypt({'A'}, output, c.modulus, c.exponent), 0);
+        EXPECT_NE(rsa::decrypt(std::vector<unsigned char>(128), output, c.modulus, c.exponent), 0);
+    }
 }

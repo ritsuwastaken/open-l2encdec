@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.14)
-project(l2encdec VERSION 1.3.11 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.22)
+project(l2encdec VERSION 1.3.11 LANGUAGES C CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
 include(CTest)
 
 fetchcontent_declare(
-    mbedtls
-    GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
-    GIT_TAG v3.6.7
+    libtommath
+    GIT_REPOSITORY https://github.com/libtom/libtommath.git
+    GIT_TAG v1.3.0
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
@@ -18,20 +18,19 @@ fetchcontent_declare(
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
-    blowfish
-    GIT_REPOSITORY https://github.com/avinal/blowfish.git
-    GIT_TAG 2b4c5a2a6f4933a5b48844f72a5861dde00d0fb7
+    libtomcrypt
+    GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
+    GIT_TAG develop
+    GIT_SHALLOW TRUE
 )
-
-set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
-set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
-set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
-set(MBEDTLS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/configs/mbedtls_config.h" CACHE STRING "" FORCE)
-set(DISABLE_PACKAGE_CONFIG_AND_INSTALL ON CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(INSTALL_MBEDTLS_HEADERS OFF CACHE BOOL "" FORCE)
+set(WITH_LTM OFF CACHE BOOL "" FORCE)
+fetchcontent_makeavailable(libtommath miniz libtomcrypt)
 
-fetchcontent_makeavailable(mbedtls miniz blowfish)
+set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+
+set_target_properties(libtommath miniz libtomcrypt PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
@@ -72,7 +71,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE mbedcrypto miniz blowfish)
+target_link_libraries(${PROJECT_NAME} PRIVATE libtommath miniz libtomcrypt)
 
 if(L2ENCDEC_BUILD_TESTS)
     enable_testing()

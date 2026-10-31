@@ -22,7 +22,7 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 In `CMakeLists.txt`
 
 ```cmake
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.22)
 project(example VERSION 1.0.0 LANGUAGES CXX)
 
 include(FetchContent)
@@ -71,9 +71,8 @@ See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](
 - [Hint](https://github.com/Hint-ru) - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
-- **Trusted Firmware** - [MbedTLS](https://github.com/Mbed-TLS/mbedtls)
-- **avinal** - [blowfish](https://github.com/avinal/blowfish)
-- **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8) for CMake
+- **LibTom Projects** - [LibTomMath](https://github.com/libtom/libtommath) and [LibTomCrypt](https://github.com/libtom/libtomcrypt)
+- **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8)
 
 ## License
 

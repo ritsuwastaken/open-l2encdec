@@ -1,50 +1,59 @@
 #include "blowfish.h"
-#include <blowfish/blowfish.h>
+#include <algorithm>
+#include <array>
+#include <tomcrypt.h>
 
 namespace
 {
 constexpr size_t BLOWFISH_BLOCK = 8;
+constexpr size_t BLOWFISH_MIN_KEY = 8;
+constexpr size_t BLOWFISH_MAX_KEY = 56;
 
-inline uint32_t read_u32(const unsigned char *p)
-{
-    return (uint32_t(p[0])) |
-           (uint32_t(p[1]) << 8) |
-           (uint32_t(p[2]) << 16) |
-           (uint32_t(p[3]) << 24);
-}
-
-inline void write_u32(uint32_t v, unsigned char *p)
-{
-    p[0] = (v >> 0) & 0xFF;
-    p[1] = (v >> 8) & 0xFF;
-    p[2] = (v >> 16) & 0xFF;
-    p[3] = (v >> 24) & 0xFF;
-}
-
-template <void (Blowfish::*Func)(uint32_t &, uint32_t &)>
+template <int (*Func)(const unsigned char *, unsigned char *, const symmetric_key *)>
 size_t process(const std::vector<unsigned char> &input_data,
                std::vector<unsigned char> &output_data,
                std::string key)
 {
-    output_data = input_data;
-
     if (key.empty() || key.back() != '\0')
         key.push_back('\0');
 
-    Blowfish bf(key);
+    if (key.size() > BLOWFISH_MAX_KEY)
+    {
+        output_data.clear();
+        return size_t(-1);
+    }
 
+    const std::string original_key = key;
+    while (key.size() < BLOWFISH_MIN_KEY)
+        key += original_key;
+
+    symmetric_key bf{};
+    if (blowfish_setup(reinterpret_cast<const unsigned char *>(key.data()),
+                       static_cast<int>(key.size()), 0, &bf) != CRYPT_OK)
+    {
+        output_data.clear();
+        return size_t(-1);
+    }
+
+    output_data = input_data;
     size_t full_blocks = input_data.size() / BLOWFISH_BLOCK;
     for (size_t i = 0; i < full_blocks * BLOWFISH_BLOCK; i += BLOWFISH_BLOCK)
     {
-        uint32_t left = read_u32(&output_data[i]);
-        uint32_t right = read_u32(&output_data[i + 4]);
+        std::array<unsigned char, BLOWFISH_BLOCK> block;
+        std::reverse_copy(output_data.begin() + i, output_data.begin() + i + 4, block.begin());
+        std::reverse_copy(output_data.begin() + i + 4, output_data.begin() + i + 8, block.begin() + 4);
 
-        (bf.*Func)(left, right);
+        if (Func(block.data(), block.data(), &bf) != CRYPT_OK)
+        {
+            output_data.clear();
+            return size_t(-1);
+        }
 
-        write_u32(left, &output_data[i]);
-        write_u32(right, &output_data[i + 4]);
+        std::reverse_copy(block.begin(), block.begin() + 4, output_data.begin() + i);
+        std::reverse_copy(block.begin() + 4, block.end(), output_data.begin() + i + 4);
     }
 
+    blowfish_done(&bf);
     return output_data.size();
 }
 } // namespace
@@ -53,12 +62,12 @@ size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
                          std::string key)
 {
-    return process<&Blowfish::encrypt>(input_data, output_data, key);
+    return process<&blowfish_ecb_encrypt>(input_data, output_data, key);
 }
 
 size_t blowfish::decrypt(const std::vector<unsigned char> &input_data,
                          std::vector<unsigned char> &output_data,
                          std::string key)
 {
-    return process<&Blowfish::decrypt>(input_data, output_data, key);
+    return process<&blowfish_ecb_decrypt>(input_data, output_data, key);
 }

@@ -76,6 +76,18 @@ TEST(L2EncodeDecode, RSA)
     EXPECT_EQ(dec, input);
 }
 
+TEST(L2EncodeDecode, BlowfishRejectsOversizedKey)
+{
+    l2encdec::Params params{};
+    ASSERT_TRUE(l2encdec::init_params(params, 211));
+    params.blowfish_key = std::string(56, 'a');
+    params.skip_header = true;
+    params.skip_tail = true;
+    std::vector<unsigned char> input(8), output;
+    EXPECT_EQ(l2encdec::encode(input, output, params), l2encdec::EncodeResult::ENCRYPTION_FAILED);
+    EXPECT_EQ(l2encdec::decode(input, output, params), l2encdec::DecodeResult::DECRYPTION_FAILED);
+}
+
 TEST(L2Encode, HeaderAndTailApplied)
 {
     auto input = make_input();

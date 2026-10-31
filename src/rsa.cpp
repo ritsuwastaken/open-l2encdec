@@ -1,8 +1,8 @@
 #include "rsa.h"
 #include <algorithm>
 #include <atomic>
-#include <mbedtls/bignum.h>
 #include <thread>
+#include <tommath.h>
 
 namespace
 {
@@ -12,9 +12,10 @@ constexpr size_t BLOCK_BODY_SIZE = 124;
 
 struct Mpi
 {
-    mbedtls_mpi v;
-    Mpi() { mbedtls_mpi_init(&v); }
-    ~Mpi() { mbedtls_mpi_free(&v); }
+    mp_int v{};
+    int status;
+    Mpi() : status(mp_init(&v)) {}
+    ~Mpi() { mp_clear(&v); }
     Mpi(const Mpi &) = delete;
     Mpi &operator=(const Mpi &) = delete;
 };
@@ -24,9 +25,21 @@ constexpr size_t align_to_4_bytes(size_t x)
     return (x + 3) & ~size_t(3);
 }
 
-int mpi_read_hex(mbedtls_mpi *x, const std::string &hex)
+int mpi_read_hex(Mpi &x, const std::string &hex)
 {
-    return mbedtls_mpi_read_string(x, 16, hex.c_str());
+    if (x.status != MP_OKAY) return x.status;
+    size_t start = !hex.empty() && hex.front() == '-' ? 1 : 0;
+    if (start == hex.size() || hex.find_first_not_of("0123456789abcdefABCDEF", start) != std::string::npos)
+        return MP_VAL;
+    return mp_read_radix(&x.v, hex.c_str(), 16);
+}
+
+int mpi_write_block(const mp_int &x, std::vector<unsigned char> &buffer)
+{
+    size_t size = mp_ubin_size(&x);
+    if (size > buffer.size()) return MP_BUF;
+    std::fill(buffer.begin(), buffer.end(), 0);
+    return mp_to_ubin(&x, buffer.data() + buffer.size() - size, size, nullptr);
 }
 
 inline void store_first_error(std::atomic<int> &err, int rc)
@@ -86,8 +99,9 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
     output_data.resize(total_size);
 
     Mpi modulus, public_exp;
-    if (mpi_read_hex(&modulus.v, modulus_hex) != 0 ||
-        mpi_read_hex(&public_exp.v, public_exp_hex) != 0)
+    if (mpi_read_hex(modulus, modulus_hex) != 0 ||
+        mpi_read_hex(public_exp, public_exp_hex) != 0 ||
+        mp_cmp_d(&modulus.v, 0) != MP_GT || mp_iseven(&modulus.v) || mp_isneg(&public_exp.v))
     {
         output_data.clear();
         return -2;
@@ -102,9 +116,11 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
 
     for (size_t i = 0; i < num_threads; ++i)
     {
-        int rc = mbedtls_mpi_copy(&thread_mods[i].v, &modulus.v);
+        if (thread_mods[i].status != MP_OKAY) return thread_mods[i].status;
+        int rc = mp_copy(&modulus.v, &thread_mods[i].v);
         if (rc != 0) return rc;
-        rc = mbedtls_mpi_copy(&thread_exps[i].v, &public_exp.v);
+        if (thread_exps[i].status != MP_OKAY) return thread_exps[i].status;
+        rc = mp_copy(&public_exp.v, &thread_exps[i].v);
         if (rc != 0) return rc;
     }
 
@@ -119,6 +135,8 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
         threads.emplace_back([&, t]()
                              {
             Mpi block, encrypted_block;
+            if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
+            if (encrypted_block.status != MP_OKAY) { store_first_error(error, encrypted_block.status); return; }
             std::vector<unsigned char> temp(BLOCK_SIZE);
 
             while (true) {
@@ -128,14 +146,13 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
 
                 size_t offset = i * BLOCK_SIZE;
 
-                int rc = mbedtls_mpi_read_binary(&block.v, padded_buffer.data() + offset, BLOCK_SIZE);
+                int rc = mp_from_ubin(&block.v, padded_buffer.data() + offset, BLOCK_SIZE);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
-                rc = mbedtls_mpi_exp_mod(&encrypted_block.v, &block.v,
-                                         &thread_exps[t].v, &thread_mods[t].v, nullptr);
+                rc = mp_exptmod(&block.v, &thread_exps[t].v, &thread_mods[t].v, &encrypted_block.v);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
-                rc = mbedtls_mpi_write_binary(&encrypted_block.v, temp.data(), BLOCK_SIZE);
+                rc = mpi_write_block(encrypted_block.v, temp);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
                 std::copy(temp.begin(), temp.end(), output_data.begin() + offset);
@@ -166,8 +183,9 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
     std::vector<unsigned char> decrypted_buffer(input_data.size());
 
     Mpi modulus, private_exp;
-    if (mpi_read_hex(&modulus.v, modulus_hex) != 0 ||
-        mpi_read_hex(&private_exp.v, private_exp_hex) != 0)
+    if (mpi_read_hex(modulus, modulus_hex) != 0 ||
+        mpi_read_hex(private_exp, private_exp_hex) != 0 ||
+        mp_cmp_d(&modulus.v, 0) != MP_GT || mp_iseven(&modulus.v) || mp_isneg(&private_exp.v))
     {
         return -2;
     }
@@ -181,9 +199,11 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
 
     for (size_t i = 0; i < num_threads; ++i)
     {
-        int rc = mbedtls_mpi_copy(&thread_mods[i].v, &modulus.v);
+        if (thread_mods[i].status != MP_OKAY) return thread_mods[i].status;
+        int rc = mp_copy(&modulus.v, &thread_mods[i].v);
         if (rc != 0) return rc;
-        rc = mbedtls_mpi_copy(&thread_privs[i].v, &private_exp.v);
+        if (thread_privs[i].status != MP_OKAY) return thread_privs[i].status;
+        rc = mp_copy(&private_exp.v, &thread_privs[i].v);
         if (rc != 0) return rc;
     }
 
@@ -198,6 +218,8 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
         threads.emplace_back([&, t]()
                              {
             Mpi block, decrypted_block;
+            if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
+            if (decrypted_block.status != MP_OKAY) { store_first_error(error, decrypted_block.status); return; }
             std::vector<unsigned char> temp(BLOCK_SIZE);
 
             while (true) {
@@ -207,14 +229,13 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
 
                 size_t offset = i * BLOCK_SIZE;
 
-                int rc = mbedtls_mpi_read_binary(&block.v, input_data.data() + offset, BLOCK_SIZE);
+                int rc = mp_from_ubin(&block.v, input_data.data() + offset, BLOCK_SIZE);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
-                rc = mbedtls_mpi_exp_mod(&decrypted_block.v, &block.v,
-                                         &thread_privs[t].v, &thread_mods[t].v, nullptr);
+                rc = mp_exptmod(&block.v, &thread_privs[t].v, &thread_mods[t].v, &decrypted_block.v);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
-                rc = mbedtls_mpi_write_binary(&decrypted_block.v, temp.data(), BLOCK_SIZE);
+                rc = mpi_write_block(decrypted_block.v, temp);
                 if (rc != 0) { store_first_error(error, rc); break; }
 
                 std::copy(temp.begin(), temp.end(), decrypted_buffer.begin() + offset);
