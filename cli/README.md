@@ -56,11 +56,6 @@ $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
 
-#### Visual Studio (as CMake project)
-
-- [Visual Studio 17 2022 or newer](https://visualstudio.microsoft.com/downloads/)
-- [CMake](https://cmake.org/) - [Included with Visual Studio](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170#installation)
-
 ## Credits
 
 - **Microsoft** - [getopt](https://github.com/iotivity/iotivity/blob/master/resource/c_common/windows/src/getopt.c) from [IoTivity](https://github.com/iotivity/iotivity) project
