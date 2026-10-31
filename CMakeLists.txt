@@ -12,19 +12,19 @@ fetchcontent_declare(
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
-    libtommath
-    GIT_REPOSITORY https://github.com/libtom/libtommath.git
-    GIT_TAG v1.3.0
-    GIT_SHALLOW TRUE
-)
-fetchcontent_declare(
     miniz
     GIT_REPOSITORY https://github.com/richgel999/miniz.git
     GIT_TAG 3.1.2
     GIT_SHALLOW TRUE
 )
+fetchcontent_declare(
+    libtommath
+    GIT_REPOSITORY https://github.com/libtom/libtommath.git
+    GIT_TAG v1.3.0
+    GIT_SHALLOW TRUE
+)
 set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
-fetchcontent_makeavailable(libtomcrypt libtommath miniz)
+fetchcontent_makeavailable(libtommath miniz libtomcrypt)
 
 set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
