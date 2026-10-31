@@ -33,7 +33,7 @@ set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 set_target_properties(libtommath miniz libtomcrypt PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(BUILD_TESTING "Build unit tests" OFF)
+option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
 option(L2ENCDEC_BUILD_CLI "Build examples" OFF)
 
 set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -73,7 +73,8 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE libtommath miniz libtomcrypt)
 
-if(BUILD_TESTING)
+if(L2ENCDEC_BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
