@@ -9,15 +9,13 @@ Based on **l2encdec** by **DStuff** and **L2crypt** by **acmi**.
 - **Blowfish**: 211, 212
 - **RSA**: 411, 412, 413, 414 - **l2encdec** key by default
 
-\* protocol 121 requires the correct filename
+\* Protocol 121 requires the correct filename.
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
-### [CLI usage and build options](/cli)
-
-### [API](/API.md)
-
 ## Usage
+
+#### [API description](/API.md)
 
 In `CMakeLists.txt`
 
@@ -63,7 +61,7 @@ l2encdec::decode(input, output, params);
 l2encdec::encode(input, output, params);
 ```
 
-See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](https://github.com/ritsuwastaken/utx121webp) or [`cli`](./cli) for more examples
+See [`cli`](./cli) for extended usage examples.
 
 ## Credits
 
@@ -75,4 +73,4 @@ See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](
 
 ## License
 
-This project is licensed under MIT
+This project is licensed under MIT.
