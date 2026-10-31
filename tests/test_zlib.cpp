@@ -66,6 +66,14 @@ TEST(ZlibUtils, RejectsIncorrectUncompressedSize)
     EXPECT_NE(zlib_utils::unpack(packed, unpacked), 0);
 }
 
+TEST(ZlibUtils, RejectsZeroSizeForNonemptyStream)
+{
+    std::vector<unsigned char> input{'x'}, packed, unpacked;
+    ASSERT_EQ(zlib_utils::pack(input, packed), 0);
+    packed[0] = packed[1] = packed[2] = packed[3] = 0;
+    EXPECT_NE(zlib_utils::unpack(packed, unpacked), 0);
+}
+
 TEST(ZlibUtils, StandardAndIncrementalCrc32)
 {
     std::vector<unsigned char> input{'1', '2', '3', '4', '5', '6', '7', '8', '9'};
