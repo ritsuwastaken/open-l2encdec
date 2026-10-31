@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(l2encdec VERSION 1.3.11 LANGUAGES C CXX)
+project(l2encdec VERSION 1.4.0 LANGUAGES C CXX)
 
 include(FetchContent)
 include(GenerateExportHeader)
