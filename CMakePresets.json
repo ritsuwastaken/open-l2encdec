@@ -14,6 +14,7 @@
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_SHARED_LIBS": "OFF",
                 "L2ENCDEC_BUILD_TESTS": "ON",
                 "L2ENCDEC_BUILD_CLI": "ON"
             }
@@ -88,6 +89,28 @@
             "name": "msvc-x86-test",
             "configurePreset": "msvc-x86",
             "configuration": "Release"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "unix-package",
+            "configurePreset": "unix",
+            "generators": [
+                "ZIP"
+            ],
+            "configurations": [
+                "Release"
+            ]
+        },
+        {
+            "name": "msvc-x86-package",
+            "configurePreset": "msvc-x86",
+            "generators": [
+                "ZIP"
+            ],
+            "configurations": [
+                "Release"
+            ]
         }
     ]
 }

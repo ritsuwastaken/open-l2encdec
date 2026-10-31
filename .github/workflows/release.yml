@@ -17,16 +17,19 @@ jobs:
             configure_preset: msvc-x86
             build_preset: msvc-x86-build
             test_preset: msvc-x86-test
+            package_preset: msvc-x86-package
             build_dir: build_msvc
           - os: ubuntu-26.04
             configure_preset: unix
             build_preset: unix-build
             test_preset: unix-test
+            package_preset: unix-package
             build_dir: build_unix
           - os: macos-26
             configure_preset: unix
             build_preset: unix-build
             test_preset: unix-test
+            package_preset: unix-package
             build_dir: build_unix
     runs-on: ${{ matrix.os }}
 
@@ -37,17 +40,14 @@ jobs:
       - name: Setup CMake
         uses: lukka/get-cmake@latest
 
-      - name: Configure, build and test
+      - name: Configure, build, test and package
         uses: lukka/run-cmake@v10
         with:
           configurePreset: ${{ matrix.configure_preset }}
-          configurePresetAdditionalArgs: "['-DBUILD_SHARED_LIBS=OFF']"
           buildPreset: ${{ matrix.build_preset }}
           testPreset: ${{ matrix.test_preset }}
           testPresetAdditionalArgs: "['--output-on-failure']"
-
-      - name: Package
-        run: cpack --config "${{ matrix.build_dir }}/CPackConfig.cmake" -C Release -B "${{ matrix.build_dir }}"
+          packagePreset: ${{ matrix.package_preset }}
 
       - name: Release
         uses: softprops/action-gh-release@v3
