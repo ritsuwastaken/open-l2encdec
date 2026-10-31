@@ -18,19 +18,16 @@ jobs:
             build_preset: msvc-x86-build
             test_preset: msvc-x86-test
             package_preset: msvc-x86-package
-            build_dir: build_msvc
           - os: ubuntu-26.04
             configure_preset: unix
             build_preset: unix-build
             test_preset: unix-test
             package_preset: unix-package
-            build_dir: build_unix
           - os: macos-26
             configure_preset: unix
             build_preset: unix-build
             test_preset: unix-test
             package_preset: unix-package
-            build_dir: build_unix
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -52,4 +49,4 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
-          files: ${{ matrix.build_dir }}/l2encdec-*-*.zip
+          files: build_*/l2encdec-*-*.zip
