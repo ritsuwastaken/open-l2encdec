@@ -14,7 +14,7 @@ fetchcontent_declare(
 fetchcontent_declare(
     libtommath
     GIT_REPOSITORY https://github.com/libtom/libtommath.git
-    GIT_TAG develop
+    GIT_TAG v1.3.0
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
