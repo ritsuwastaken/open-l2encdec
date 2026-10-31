@@ -7,11 +7,9 @@
 #include <map>
 #include <vector>
 
-#ifdef _WIN32
-#include <getopt.h>
-#else
-#include <unistd.h>
-#endif
+#define OPTPARSE_IMPLEMENTATION
+#define OPTPARSE_API static
+#include "extern/optparse.h"
 
 std::map<l2encdec::EncodeResult, const char *> ENCODE_ERRORS = {
     {l2encdec::EncodeResult::INVALID_TYPE, "Invalid protocol"},
@@ -168,17 +166,20 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    bool has_single_option = argc == 2 && optind == 1;
+    struct optparse options;
+    optparse_init(&options, argv);
+
+    bool has_single_option = argc == 2;
     if (has_single_option)
     {
-        std::filesystem::path input_path(argv[optind]);
+        std::filesystem::path input_path(argv[1]);
         bool has_decode_prefix = input_path.filename().string().starts_with(PREFIXES[Command::DECODE] + "-");
         if (has_decode_prefix)
             command = Command::ENCODE;
     }
 
     int opt;
-    while ((opt = getopt(argc, argv, "hc:p:o:tla:w:e:d:m:b:x:s:vf:T:")) != -1)
+    while ((opt = optparse(&options, "hc:p:o:tla:w:e:d:m:b:x:s:vf:T:")) != -1)
     {
         switch (opt)
         {
@@ -186,16 +187,16 @@ int main(int argc, char *argv[])
             print_usage(argv[0]);
             return 0;
         case 'c':
-            if (!optarg || !COMMANDS.contains(optarg))
+            if (!options.optarg || !COMMANDS.contains(options.optarg))
             {
                 print_usage(argv[0]);
                 return 1;
             }
 
-            command = COMMANDS.at(optarg);
+            command = COMMANDS.at(options.optarg);
             break;
         case 'p':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Protocol option requires a value" << std::endl;
                 print_usage(argv[0]);
@@ -203,23 +204,23 @@ int main(int argc, char *argv[])
             }
             try
             {
-                protocol = std::stoi(optarg);
+                protocol = std::stoi(options.optarg);
             }
             catch (const std::exception &)
             {
-                std::cerr << "Invalid protocol value: " << optarg << std::endl;
+                std::cerr << "Invalid protocol value: " << options.optarg << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
             break;
         case 'o':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Output file option requires a value" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            output_filename = optarg;
+            output_filename = options.optarg;
             break;
         case 't':
             skip_tail = true;
@@ -228,53 +229,53 @@ int main(int argc, char *argv[])
             use_legacy_decrypt_rsa = true;
             break;
         case 'a':
-            if (!optarg || !ENCDEC_TYPES.contains(optarg))
+            if (!options.optarg || !ENCDEC_TYPES.contains(options.optarg))
             {
                 std::cerr << "Invalid algorithm" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            algorithm = ENCDEC_TYPES.at(optarg);
+            algorithm = ENCDEC_TYPES.at(options.optarg);
             break;
         case 'w':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Header option requires a value" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            header = optarg;
+            header = options.optarg;
             break;
         case 'e':
         case 'd':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Exponent option requires a value" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            exponent = optarg;
+            exponent = options.optarg;
             break;
         case 'm':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Modulus option requires a value" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            modulus = optarg;
+            modulus = options.optarg;
             break;
         case 'b':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Blowfish key option requires a value" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            blowfish_key = optarg;
+            blowfish_key = options.optarg;
             break;
         case 'x':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "XOR key option requires a value" << std::endl;
                 print_usage(argv[0]);
@@ -282,16 +283,16 @@ int main(int argc, char *argv[])
             }
             try
             {
-                xor_key = new int(std::stoi(optarg));
+                xor_key = new int(std::stoi(options.optarg));
             }
             catch (const std::exception &)
             {
-                std::cerr << "Invalid XOR key value: " << optarg << std::endl;
+                std::cerr << "Invalid XOR key value: " << options.optarg << std::endl;
                 return 1;
             }
             break;
         case 's':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Start index option requires a value" << std::endl;
                 print_usage(argv[0]);
@@ -299,11 +300,11 @@ int main(int argc, char *argv[])
             }
             try
             {
-                xor_start_position = new int(std::stoi(optarg));
+                xor_start_position = new int(std::stoi(options.optarg));
             }
             catch (const std::exception &)
             {
-                std::cerr << "Invalid start index value: " << optarg << std::endl;
+                std::cerr << "Invalid start index value: " << options.optarg << std::endl;
                 return 1;
             }
             break;
@@ -311,22 +312,22 @@ int main(int argc, char *argv[])
             verify = true;
             break;
         case 'f':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Missing filename for -f option" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            filename = optarg;
+            filename = options.optarg;
             break;
         case 'T':
-            if (!optarg)
+            if (!options.optarg)
             {
                 std::cerr << "Missing hex string for -T option" << std::endl;
                 print_usage(argv[0]);
                 return 1;
             }
-            tail = optarg;
+            tail = options.optarg;
             if (tail.size() != TAIL_HEX_SIZE)
             {
                 std::cerr << "Tail hex string must be exactly 40 symbols (20 bytes)" << std::endl;
@@ -334,18 +335,20 @@ int main(int argc, char *argv[])
             }
             break;
         case '?':
+            std::cerr << argv[0] << ": " << options.errmsg << std::endl;
             print_usage(argv[0]);
             return 1;
         }
     }
 
-    if (optind >= argc)
+    const char *input_argument = optparse_arg(&options);
+    if (!input_argument)
     {
         print_usage(argv[0]);
         return 1;
     }
 
-    std::filesystem::path input_path(argv[optind]);
+    std::filesystem::path input_path(input_argument);
     std::string input_file = input_path.string();
     std::string input_file_name = input_path.filename().string();
     std::string input_file_dir = input_path.parent_path().string();

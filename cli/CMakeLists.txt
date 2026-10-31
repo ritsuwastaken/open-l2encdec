@@ -22,11 +22,8 @@ if(NOT L2ENCDEC_DIR)
     set(L2ENCDEC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
     add_subdirectory(${L2ENCDEC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
-if(MSVC)
-    add_subdirectory(extern/getopt)
-endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec $<$<BOOL:${MSVC}>:getopt>)
+target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION . COMPONENT cli

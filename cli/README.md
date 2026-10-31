@@ -46,7 +46,3 @@ $ cd cli
 $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
-
-## Credits
-
-- **Microsoft** - [getopt](https://github.com/iotivity/iotivity/blob/master/resource/c_common/windows/src/getopt.c) from [IoTivity](https://github.com/iotivity/iotivity) project
