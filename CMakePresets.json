@@ -53,40 +53,6 @@
             "inherits": "msvc-base",
             "displayName": "MSVC ARM64",
             "architecture": "ARM64"
-        },
-        {
-            "name": "mingw-w64-i686",
-            "displayName": "MinGW x86",
-            "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build_mingw_i686/",
-            "toolchainFile": "${sourceDir}/cmake/mingw-w64-i686.cmake",
-            "condition": {
-                "type": "notEquals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "OFF",
-                "L2ENCDEC_BUILD_CLI": "ON"
-            }
-        },
-        {
-            "name": "mingw-w64-x86_64",
-            "displayName": "MinGW x86_64",
-            "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build_mingw_x86_64/",
-            "toolchainFile": "${sourceDir}/cmake//mingw-w64-x86_64.cmake",
-            "condition": {
-                "type": "notEquals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "L2ENCDEC_BUILD_TESTS": "OFF",
-                "L2ENCDEC_BUILD_CLI": "ON"
-            }
         }
     ],
     "buildPresets": [
@@ -95,18 +61,6 @@
             "description": "Build using Unix Makefiles generator",
             "displayName": "Unix Build",
             "configurePreset": "unix"
-        },
-        {
-            "name": "mingw-w64-i686-build",
-            "description": "Build using MinGW toolchain",
-            "displayName": "MinGW Build",
-            "configurePreset": "mingw-w64-i686"
-        },
-        {
-            "name": "mingw-w64-x86_64-build",
-            "description": "Build using MinGW toolchain",
-            "displayName": "MinGW Build",
-            "configurePreset": "mingw-w64-x86_64"
         },
         {
             "name": "msvc-x64-build",
@@ -133,14 +87,6 @@
             "name": "msvc-x86-test",
             "configurePreset": "msvc-x86",
             "configuration": "Release"
-        },
-        {
-            "name": "mingw-w64-i686-test",
-            "configurePreset": "mingw-w64-i686"
-        },
-        {
-            "name": "mingw-w64-x86_64-test",
-            "configurePreset": "mingw-w64-x86_64"
         }
     ]
 }

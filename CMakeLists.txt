@@ -6,9 +6,15 @@ include(GenerateExportHeader)
 include(CTest)
 
 fetchcontent_declare(
+    libtomcrypt
+    GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
+    GIT_TAG develop
+    GIT_SHALLOW TRUE
+)
+fetchcontent_declare(
     libtommath
     GIT_REPOSITORY https://github.com/libtom/libtommath.git
-    GIT_TAG v1.3.0
+    GIT_TAG develop
     GIT_SHALLOW TRUE
 )
 fetchcontent_declare(
@@ -17,15 +23,8 @@ fetchcontent_declare(
     GIT_TAG 3.1.2
     GIT_SHALLOW TRUE
 )
-fetchcontent_declare(
-    libtomcrypt
-    GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
-    GIT_TAG develop
-    GIT_SHALLOW TRUE
-)
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(WITH_LTM OFF CACHE BOOL "" FORCE)
-fetchcontent_makeavailable(libtommath miniz libtomcrypt)
+set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
+fetchcontent_makeavailable(libtomcrypt libtommath miniz)
 
 set_property(DIRECTORY ${libtommath_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 set_property(DIRECTORY ${libtomcrypt_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)

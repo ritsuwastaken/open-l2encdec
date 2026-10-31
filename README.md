@@ -72,7 +72,6 @@ See [`txt211json`](https://github.com/ritsuwastaken/txt211json), [`utx121webp`](
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **richgel999, Tenacious Software LLC, RAD Game Tools, Valve Software** - [miniz](https://github.com/richgel999/miniz)
 - **LibTom Projects** - [LibTomMath](https://github.com/libtom/libtommath) and [LibTomCrypt](https://github.com/libtom/libtomcrypt)
-- **peterspackman** - [mingw-w64 toolchain](https://gist.github.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8)
 
 ## License
 
