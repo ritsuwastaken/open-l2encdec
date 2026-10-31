@@ -46,3 +46,7 @@ $ cd cli
 $ cmake . --preset unix
 $ cmake --build --preset unix-build
 ```
+
+## Credits
+
+- **skeeto** - [optparse](https://github.com/skeeto/optparse)
