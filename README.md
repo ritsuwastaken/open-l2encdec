@@ -23,7 +23,7 @@ include(FetchContent)
 fetchcontent_declare(
     l2encdec
     GIT_REPOSITORY https://github.com/ritsuwastaken/open-l2encdec.git
-    GIT_TAG 1.4.1
+    GIT_TAG 1.5.0
 )
 fetchcontent_makeavailable(l2encdec)
 
