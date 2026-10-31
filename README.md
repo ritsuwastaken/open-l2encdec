@@ -12,7 +12,7 @@
 
 ## Usage
 
-In `CMakeLists.txt`
+In `CMakeLists.txt`:
 
 ```cmake
 cmake_minimum_required(VERSION 3.28)
@@ -31,7 +31,7 @@ add_library(${PROJECT_NAME} main.cpp) # or add_executable(${PROJECT_NAME} src/ma
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 ```
 
-In `main.cpp`
+In your code:
 
 ```cpp
 #include <l2encdec.h>
