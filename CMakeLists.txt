@@ -26,7 +26,7 @@ fetchcontent_declare(
     EXCLUDE_FROM_ALL
     GIT_SHALLOW TRUE
 )
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # dependencies
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # libtomcrypt, libtommath, zlibng
 set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
 fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
 
