@@ -4,19 +4,9 @@
 
 void utils::add_header(std::vector<unsigned char> &data, std::string_view header)
 {
-    const size_t wide_size = header.size() * 2;
-    data.reserve(data.size() + wide_size);
-
-    std::vector<unsigned char> wide;
-    wide.resize(wide_size);
-
+    data.insert(data.begin(), header.size() * 2, 0);
     for (size_t i = 0; i < header.size(); i++)
-    {
-        wide[i * 2] = static_cast<unsigned char>(header[i]);
-        wide[i * 2 + 1] = 0;
-    }
-
-    data.insert(data.begin(), wide.begin(), wide.end());
+        data[i * 2] = static_cast<unsigned char>(header[i]);
 }
 
 std::string utils::make_tail(uint32_t crc, size_t crc32_offset, size_t tail_size)
