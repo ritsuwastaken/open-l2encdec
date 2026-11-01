@@ -136,9 +136,7 @@ void print_usage(const char *name)
               << "Example:\n"
               << "  " << name << " -c decode filename.ini\n"
               << "  " << name << " -c encode -p 413 -o enc-filename.ini dec-filename.ini\n"
-              << "  " << name << " -c decode -a rsa -m 75b4d6...e2039 -d 1d -o dec-filename.ini -w Lineage2Ver413 filename.ini\n\n"
-              << "Source code: " << "https://github.com/ritsuwastaken/open-l2encdec"
-              << "\n";
+              << "  " << name << " -c decode -a rsa -m 75b4d6...e2039 -d 1d -o dec-filename.ini -w Lineage2Ver413 filename.ini\n\n";
 }
 
 int main(int argc, char *argv[])
