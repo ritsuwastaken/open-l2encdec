@@ -1,90 +1,50 @@
-# open-l2encdec typescript bindings
-
-## CLI
-```bash
-$ npx open-l2encdec -c encode -p 413 input.bin output.bin
-$ npx open-l2encdec -c decode -p 413 output.bin input.bin
-```
+# open-l2encdec TypeScript bindings
 
 ## Installation
 
 ```bash
-$ npm install open-l2encdec
-# or
-$ yarn add open-l2encdec
-# or
-$ pnpm add open-l2encdec
-# or
-$ bun add open-l2encdec
+npm install open-l2encdec
 ```
 
 ## Usage
 
 ```typescript
-// node
-import { initL2EncDec, encode, decode, initParams } from 'open-l2encdec';
-// browser
-import { initL2EncDec, encode, decode, initParams } from 'open-l2encdec/web';
+import { createL2EncDec } from 'open-l2encdec'; // or import { createL2EncDec } from 'open-l2encdec/web';
 
-const module = await initL2EncDec();
-
-const params = await initParams(111);
+const codec = await createL2EncDec();
+const params = codec.initParams(413);
 const input = new Uint8Array([1, 2, 3, 4, 5]);
-const encoded = await encode(input, params, module);
 
-const decoded = await decode(encoded, params, module);
+const encoded = codec.encode(input, params);
+codec.verifyChecksum(encoded);
+const decoded = codec.decode(encoded, params);
 ```
 
-## API Reference
+## API
 
-#### `initL2EncDec(): Promise<MainModule>`
+- `createL2EncDec(): Promise<L2EncDec>` creates an independent codec instance.
+- `codec.initParams(protocol, filename = '', useLegacyDecryptRsa = false): Params`
+  returns default parameters. Protocol 121 requires the filename. Legacy RSA
+  parameters for protocols 411–414 support decryption only.
+- `codec.encode(input, params): Uint8Array` encrypts the input.
+- `codec.decode(input, params): Uint8Array` decrypts the input.
+- `codec.verifyChecksum(input): void` verifies an encoded file's checksum and throws on mismatch.
 
-Initializes and returns the l2encdec WASM module. The module is cached, so subsequent calls return the same instance.
+Inputs accept `Uint8Array` (including Node.js `Buffer`) or `number[]`.
+`Params` contains the native parameter fields, including custom keys, headers,
+tails, `skip_header`, and `skip_tail`. Algorithm and result constants are available
+as `codec.Type`, `codec.EncodeResult`, `codec.DecodeResult`, and `codec.ChecksumResult`.
+For example, `codec.Type.RSA` is a number.
 
-#### `encode(input: Uint8Array | number[], params: Params, module?: MainModule): Promise<Uint8Array>`
+Failures throw JavaScript errors with `name`, `message`, and numeric `code`:
+`InitParamsError`, `EncodeError`, `DecodeError`, or `ChecksumError`.
 
-Encodes input data using the specified parameters.
-
-- `input`: Input data as `Uint8Array` or array of numbers
-- `params`: Encoding parameters (see `initParams` or `Params` type)
-- `module`: Optional pre-initialized module (for performance)
-
-Returns encoded data as `Uint8Array`.
-
-#### `decode(input: Uint8Array | number[], params: Params, module?: MainModule): Promise<Uint8Array>`
-
-Decodes input data using the specified parameters.
-
-- `input`: Input data as `Uint8Array` or array of numbers
-- `params`: Decoding parameters (see `initParams` or `Params` type)
-- `module`: Optional pre-initialized module (for performance)
-
-Returns decoded data as `Uint8Array`.
-
-#### `initParams(protocol: number, filename?: string, use_legacy_decrypt_rsa?: boolean, module?: MainModule): Promise<Params>`
-
-Initializes default parameters for the specified protocol.
-
-- `protocol`: Protocol number (last three digits of file header)
-- `filename`: Filename used for protocol 121 (XOR_FILENAME)
-- `use_legacy_decrypt_rsa`: Use legacy (original) RSA decryption for protocols 411-414
-- `module`: Optional pre-initialized module (for performance)
-
-## Development
-
-- [CMake](https://cmake.org/) >= 3.28
-- [Emscripten](https://emscripten.org/) >= 6.0.13
-- [Node.js](https://nodejs.org/) >= v24.19.0
-- [npm](https://www.npmjs.com/), [yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/) or [bun](https://bun.sh/)
-
-### Building
+## CLI
 
 ```bash
-$ npm run build
-# or
-$ yarn build
-# or
-$ pnpm build
-# or
-$ bun run build
+npx open-l2encdec -c encode -p 413 input.bin output.bin
+npx open-l2encdec -c decode -p 413 output.bin input.bin
 ```
+
+Options: `-c` / `--command`, `-p` / `--protocol`, `-f` / `--filename` for protocol 121,
+and `-l` / `--legacy` for original RSA decryption keys.

@@ -1,64 +1,31 @@
-import type {
-  MainModule,
-  Params,
-  Type,
-  EncodeResult,
-  DecodeResult
-} from "./l2encdec.node.js";
+import type { MainModule, Params } from "./l2encdec.node.js";
 
-export type {
-  MainModule as L2EncDecModule,
-  Params,
-  Type,
-  EncodeResult,
-  DecodeResult
-};
+export type { Params, Type, EncodeResult, DecodeResult, ChecksumResult } from "./l2encdec.node.js";
+export type ByteInput = Uint8Array | number[];
+export type L2EncDec = Awaited<ReturnType<typeof createCodec>>;
 
-export function createApi(createModule: () => Promise<MainModule>) {
-  let modulePromise: Promise<MainModule> | undefined;
+export async function createCodec(createModule: () => Promise<MainModule>) {
+  const module = await createModule();
+  return {
+    Type: module.Type,
+    EncodeResult: module.EncodeResult,
+    DecodeResult: module.DecodeResult,
+    ChecksumResult: module.ChecksumResult,
 
-  function initL2EncDec(): Promise<MainModule> {
-    modulePromise ??= createModule().catch(error => {
-      modulePromise = undefined;
-      throw error;
-    });
-    return modulePromise;
-  }
+    initParams(protocol: number, filename = "", useLegacyDecryptRsa = false): Params {
+      return module.init_params(protocol, filename, useLegacyDecryptRsa);
+    },
 
-  async function encode(
-    input: Uint8Array | number[],
-    params: Params,
-    module?: MainModule
-  ): Promise<Uint8Array> {
-    const m = module ?? await initL2EncDec();
-    return m.encode(input, params);
-  }
+    encode(input: ByteInput, params: Params): Uint8Array {
+      return module.encode(input, params);
+    },
 
-  async function decode(
-    input: Uint8Array | number[],
-    params: Params,
-    module?: MainModule
-  ): Promise<Uint8Array> {
-    const m = module ?? await initL2EncDec();
-    return m.decode(input, params);
-  }
+    decode(input: ByteInput, params: Params): Uint8Array {
+      return module.decode(input, params);
+    },
 
-  async function initParams(
-    protocol: number,
-    filename = "",
-    use_legacy_decrypt_rsa = false,
-    module?: MainModule
-  ): Promise<Params> {
-    const m = module ?? await initL2EncDec();
-    const params = new m.Params();
-    try {
-      m.init_params(params, protocol, filename, use_legacy_decrypt_rsa);
-      return params;
-    } catch (error) {
-      params.delete();
-      throw error;
+    verifyChecksum(input: ByteInput): void {
+      module.verify_checksum(input);
     }
-  }
-
-  return { initL2EncDec, encode, decode, initParams };
+  };
 }

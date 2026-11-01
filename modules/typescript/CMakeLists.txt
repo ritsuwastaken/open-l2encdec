@@ -1,12 +1,5 @@
-cmake_minimum_required(VERSION 3.28)
-project(l2encdec-typescript LANGUAGES CXX)
-
 if(NOT EMSCRIPTEN)
     message(FATAL_ERROR "This target must be built with Emscripten")
-endif()
-
-if(NOT TARGET l2encdec)
-    add_subdirectory(../.. ${CMAKE_CURRENT_BINARY_DIR}/l2encdec)
 endif()
 
 set(TS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/dist)
