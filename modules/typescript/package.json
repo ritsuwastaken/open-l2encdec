@@ -1,7 +1,7 @@
 {
     "name": "open-l2encdec",
-    "version": "0.0.24",
-    "description": "TypeScript/JavaScript bindings for open-l2encdec - Lineage 2 encryption library",
+    "version": "0.0.25",
+    "description": "TypeScript/JavaScript bindings for open-l2encdec",
     "type": "module",
     "bin": {
         "open-l2encdec": "./dist/cli.js"
@@ -14,11 +14,6 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js",
             "default": "./dist/index.js"
-        },
-        "./web": {
-            "types": "./dist/index.web.d.ts",
-            "import": "./dist/index.web.js",
-            "default": "./dist/index.web.js"
         }
     },
     "files": [
@@ -49,6 +44,6 @@
     },
     "devDependencies": {
         "@types/node": "^24.19.0",
-        "typescript": "^5.9.3"
+        "typescript": "^7.0.2"
     }
 }
