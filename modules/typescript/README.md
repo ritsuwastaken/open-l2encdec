@@ -73,8 +73,8 @@ Initializes default parameters for the specified protocol.
 ## Development
 
 - [CMake](https://cmake.org/) >= 3.28
-- [Emscripten](https://emscripten.org/) >= 4.0.21
-- [Node.js](https://nodejs.org/) >= v22
+- [Emscripten](https://emscripten.org/) >= 6.0.13
+- [Node.js](https://nodejs.org/) >= v24.19.0
 - [npm](https://www.npmjs.com/), [yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/) or [bun](https://bun.sh/)
 
 ### Building
