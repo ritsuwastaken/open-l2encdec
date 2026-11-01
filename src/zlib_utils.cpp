@@ -6,6 +6,7 @@
 namespace
 {
 constexpr size_t COMPRESSED_HEADER_SIZE = 4;
+constexpr uint64_t MAX_DEFLATE_RATIO = 1032;
 } // namespace
 
 int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
@@ -16,7 +17,8 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
     uint32_t expected_decompressed_size = 0;
     std::memcpy(&expected_decompressed_size, input_buffer.data(), sizeof(expected_decompressed_size));
 
-    if (expected_decompressed_size > output_buffer.max_size())
+    if (expected_decompressed_size > output_buffer.max_size() ||
+        expected_decompressed_size > (input_buffer.size() - COMPRESSED_HEADER_SIZE) * MAX_DEFLATE_RATIO)
         return -1;
 
     output_buffer.resize(expected_decompressed_size ? expected_decompressed_size : 1);
