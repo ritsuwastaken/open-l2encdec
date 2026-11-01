@@ -65,4 +65,4 @@ See [`cli`](./cli) for extended usage examples.
 - [Hint](https://github.com/Hint-ru) - [L2 file decoder](https://web.archive.org/web/20241105235133/https://forum.zone-game.info/showthread.php?tid=16178)
 - **acmi** - [L2crypt](https://github.com/acmi/L2crypt)
 - **LibTom Projects** - [LibTomMath](https://github.com/libtom/libtommath) and [LibTomCrypt](https://github.com/libtom/libtomcrypt)
-- **[zlib-ng](https://github.com/zlib-ng/zlib-ng)**
+- **zlib-ng** - [zlib-ng](https://github.com/zlib-ng/zlib-ng)
