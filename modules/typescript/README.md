@@ -30,15 +30,6 @@ const decoded = codec.decode(encoded, params);
 - `codec.decode(input, params): Uint8Array` decrypts the input.
 - `codec.verifyChecksum(input): void` verifies an encoded file's checksum and throws on mismatch.
 
-Inputs accept `Uint8Array` (including Node.js `Buffer`) or `number[]`.
-`Params` contains the native parameter fields, including custom keys, headers,
-tails, `skip_header`, and `skip_tail`. Algorithm and result constants are available
-as `codec.Type`, `codec.EncodeResult`, `codec.DecodeResult`, and `codec.ChecksumResult`.
-For example, `codec.Type.RSA` is a number.
-
-Failures throw JavaScript errors with `name`, `message`, and numeric `code`:
-`InitParamsError`, `EncodeError`, `DecodeError`, or `ChecksumError`.
-
 ## CLI
 
 ```bash
