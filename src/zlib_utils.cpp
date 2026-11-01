@@ -54,7 +54,7 @@ int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector
     return 0;
 }
 
-uint32_t zlib_utils::checksum(const std::vector<unsigned char> &buffer, uint32_t checksum)
+uint32_t zlib_utils::checksum(std::span<const unsigned char> buffer, uint32_t checksum)
 {
     return zng_crc32_z(checksum, buffer.data(), buffer.size());
 }

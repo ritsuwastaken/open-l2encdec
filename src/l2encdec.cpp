@@ -6,6 +6,7 @@
 #include "zlib_utils.h"
 #include <cstddef>
 #include <cstring>
+#include <span>
 #include <string_view>
 #include <unordered_map>
 
@@ -70,8 +71,7 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
         input.data() + input.size() - TAIL_SIZE + TAIL_CRC32_OFFSET,
         sizeof(uint32_t));
 
-    std::vector<unsigned char> notail(input.begin(), input.end() - TAIL_SIZE);
-    return zlib_utils::checksum(notail) == checksum
+    return zlib_utils::checksum(std::span(input).first(input.size() - TAIL_SIZE)) == checksum
                ? ChecksumResult::SUCCESS
                : ChecksumResult::MISMATCH;
 }
