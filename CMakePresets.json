@@ -13,9 +13,7 @@
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "BUILD_SHARED_LIBS": "OFF",
-                "L2ENCDEC_BUILD_TESTS": "ON",
-                "L2ENCDEC_BUILD_CLI": "ON"
+                "BUILD_SHARED_LIBS": "OFF"
             }
         },
         {
@@ -31,9 +29,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
-                "BUILD_SHARED_LIBS": "OFF",
-                "L2ENCDEC_BUILD_TESTS": "ON",
-                "L2ENCDEC_BUILD_CLI": "ON"
+                "BUILD_SHARED_LIBS": "OFF"
             }
         },
         {

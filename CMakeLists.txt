@@ -4,6 +4,10 @@ project(l2encdec VERSION 1.5.0 LANGUAGES C CXX)
 include(FetchContent)
 include(GenerateExportHeader)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(L2ENCDEC_BUILD_CLI "Build the command-line tool" ${PROJECT_IS_TOP_LEVEL})
+option(L2ENCDEC_BUILD_TESTS "Build tests" ${PROJECT_IS_TOP_LEVEL})
+
 fetchcontent_declare(
     libtomcrypt
     GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
@@ -22,18 +26,14 @@ fetchcontent_declare(
     zlibng
     GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
     GIT_TAG 2.3.3
-    EXCLUDE_FROM_ALL
     GIT_SHALLOW TRUE
+    EXCLUDE_FROM_ALL
 )
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # libtomcrypt, libtommath, zlibng
 set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
 fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
 
 set_target_properties(libtomcrypt libtommath zlib-ng PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(L2ENCDEC_BUILD_TESTS "Build unit tests" OFF)
-option(L2ENCDEC_BUILD_CLI "Build examples" OFF)
 
 add_library(${PROJECT_NAME}
     src/l2encdec.cpp
