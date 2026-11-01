@@ -1,5 +1,8 @@
 import createModule from "./l2encdec.browser.js";
-import { createApi } from "./api.js";
+import { createCodec } from "./api.js";
 
-export type { L2EncDecModule, Params, Type, EncodeResult, DecodeResult } from "./api.js";
-export const { initL2EncDec, encode, decode, initParams } = createApi(createModule);
+export type { L2EncDec, ByteInput, Params, Type, EncodeResult, DecodeResult, ChecksumResult } from "./api.js";
+
+export function createL2EncDec() {
+  return createCodec(createModule);
+}

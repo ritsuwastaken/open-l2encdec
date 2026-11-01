@@ -2,7 +2,7 @@
 
 import fs from "node:fs/promises";
 import { parseArgs } from "node:util";
-import { initParams, encode, decode, initL2EncDec } from "./index.js";
+import { createL2EncDec } from "./index.js";
 
 async function main() {
   const { values, positionals } = parseArgs({
@@ -42,21 +42,14 @@ Usage:
     process.exit(1);
   }
 
-  await initL2EncDec();
-  const [input, params] = await Promise.all([
+  const [input, codec] = await Promise.all([
     fs.readFile(positionals[0]),
-    initParams(parseInt(values.protocol), values.filename, values.legacy)
+    createL2EncDec()
   ]);
-
-  let result: Uint8Array;
-  if (values.command === "encode") {
-    result = await encode(input, params);
-  } else if (values.command === "decode") {
-    result = await decode(input, params);
-  } else {
-    console.error("Unknown command:", values.command);
-    process.exit(1);
-  }
+  const params = codec.initParams(parseInt(values.protocol), values.filename, values.legacy);
+  const result = values.command === "encode"
+    ? codec.encode(input, params)
+    : codec.decode(input, params);
 
   await fs.writeFile(positionals[1], result);
 }
