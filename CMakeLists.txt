@@ -53,12 +53,15 @@ add_library(${PROJECT_NAME}
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_EXTENSIONS OFF
-    POSITION_INDEPENDENT_CODE ON
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+
+if(NOT EMSCRIPTEN)
+    set_target_properties(${PROJECT_NAME} libtomcrypt libtommath zlib-ng PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 generate_export_header(${PROJECT_NAME}
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/l2encdec-export.h

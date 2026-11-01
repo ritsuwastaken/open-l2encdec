@@ -39,5 +39,3 @@ foreach(environment IN ITEMS browser node)
     install(TARGETS ${target} RUNTIME DESTINATION dist COMPONENT typescript)
     install(FILES ${declarations} DESTINATION dist COMPONENT typescript)
 endforeach()
-
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../LICENSE DESTINATION . COMPONENT typescript)
