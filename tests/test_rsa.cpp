@@ -63,3 +63,28 @@ TEST(RSAEncryptDecrypt, RejectsInvalidKeys)
         EXPECT_NE(rsa::decrypt(std::vector<unsigned char>(128), output, c.modulus, c.exponent), 0);
     }
 }
+
+TEST(RSAEncryptDecrypt, RoundTripAcrossBlockBoundaries)
+{
+    l2encdec::Params params{};
+    ASSERT_TRUE(l2encdec::init_params(params, 413));
+    for (size_t size : {1u, 124u, 125u, 4097u})
+    {
+        SCOPED_TRACE(size);
+        std::vector<unsigned char> input(size), encrypted, decrypted;
+        for (size_t i = 0; i < size; ++i)
+            input[i] = static_cast<unsigned char>(i * 37);
+        ASSERT_EQ(rsa::encrypt(input, encrypted, params.rsa_modulus, params.rsa_public_exponent), 0);
+        ASSERT_EQ(rsa::decrypt(encrypted, decrypted, params.rsa_modulus, params.rsa_private_exponent), 0);
+        EXPECT_EQ(decrypted, input);
+    }
+}
+
+TEST(RSAEncryptDecrypt, EmptyCiphertextStillValidatesKeys)
+{
+    std::vector<unsigned char> output{'x'};
+    EXPECT_EQ(rsa::decrypt({}, output, "invalid", "1"), -2);
+    EXPECT_EQ(output, std::vector<unsigned char>{'x'});
+    EXPECT_EQ(rsa::decrypt({}, output, "101", "1"), 0);
+    EXPECT_TRUE(output.empty());
+}

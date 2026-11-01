@@ -82,3 +82,9 @@ TEST(ZlibUtils, StandardAndIncrementalCrc32)
     std::vector<unsigned char> second(input.begin() + 4, input.end());
     EXPECT_EQ(zlib_utils::checksum(second, zlib_utils::checksum(first)), 0xcbf43926u);
 }
+
+TEST(ZlibUtils, ChecksumUsesOnlyTheRequestedSlice)
+{
+    const std::vector<unsigned char> input{'?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!'};
+    EXPECT_EQ(zlib_utils::checksum(std::span(input).subspan(1, 9)), 0xcbf43926u);
+}

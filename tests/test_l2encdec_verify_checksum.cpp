@@ -42,3 +42,12 @@ TEST(L2Checksum, VerifyMismatch)
         l2encdec::verify_checksum(data),
         l2encdec::ChecksumResult::MISMATCH);
 }
+
+TEST(L2Checksum, EmptyPayloadAndTruncatedTail)
+{
+    std::vector<unsigned char> data;
+    utils::add_tail(data, utils::make_tail(0, CRC32_OFFSET, TAIL_SIZE));
+    EXPECT_EQ(l2encdec::verify_checksum(data), l2encdec::ChecksumResult::SUCCESS);
+    data.pop_back();
+    EXPECT_EQ(l2encdec::verify_checksum(data), l2encdec::ChecksumResult::MISMATCH);
+}

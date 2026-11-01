@@ -42,10 +42,61 @@ int mpi_write_block(const mp_int &x, std::vector<unsigned char> &buffer)
     return mp_to_ubin(&x, buffer.data() + buffer.size() - size, size, nullptr);
 }
 
-inline void store_first_error(std::atomic<int> &err, int rc)
+void store_first_error(std::atomic<int> &err, int rc)
 {
     int expected = 0;
     err.compare_exchange_strong(expected, rc);
+}
+
+int transform_blocks(const std::vector<unsigned char> &input,
+                     std::vector<unsigned char> &output,
+                     const std::string &modulus_hex,
+                     const std::string &exponent_hex)
+{
+    Mpi modulus, exponent;
+    if (mpi_read_hex(modulus, modulus_hex) != MP_OKAY ||
+        mpi_read_hex(exponent, exponent_hex) != MP_OKAY ||
+        mp_cmp_d(&modulus.v, 0) != MP_GT || mp_iseven(&modulus.v) || mp_isneg(&exponent.v))
+        return -2;
+
+    output.resize(input.size());
+    if (input.empty()) return 0;
+
+    const size_t total_blocks = input.size() / BLOCK_SIZE;
+    std::atomic<size_t> next_block{0};
+    std::atomic<int> error{0};
+    auto worker = [&]()
+    {
+        Mpi block, result;
+        if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
+        if (result.status != MP_OKAY) { store_first_error(error, result.status); return; }
+        std::vector<unsigned char> buffer(BLOCK_SIZE);
+
+        while (error.load() == 0)
+        {
+            const size_t i = next_block.fetch_add(1);
+            if (i >= total_blocks) break;
+            const size_t offset = i * BLOCK_SIZE;
+            int rc = mp_from_ubin(&block.v, input.data() + offset, BLOCK_SIZE);
+            if (rc == MP_OKAY)
+                rc = mp_exptmod(&block.v, &exponent.v, &modulus.v, &result.v);
+            if (rc == MP_OKAY)
+                rc = mpi_write_block(result.v, buffer);
+            if (rc != MP_OKAY) { store_first_error(error, rc); return; }
+            std::copy(buffer.begin(), buffer.end(), output.begin() + offset);
+        }
+    };
+
+    const size_t hw = std::thread::hardware_concurrency();
+    const size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
+    {
+        std::vector<std::jthread> threads;
+        threads.reserve(num_threads - 1);
+        for (size_t i = 1; i < num_threads; ++i)
+            threads.emplace_back(worker);
+        worker();
+    }
+    return error.load();
 }
 } // namespace
 
@@ -91,85 +142,11 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
                  const std::string &modulus_hex,
                  const std::string &public_exp_hex)
 {
-    std::vector<unsigned char> padded_buffer;
-    size_t total_size = add_padding(padded_buffer, input_data);
-    if (total_size == 0) return -1;
-
-    size_t total_blocks = total_size / BLOCK_SIZE;
-    output_data.resize(total_size);
-
-    Mpi modulus, public_exp;
-    if (mpi_read_hex(modulus, modulus_hex) != 0 ||
-        mpi_read_hex(public_exp, public_exp_hex) != 0 ||
-        mp_cmp_d(&modulus.v, 0) != MP_GT || mp_iseven(&modulus.v) || mp_isneg(&public_exp.v))
-    {
-        output_data.clear();
-        return -2;
-    }
-
-    size_t hw = std::thread::hardware_concurrency();
-    size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
-    if (num_threads == 0) num_threads = 1;
-
-    std::vector<Mpi> thread_mods(num_threads);
-    std::vector<Mpi> thread_exps(num_threads);
-
-    for (size_t i = 0; i < num_threads; ++i)
-    {
-        if (thread_mods[i].status != MP_OKAY) return thread_mods[i].status;
-        int rc = mp_copy(&modulus.v, &thread_mods[i].v);
-        if (rc != 0) return rc;
-        if (thread_exps[i].status != MP_OKAY) return thread_exps[i].status;
-        rc = mp_copy(&public_exp.v, &thread_exps[i].v);
-        if (rc != 0) return rc;
-    }
-
-    std::atomic<size_t> next_block(0);
-    std::atomic<int> error(0);
-
-    std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-
-    for (size_t t = 0; t < num_threads; ++t)
-    {
-        threads.emplace_back([&, t]()
-                             {
-            Mpi block, encrypted_block;
-            if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
-            if (encrypted_block.status != MP_OKAY) { store_first_error(error, encrypted_block.status); return; }
-            std::vector<unsigned char> temp(BLOCK_SIZE);
-
-            while (true) {
-                size_t i = next_block.fetch_add(1);
-                if (i >= total_blocks) break;
-                if (error.load() != 0) break;
-
-                size_t offset = i * BLOCK_SIZE;
-
-                int rc = mp_from_ubin(&block.v, padded_buffer.data() + offset, BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mp_exptmod(&block.v, &thread_exps[t].v, &thread_mods[t].v, &encrypted_block.v);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mpi_write_block(encrypted_block.v, temp);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                std::copy(temp.begin(), temp.end(), output_data.begin() + offset);
-            } });
-    }
-
-    for (auto &th : threads)
-        th.join();
-
-    int rc = error.load();
-    if (rc != 0)
-    {
-        output_data.clear();
-        return rc;
-    }
-
-    return 0;
+    std::vector<unsigned char> padded;
+    if (add_padding(padded, input_data) == 0) return -1;
+    const int rc = transform_blocks(padded, output_data, modulus_hex, public_exp_hex);
+    if (rc != MP_OKAY) output_data.clear();
+    return rc;
 }
 
 int rsa::decrypt(const std::vector<unsigned char> &input_data,
@@ -178,77 +155,9 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
                  const std::string &private_exp_hex)
 {
     if (input_data.size() % BLOCK_SIZE != 0) return -1;
-
-    size_t total_blocks = input_data.size() / BLOCK_SIZE;
-    std::vector<unsigned char> decrypted_buffer(input_data.size());
-
-    Mpi modulus, private_exp;
-    if (mpi_read_hex(modulus, modulus_hex) != 0 ||
-        mpi_read_hex(private_exp, private_exp_hex) != 0 ||
-        mp_cmp_d(&modulus.v, 0) != MP_GT || mp_iseven(&modulus.v) || mp_isneg(&private_exp.v))
-    {
-        return -2;
-    }
-
-    size_t hw = std::thread::hardware_concurrency();
-    size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
-    if (num_threads == 0) num_threads = 1;
-
-    std::vector<Mpi> thread_mods(num_threads);
-    std::vector<Mpi> thread_privs(num_threads);
-
-    for (size_t i = 0; i < num_threads; ++i)
-    {
-        if (thread_mods[i].status != MP_OKAY) return thread_mods[i].status;
-        int rc = mp_copy(&modulus.v, &thread_mods[i].v);
-        if (rc != 0) return rc;
-        if (thread_privs[i].status != MP_OKAY) return thread_privs[i].status;
-        rc = mp_copy(&private_exp.v, &thread_privs[i].v);
-        if (rc != 0) return rc;
-    }
-
-    std::atomic<size_t> next_block(0);
-    std::atomic<int> error(0);
-
-    std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-
-    for (size_t t = 0; t < num_threads; ++t)
-    {
-        threads.emplace_back([&, t]()
-                             {
-            Mpi block, decrypted_block;
-            if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
-            if (decrypted_block.status != MP_OKAY) { store_first_error(error, decrypted_block.status); return; }
-            std::vector<unsigned char> temp(BLOCK_SIZE);
-
-            while (true) {
-                size_t i = next_block.fetch_add(1);
-                if (i >= total_blocks) break;
-                if (error.load() != 0) break;
-
-                size_t offset = i * BLOCK_SIZE;
-
-                int rc = mp_from_ubin(&block.v, input_data.data() + offset, BLOCK_SIZE);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mp_exptmod(&block.v, &thread_privs[t].v, &thread_mods[t].v, &decrypted_block.v);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                rc = mpi_write_block(decrypted_block.v, temp);
-                if (rc != 0) { store_first_error(error, rc); break; }
-
-                std::copy(temp.begin(), temp.end(), decrypted_buffer.begin() + offset);
-            } });
-    }
-
-    for (auto &th : threads)
-        th.join();
-
-    int rc = error.load();
-    if (rc != 0) return rc;
-
-    output_data.clear();
-    remove_padding(output_data, decrypted_buffer);
+    std::vector<unsigned char> decrypted;
+    const int rc = transform_blocks(input_data, decrypted, modulus_hex, private_exp_hex);
+    if (rc != MP_OKAY) return rc;
+    remove_padding(output_data, decrypted);
     return 0;
 }
