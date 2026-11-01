@@ -9,7 +9,7 @@ npm install open-l2encdec
 ## Usage
 
 ```typescript
-import { createL2EncDec } from 'open-l2encdec'; // or import { createL2EncDec } from 'open-l2encdec/web';
+import { createL2EncDec } from 'open-l2encdec';
 
 const codec = await createL2EncDec();
 const params = codec.initParams(413);

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "NodeNext",
     "lib": [
       "ES2020",
       "DOM"
@@ -9,7 +9,7 @@
     "types": [
       "node"
     ],
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "allowJs": false,
     "checkJs": false,
@@ -31,9 +31,7 @@
   },
   "include": [
     "index.ts",
-    "index.web.ts",
-    "cli.ts",
-    "api.ts"
+    "cli.ts"
   ],
   "exclude": [
     "node_modules",
