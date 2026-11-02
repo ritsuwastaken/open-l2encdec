@@ -23,21 +23,15 @@ jobs:
       matrix:
         include:
           - os: windows-2025-vs2026
-            configure_preset: msvc-x86
-            test_preset: msvc-x86-test
-            build_preset: msvc-x86-build
+            preset: msvc-x86
           - os: ubuntu-26.04-arm
-            configure_preset: unix
-            test_preset: unix-test
-            build_preset: unix-build
+            preset: unix
           - os: ubuntu-26.04
-            configure_preset: unix
-            test_preset: unix-test
-            build_preset: unix-build
+            preset: unix
+          - os: ubuntu-26.04
+            preset: shared
           - os: macos-26
-            configure_preset: unix
-            test_preset: unix-test
-            build_preset: unix-build
+            preset: macos
 
     runs-on: ${{ matrix.os }}
 
@@ -51,6 +45,6 @@ jobs:
       - name: Configure, build and test
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: ${{ matrix.configure_preset }}
-          buildPreset: ${{ matrix.build_preset }}
-          testPreset: ${{ matrix.test_preset }}
+          configurePreset: ${{ matrix.preset }}
+          buildPreset: ${{ matrix.preset }}
+          testPreset: ${{ matrix.preset }}

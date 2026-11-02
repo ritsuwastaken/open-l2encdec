@@ -18,8 +18,6 @@ add_executable(l2encdec_tests
     test_l2encdec_verify_checksum.cpp
 )
 
-target_compile_features(l2encdec_tests PRIVATE cxx_std_20)
-set_target_properties(l2encdec_tests PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(l2encdec_tests PRIVATE ../src)
 target_link_libraries(l2encdec_tests PRIVATE GTest::gtest_main l2encdec)
 

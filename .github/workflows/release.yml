@@ -14,20 +14,12 @@ jobs:
       matrix:
         include:
           - os: windows-2025-vs2026
-            configure_preset: msvc-x86
-            build_preset: msvc-x86-build
-            test_preset: msvc-x86-test
-            package_preset: msvc-x86-package
+            preset: msvc-x86
           - os: ubuntu-26.04
-            configure_preset: unix
-            build_preset: unix-build
-            test_preset: unix-test
-            package_preset: unix-package
+            preset: unix
           - os: macos-26
-            configure_preset: unix
-            build_preset: unix-build
-            test_preset: unix-test
-            package_preset: unix-package
+            preset: macos
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -40,13 +32,13 @@ jobs:
       - name: Configure, build, test and package
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: ${{ matrix.configure_preset }}
-          buildPreset: ${{ matrix.build_preset }}
-          testPreset: ${{ matrix.test_preset }}
-          packagePreset: ${{ matrix.package_preset }}
+          configurePreset: ${{ matrix.preset }}
+          buildPreset: ${{ matrix.preset }}
+          testPreset: ${{ matrix.preset }}
+          packagePreset: ${{ matrix.preset }}
 
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
           fail_on_unmatched_files: true
-          files: build_*/l2encdec-*-*.zip
+          files: build/*/l2encdec-*-*.zip
