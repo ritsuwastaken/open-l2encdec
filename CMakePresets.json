@@ -11,14 +11,6 @@
             }
         },
         {
-            "name": "shared",
-            "inherits": "base",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "BUILD_SHARED_LIBS": "ON"
-            }
-        },
-        {
             "name": "unix",
             "inherits": "base",
             "generator": "Unix Makefiles",
@@ -79,11 +71,6 @@
             "configuration": "Release"
         },
         {
-            "name": "shared",
-            "configurePreset": "shared",
-            "configuration": "Debug"
-        },
-        {
             "name": "unix",
             "inherits": "base",
             "configurePreset": "unix"
@@ -117,12 +104,6 @@
             "output": {
                 "outputOnFailure": true
             }
-        },
-        {
-            "name": "shared",
-            "inherits": "base",
-            "configurePreset": "shared",
-            "configuration": "Debug"
         },
         {
             "name": "unix",

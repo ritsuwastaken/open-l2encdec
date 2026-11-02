@@ -28,8 +28,6 @@ jobs:
             preset: unix
           - os: ubuntu-26.04
             preset: unix
-          - os: ubuntu-26.04
-            preset: shared
           - os: macos-26
             preset: macos
 

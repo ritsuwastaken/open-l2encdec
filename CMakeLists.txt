@@ -44,9 +44,8 @@ add_library(${PROJECT_NAME}
     src/zlib_utils.cpp
 )
 
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
     POSITION_INDEPENDENT_CODE ON
     CXX_VISIBILITY_PRESET hidden
