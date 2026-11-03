@@ -2,43 +2,29 @@ name: release
 
 on:
   push:
-    tags:
-      - "*"
+    tags: ["*"]
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  release:
     strategy:
       matrix:
         include:
-          - os: windows-2025-vs2026
-            preset: msvc-x86
-          - os: ubuntu-26.04
-            preset: unix
-          - os: macos-26
-            preset: macos
-
+          - { os: windows-2025-vs2026, preset: msvc-x86 }
+          - { os: ubuntu-26.04, preset: unix }
+          - { os: macos-26, preset: macos }
     runs-on: ${{ matrix.os }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup CMake
-        uses: lukka/get-cmake@latest
-
-      - name: Configure, build, test and package
-        uses: lukka/run-cmake@v10
-        with:
-          configurePreset: ${{ matrix.preset }}
-          buildPreset: ${{ matrix.preset }}
-          testPreset: ${{ matrix.preset }}
-          packagePreset: ${{ matrix.preset }}
-
-      - name: Release
-        uses: softprops/action-gh-release@v3
-        with:
-          fail_on_unmatched_files: true
-          files: build/*/l2encdec-*-*.zip
+      - uses: actions/checkout@v7
+      - run: cmake --preset ${{ matrix.preset }}
+      - run: cmake --build --preset ${{ matrix.preset }}
+      - run: ctest --preset ${{ matrix.preset }}
+      - run: cpack --preset ${{ matrix.preset }}
+      - run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag || true
+          gh release upload "$GITHUB_REF_NAME" build/*/l2encdec-*-*.zip --clobber
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

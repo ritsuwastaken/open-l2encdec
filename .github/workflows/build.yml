@@ -22,27 +22,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-2025-vs2026
-            preset: msvc-x86
-          - os: ubuntu-26.04-arm
-            preset: unix
-          - os: ubuntu-26.04
-            preset: unix
-          - os: macos-26
-            preset: macos
-
+          - { os: windows-2025-vs2026, preset: msvc-x86 }
+          - { os: ubuntu-26.04-arm, preset: unix }
+          - { os: ubuntu-26.04, preset: unix }
+          - { os: macos-26, preset: macos }
     runs-on: ${{ matrix.os }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup CMake
-        uses: lukka/get-cmake@latest
-
-      - name: Configure, build and test
-        uses: lukka/run-cmake@v10
-        with:
-          configurePreset: ${{ matrix.preset }}
-          buildPreset: ${{ matrix.preset }}
-          testPreset: ${{ matrix.preset }}
+      - uses: actions/checkout@v7
+      - run: cmake --preset ${{ matrix.preset }}
+      - run: cmake --build --preset ${{ matrix.preset }}
+      - run: ctest --preset ${{ matrix.preset }}
