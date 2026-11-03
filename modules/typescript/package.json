@@ -1,0 +1,49 @@
+{
+    "name": "open-l2encdec",
+    "version": "0.0.25",
+    "description": "TypeScript/JavaScript bindings for open-l2encdec",
+    "type": "module",
+    "bin": {
+        "open-l2encdec": "./dist/cli.js"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "keywords": [
+        "l2encdec",
+        "lineage2",
+        "encryption",
+        "decryption",
+        "wasm",
+        "typescript",
+        "javascript"
+    ],
+    "author": "ritsuwastaken",
+    "license": "Unlicense",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ritsuwastaken/open-l2encdec.git",
+        "directory": "modules/typescript"
+    },
+    "scripts": {
+        "wasm:build": "cd ../.. && cmake --preset emscripten && cmake --build --preset emscripten-build --parallel && cmake --install build_wasm --prefix modules/typescript --component typescript",
+        "ts:build": "tsc -p tsconfig.json",
+        "build": "npm run wasm:build && npm run ts:build",
+        "prepack": "npm run build"
+    },
+    "devDependencies": {
+        "@types/node": "^24.19.0",
+        "typescript": "^7.0.2"
+    }
+}
