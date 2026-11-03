@@ -6,13 +6,12 @@ on:
       - "src/**"
       - "tests/**"
       - ".github/workflows/build.yml"
-      - ".github/workflows/release.yml"
-      - "cli/extern/optparse.h"
       - "cli/cli.cpp"
+      - "cli/extern/optparse.h"
       - "cli/CMakeLists.txt"
-      - "include/l2encdec.h"
       - "CMakeLists.txt"
       - "CMakePresets.json"
+      - "include/l2encdec.h"
 
 permissions:
   contents: read
