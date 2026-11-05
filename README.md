@@ -6,17 +6,15 @@
 - **Blowfish**: 211, 212
 - **RSA**: 411, 412, 413, 414 - **l2encdec** key by default
 
-\* Protocol 121 requires the correct filename.
+\* Protocol 121 requires the filename.
 
 ### [Download](https://github.com/ritsuwastaken/open-l2encdec/releases/latest)
 
 ## Usage
 
-In `CMakeLists.txt`:
-
 ```cmake
 cmake_minimum_required(VERSION 3.28)
-project(example VERSION 1.0.0 LANGUAGES CXX)
+project(example LANGUAGES CXX)
 
 include(FetchContent)
 
@@ -27,11 +25,9 @@ fetchcontent_declare(
 )
 fetchcontent_makeavailable(l2encdec)
 
-add_library(${PROJECT_NAME} main.cpp) # or add_executable(${PROJECT_NAME} src/main.cpp)
+add_library(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 ```
-
-In your code:
 
 ```cpp
 #include <l2encdec.h>
