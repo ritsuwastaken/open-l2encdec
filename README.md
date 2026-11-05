@@ -31,22 +31,29 @@ target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 
 ```cpp
 #include <l2encdec.h>
-// ...
-std::vector<unsigned char> input;
-std::string filename = "l2_skilltime";
-int protocol_version = 121;
-bool use_legacy_decrypt_rsa = false;
-std::vector<unsigned char> output;
+#include <fstream>
+#include <iterator>
 
-l2encdec::decode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
-l2encdec::encode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
+int main()
+{
+    const auto filename = "l2_skilltime";
+    std::ifstream file("l2_skilltime.dat", std::ios::binary);
+    if (!file) return 1;
+    const std::vector<unsigned char> input(std::istreambuf_iterator<char>{file}, {});
+    std::vector<unsigned char> decoded, encoded;
 
-// with custom params
-l2encdec::Params params{};
-l2encdec::init_params(params, protocol_version, filename, use_legacy_decrypt_rsa);
-params.tail = "000000000000000000000000deadbeef00000000";
-l2encdec::decode(input, output, params);
-l2encdec::encode(input, output, params);
+    l2encdec::decode(input, decoded, 121, filename);
+    // ...
+    l2encdec::encode(decoded, encoded, 121, filename);
+
+    // with custom params
+    l2encdec::Params params{};
+    l2encdec::init_params(params, 121, filename);
+    params.tail = "000000000000000000000000deadbeef00000000";
+    l2encdec::decode(input, decoded, params);
+    // ...
+    l2encdec::encode(decoded, encoded, params);
+}
 ```
 
 See [`include/l2encdec.h`](./include/l2encdec.h) for the public API.  
