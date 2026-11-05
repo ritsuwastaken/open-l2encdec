@@ -25,7 +25,7 @@ fetchcontent_declare(
 )
 fetchcontent_makeavailable(l2encdec)
 
-add_library(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 ```
 
@@ -38,17 +38,14 @@ int protocol_version = 121;
 bool use_legacy_decrypt_rsa = false;
 std::vector<unsigned char> output;
 
-// basic usage
 l2encdec::decode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
-// ...
 l2encdec::encode(input, output, protocol_version, filename, use_legacy_decrypt_rsa);
 
-// advanced usage
+// with custom params
 l2encdec::Params params{};
 l2encdec::init_params(params, protocol_version, filename, use_legacy_decrypt_rsa);
 params.tail = "000000000000000000000000deadbeef00000000";
 l2encdec::decode(input, output, params);
-// ...
 l2encdec::encode(input, output, params);
 ```
 
