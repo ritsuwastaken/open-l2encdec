@@ -37,7 +37,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE l2encdec)
 int main()
 {
     const auto filename = "l2_skilltime";
-    std::ifstream file("l2_skilltime.dat", std::ios::binary);
+    std::ifstream file("l2_skilltime.utx", std::ios::binary);
     if (!file) return 1;
     const std::vector<unsigned char> input(std::istreambuf_iterator<char>{file}, {});
     std::vector<unsigned char> decoded, encoded;
