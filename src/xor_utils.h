@@ -1,18 +1,21 @@
 #ifndef XOR_UTILS_H
 #define XOR_UTILS_H
 
-#include <functional>
+#include <cstddef>
+#include <optional>
 #include <string>
 #include <vector>
 
 namespace xor_utils
 {
-using KeyGenerator = std::function<int(int)>;
+struct Params
+{
+    int key = 0;
+    std::string filename;
+    std::optional<int> start_position;
+};
 
-size_t apply(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int xor_key);
-size_t apply(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, int start_index, KeyGenerator key_generator);
-int get_key_by_index(int index);
-int get_key_by_filename(std::string filename);
+size_t apply(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &params);
 } // namespace xor_utils
 
 #endif // XOR_UTILS_H

@@ -1,45 +1,49 @@
 #include "xor_utils.h"
 #include <gtest/gtest.h>
-#include <string>
 #include <vector>
 
-TEST(XORBasic, KeyByIndexZero)
+struct XORCase
 {
-    EXPECT_EQ(xor_utils::get_key_by_index(0), 0);
-}
+    xor_utils::Params params;
+    std::vector<unsigned char> expected;
+};
 
-TEST(XORBasic, KeyByFilenameCaseInsensitive)
+class XORApply : public testing::TestWithParam<XORCase>
 {
-    int k1 = xor_utils::get_key_by_filename("TeSt.TXT");
-    int k2 = xor_utils::get_key_by_filename("test.txt");
-    EXPECT_EQ(k1, k2);
-}
+};
 
-TEST(XOREncryptDecrypt, SymmetricSingleKey)
+TEST_P(XORApply, KnownBytesAndRoundTrip)
 {
-    std::vector<unsigned char> input = {'h', 'e', 'l', 'l', 'o'};
+    const std::vector<unsigned char> input = {0, 1, 2, 3, 255};
+    const auto &test = GetParam();
     std::vector<unsigned char> enc, dec;
-    int key = 0x5A;
 
-    xor_utils::apply(input, enc, key);
-    ASSERT_EQ(enc.size(), input.size());
-
-    xor_utils::apply(enc, dec, key);
+    EXPECT_EQ(xor_utils::apply(input, enc, test.params), input.size());
+    EXPECT_EQ(enc, test.expected);
+    EXPECT_EQ(xor_utils::apply(enc, dec, test.params), input.size());
     EXPECT_EQ(dec, input);
 }
 
-TEST(XOREncryptDecrypt, SymmetricKeyGenerator)
+TEST_P(XORApply, InPlace)
 {
-    std::vector<unsigned char> input = {1, 2, 3, 4, 5};
-    std::vector<unsigned char> enc, dec;
-    int start_index = 10;
-
-    xor_utils::KeyGenerator kg = [](int idx)
-    { return idx & 0xFF; };
-
-    xor_utils::apply(input, enc, start_index, kg);
-    ASSERT_EQ(enc.size(), input.size());
-
-    xor_utils::apply(enc, dec, start_index, kg);
-    EXPECT_EQ(dec, input);
+    std::vector<unsigned char> data = {0, 1, 2, 3, 255};
+    EXPECT_EQ(xor_utils::apply(data, data, GetParam().params), data.size());
+    EXPECT_EQ(data, GetParam().expected);
 }
+
+TEST_P(XORApply, EmptyInputClearsOutput)
+{
+    std::vector<unsigned char> output = {1, 2, 3};
+    EXPECT_EQ(xor_utils::apply({}, output, GetParam().params), 0);
+    EXPECT_TRUE(output.empty());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    Modes, XORApply,
+    testing::Values(
+        XORCase{{.start_position = 0}, {0, 0, 0, 0, 251}},
+        XORCase{{.key = 0}, {0, 1, 2, 3, 255}},
+        XORCase{{.key = 0x15A}, {0x5A, 0x5B, 0x58, 0x59, 0xA5}},
+        XORCase{{.filename = "test.txt"}, {0x4E, 0x4F, 0x4C, 0x4D, 0xB1}},
+        XORCase{{.filename = "TeSt.TXT"}, {0x4E, 0x4F, 0x4C, 0x4D, 0xB1}},
+        XORCase{{.start_position = 0xFE}, {0xFE, 0xFE, 0x03, 0x03, 0xFC}}));

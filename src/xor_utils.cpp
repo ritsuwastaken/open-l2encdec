@@ -1,7 +1,10 @@
 #include "xor_utils.h"
 #include <algorithm>
+#include <cctype>
 
-int xor_utils::get_key_by_index(int index)
+namespace
+{
+int get_key_by_index(int index)
 {
     int d1 = index & 0xf;
     int d2 = (index >> 4) & 0xf;
@@ -10,7 +13,7 @@ int xor_utils::get_key_by_index(int index)
     return ((d2 ^ d4) << 4) | (d1 ^ d3);
 }
 
-int xor_utils::get_key_by_filename(std::string filename)
+int get_key_by_filename(std::string filename)
 {
     std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
     int acc = 0;
@@ -18,30 +21,23 @@ int xor_utils::get_key_by_filename(std::string filename)
         acc += static_cast<int>(c);
     return acc & 0xff;
 }
+} // namespace
 
 size_t xor_utils::apply(const std::vector<unsigned char> &input,
                         std::vector<unsigned char> &output,
-                        int xor_key)
+                        const Params &params)
 {
-    unsigned char key = static_cast<unsigned char>(xor_key);
-
     output = input;
+    if (params.start_position.has_value())
+    {
+        int index = *params.start_position;
+        for (auto &byte : output)
+            byte ^= static_cast<unsigned char>(get_key_by_index(index++));
+        return output.size();
+    }
+
+    int key = params.filename.empty() ? params.key : get_key_by_filename(params.filename);
     for (auto &byte : output)
-        byte ^= key;
-
-    return output.size();
-}
-
-size_t xor_utils::apply(const std::vector<unsigned char> &input,
-                        std::vector<unsigned char> &output,
-                        int start_index,
-                        KeyGenerator key_generator)
-{
-    int ind = start_index;
-
-    output = input;
-    for (auto &byte : output)
-        byte ^= static_cast<unsigned char>(key_generator(ind++));
-
+        byte ^= static_cast<unsigned char>(key);
     return output.size();
 }

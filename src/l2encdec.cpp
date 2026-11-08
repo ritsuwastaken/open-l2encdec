@@ -88,13 +88,13 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     switch (p.type)
     {
     case Type::XOR:
-        xor_utils::apply(input, enc, p.xor_key);
+        xor_utils::apply(input, enc, {.key = p.xor_key});
         break;
     case Type::XOR_FILENAME:
-        xor_utils::apply(input, enc, xor_utils::get_key_by_filename(p.filename));
+        xor_utils::apply(input, enc, {.filename = p.filename});
         break;
     case Type::XOR_POSITION:
-        xor_utils::apply(input, enc, p.xor_start_position, xor_utils::get_key_by_index);
+        xor_utils::apply(input, enc, {.start_position = p.xor_start_position});
         break;
     case Type::BLOWFISH:
         if (blowfish::encrypt(input, enc, p.blowfish_key) != input.size())
@@ -152,13 +152,13 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     switch (p.type)
     {
     case Type::XOR:
-        xor_utils::apply(data, dec, p.xor_key);
-        break;
-    case Type::XOR_POSITION:
-        xor_utils::apply(data, dec, p.xor_start_position, xor_utils::get_key_by_index);
+        xor_utils::apply(data, dec, {.key = p.xor_key});
         break;
     case Type::XOR_FILENAME:
-        xor_utils::apply(data, dec, xor_utils::get_key_by_filename(p.filename));
+        xor_utils::apply(data, dec, {.filename = p.filename});
+        break;
+    case Type::XOR_POSITION:
+        xor_utils::apply(data, dec, {.start_position = p.xor_start_position});
         break;
     case Type::BLOWFISH:
         if (blowfish::decrypt(data, dec, p.blowfish_key) != data.size())
