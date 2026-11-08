@@ -11,15 +11,13 @@ option(L2ENCDEC_BUILD_TESTS "Build tests" ${PROJECT_IS_TOP_LEVEL})
 fetchcontent_declare(
     libtomcrypt
     GIT_REPOSITORY https://github.com/libtom/libtomcrypt.git
-    GIT_TAG develop
-    GIT_SHALLOW TRUE
+    GIT_TAG 6c6d5104de66f3ca0dfd7b68540ef86869982b07
     EXCLUDE_FROM_ALL
 )
 fetchcontent_declare(
     libtommath
     GIT_REPOSITORY https://github.com/libtom/libtommath.git
-    GIT_TAG develop
-    GIT_SHALLOW TRUE
+    GIT_TAG ae40a87a920099a7d9d00979570e0c8d917a1fd7
     EXCLUDE_FROM_ALL
 )
 fetchcontent_declare(
@@ -29,9 +27,13 @@ fetchcontent_declare(
     GIT_SHALLOW TRUE
     EXCLUDE_FROM_ALL
 )
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE) # libtomcrypt, libtommath, zlibng
-set(WITH_LTM OFF CACHE BOOL "" FORCE) # libtomcrypt
-fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
+block()
+    set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # libtommath
+    set(BUILD_SHARED_LIBS OFF)
+    set(BUILD_TESTING OFF) # libtomcrypt, libtommath, zlibng
+    set(WITH_LTM OFF) # libtomcrypt
+    fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
+endblock()
 
 set_target_properties(libtomcrypt libtommath zlib-ng PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
