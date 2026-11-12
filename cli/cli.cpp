@@ -14,12 +14,14 @@
 std::map<l2encdec::EncodeResult, const char *> ENCODE_ERRORS = {
     {l2encdec::EncodeResult::INVALID_TYPE, "Invalid protocol"},
     {l2encdec::EncodeResult::COMPRESSION_FAILED, "Failed to compress file"},
-    {l2encdec::EncodeResult::ENCRYPTION_FAILED, "Failed to encrypt file"}};
+    {l2encdec::EncodeResult::ENCRYPTION_FAILED, "Failed to encrypt file"},
+    {l2encdec::EncodeResult::CANCELLED, "Cancelled"}};
 
 std::map<l2encdec::DecodeResult, const char *> DECODE_ERRORS = {
     {l2encdec::DecodeResult::INVALID_TYPE, "Invalid protocol"},
     {l2encdec::DecodeResult::DECOMPRESSION_FAILED, "Failed to decompress file"},
-    {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"}};
+    {l2encdec::DecodeResult::DECRYPTION_FAILED, "Failed to decrypt file"},
+    {l2encdec::DecodeResult::CANCELLED, "Cancelled"}};
 
 std::map<l2encdec::ChecksumResult, const char *> CHECKSUM_ERRORS = {
     {l2encdec::ChecksumResult::MISMATCH, "Checksum mismatch"}};

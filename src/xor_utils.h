@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -15,7 +16,7 @@ struct Params
     std::optional<int> start_position;
 };
 
-size_t apply(const std::vector<unsigned char> &input, std::vector<unsigned char> &output, const Params &params);
+size_t apply(std::span<const unsigned char> input, std::vector<unsigned char> &output, const Params &params);
 } // namespace xor_utils
 
 #endif // XOR_UTILS_H

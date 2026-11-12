@@ -10,7 +10,7 @@ constexpr size_t BLOWFISH_MIN_KEY = 8;
 constexpr size_t BLOWFISH_MAX_KEY = 56;
 
 template <int (*Func)(const unsigned char *, unsigned char *, const symmetric_key *)>
-size_t process(const std::vector<unsigned char> &input_data,
+size_t process(std::span<const unsigned char> input_data,
                std::vector<unsigned char> &output_data,
                std::string key)
 {
@@ -35,7 +35,7 @@ size_t process(const std::vector<unsigned char> &input_data,
         return size_t(-1);
     }
 
-    output_data = input_data;
+    output_data.assign(input_data.begin(), input_data.end());
     size_t full_blocks = input_data.size() / BLOWFISH_BLOCK;
     for (size_t i = 0; i < full_blocks * BLOWFISH_BLOCK; i += BLOWFISH_BLOCK)
     {
@@ -58,14 +58,14 @@ size_t process(const std::vector<unsigned char> &input_data,
 }
 } // namespace
 
-size_t blowfish::encrypt(const std::vector<unsigned char> &input_data,
+size_t blowfish::encrypt(std::span<const unsigned char> input_data,
                          std::vector<unsigned char> &output_data,
                          std::string key)
 {
     return process<&blowfish_ecb_encrypt>(input_data, output_data, key);
 }
 
-size_t blowfish::decrypt(const std::vector<unsigned char> &input_data,
+size_t blowfish::decrypt(std::span<const unsigned char> input_data,
                          std::vector<unsigned char> &output_data,
                          std::string key)
 {

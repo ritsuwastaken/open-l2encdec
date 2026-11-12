@@ -39,12 +39,12 @@ TEST(RSAEncryptDecrypt, EncryptDecryptRoundTrip)
 TEST(RSAEncryptDecrypt, PadsSmallResultsToFullBlock)
 {
     std::vector<unsigned char> encrypted;
-    ASSERT_EQ(rsa::encrypt({'A'}, encrypted, "101", "1"), 0);
+    ASSERT_EQ(rsa::encrypt(std::vector<unsigned char>{'A'}, encrypted, "101", "1"), 0);
     std::vector<unsigned char> expected(128, 0);
     expected.back() = 193;
     EXPECT_EQ(encrypted, expected);
 
-    ASSERT_EQ(rsa::encrypt({'A'}, encrypted, "1", "1"), 0);
+    ASSERT_EQ(rsa::encrypt(std::vector<unsigned char>{'A'}, encrypted, "1", "1"), 0);
     EXPECT_EQ(encrypted, std::vector<unsigned char>(128, 0));
 }
 
@@ -59,7 +59,7 @@ TEST(RSAEncryptDecrypt, RejectsInvalidKeys)
     {
         SCOPED_TRACE(c.modulus + "/" + c.exponent);
         std::vector<unsigned char> output;
-        EXPECT_NE(rsa::encrypt({'A'}, output, c.modulus, c.exponent), 0);
+        EXPECT_NE(rsa::encrypt(std::vector<unsigned char>{'A'}, output, c.modulus, c.exponent), 0);
         EXPECT_NE(rsa::decrypt(std::vector<unsigned char>(128), output, c.modulus, c.exponent), 0);
     }
 }
