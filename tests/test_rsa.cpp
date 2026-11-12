@@ -88,3 +88,11 @@ TEST(RSAEncryptDecrypt, EmptyCiphertextStillValidatesKeys)
     EXPECT_EQ(rsa::decrypt({}, output, "101", "1"), 0);
     EXPECT_TRUE(output.empty());
 }
+
+TEST(RSAEncryptDecrypt, DecryptRejectsBlockNotBelowModulus)
+{
+    l2encdec::Params params{};
+    ASSERT_TRUE(l2encdec::init_params(params, 413));
+    std::vector<unsigned char> block(128, 0xFF), dec;
+    EXPECT_NE(rsa::decrypt(block, dec, params.rsa_modulus, params.rsa_private_exponent), 0);
+}
