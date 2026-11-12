@@ -66,12 +66,6 @@ struct Params
     std::string rsa_private_exponent; // for l2encdec::Type::RSA, decrypt
 };
 
-/**
- * @brief Progress callback for `encode`/`decode; RSA only`.
- * @param done work units finished so far
- * @param total total for units for call
- * @return `false` to cancel
- */
 using ProgressCallback = std::function<bool(std::size_t done, std::size_t total)>;
 
 /**
