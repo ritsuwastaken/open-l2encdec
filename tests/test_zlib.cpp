@@ -1,4 +1,5 @@
 #include "zlib_utils.h"
+#include <cstring>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
@@ -87,4 +88,13 @@ TEST(ZlibUtils, ChecksumUsesOnlyTheRequestedSlice)
 {
     const std::vector<unsigned char> input{'?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!'};
     EXPECT_EQ(zlib_utils::checksum(std::span(input).subspan(1, 9)), 0xcbf43926u);
+}
+
+TEST(ZlibUtils, RejectsForgedOversizedLength)
+{
+    std::vector<unsigned char> input(1000, 'a'), packed, unpacked;
+    ASSERT_EQ(zlib_utils::pack(input, packed), 0);
+    uint32_t forged = static_cast<uint32_t>((packed.size() - 4) * 1000);
+    std::memcpy(packed.data(), &forged, sizeof(forged));
+    EXPECT_NE(zlib_utils::unpack(packed, unpacked), 0);
 }
