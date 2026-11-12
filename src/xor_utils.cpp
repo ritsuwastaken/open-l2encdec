@@ -26,11 +26,11 @@ int get_key_by_filename(const std::string &filename)
 }
 } // namespace
 
-size_t xor_utils::apply(const std::vector<unsigned char> &input,
+size_t xor_utils::apply(std::span<const unsigned char> input,
                         std::vector<unsigned char> &output,
                         const Params &params)
 {
-    output = input;
+    output.assign(input.begin(), input.end());
     if (params.start_position.has_value())
     {
         auto index = static_cast<uint32_t>(*params.start_position);

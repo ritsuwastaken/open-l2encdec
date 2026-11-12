@@ -60,7 +60,7 @@ L2ENCDEC_API bool l2encdec::init_params(
     return true;
 }
 
-L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vector<unsigned char> &input)
+L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(std::span<const unsigned char> input)
 {
     if (input.size() < TAIL_SIZE)
         return ChecksumResult::MISMATCH;
@@ -71,15 +71,16 @@ L2ENCDEC_API l2encdec::ChecksumResult l2encdec::verify_checksum(const std::vecto
         input.data() + input.size() - TAIL_SIZE + TAIL_CRC32_OFFSET,
         sizeof(uint32_t));
 
-    return zlib_utils::checksum(std::span(input).first(input.size() - TAIL_SIZE)) == checksum
+    return zlib_utils::checksum(input.first(input.size() - TAIL_SIZE)) == checksum
                ? ChecksumResult::SUCCESS
                : ChecksumResult::MISMATCH;
 }
 
 L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
-    const std::vector<unsigned char> &input,
+    std::span<const unsigned char> input,
     std::vector<unsigned char> &output,
-    const Params &p)
+    const Params &p,
+    const ProgressCallback &progress)
 {
     if (!p.skip_header && p.header.empty() && (p.protocol <= 99 || p.protocol > 999))
         return EncodeResult::INVALID_TYPE;
@@ -105,12 +106,12 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
         std::vector<unsigned char> compressed;
         if (zlib_utils::pack(input, compressed) != 0)
             return EncodeResult::COMPRESSION_FAILED;
-        if (rsa::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent) != 0)
-            return EncodeResult::ENCRYPTION_FAILED;
+        if (const int rc = rsa::encrypt(compressed, enc, p.rsa_modulus, p.rsa_public_exponent, progress); rc != 0)
+            return rc == rsa::CANCELLED ? EncodeResult::CANCELLED : EncodeResult::ENCRYPTION_FAILED;
         break;
     }
     default:
-        enc = input;
+        enc.assign(input.begin(), input.end());
         break;
     }
 
@@ -136,9 +137,10 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
 }
 
 L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
-    const std::vector<unsigned char> &input,
+    std::span<const unsigned char> input,
     std::vector<unsigned char> &output,
-    const Params &p)
+    const Params &p,
+    const ProgressCallback &progress)
 {
     size_t header_size = p.skip_header ? 0 : !p.header.empty() ? p.header.size() * 2
                                                                : HEADER_SIZE;
@@ -147,7 +149,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     if (input.size() < header_size + tail_size)
         return DecodeResult::INVALID_TYPE;
 
-    std::vector<unsigned char> data(input.begin() + header_size, input.end() - tail_size);
+    const auto data = input.subspan(header_size, input.size() - header_size - tail_size);
     std::vector<unsigned char> dec;
     switch (p.type)
     {
@@ -167,14 +169,14 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
     case Type::RSA:
     {
         std::vector<unsigned char> compressed;
-        if (rsa::decrypt(data, compressed, p.rsa_modulus, p.rsa_private_exponent) != 0)
-            return DecodeResult::DECRYPTION_FAILED;
+        if (const int rc = rsa::decrypt(data, compressed, p.rsa_modulus, p.rsa_private_exponent, progress); rc != 0)
+            return rc == rsa::CANCELLED ? DecodeResult::CANCELLED : DecodeResult::DECRYPTION_FAILED;
         if (zlib_utils::unpack(compressed, dec) != 0)
             return DecodeResult::DECOMPRESSION_FAILED;
         break;
     }
     default:
-        dec = std::move(data);
+        dec.assign(data.begin(), data.end());
         break;
     }
 
@@ -183,7 +185,7 @@ L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
 }
 
 L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
-    const std::vector<unsigned char> &input,
+    std::span<const unsigned char> input,
     std::vector<unsigned char> &output,
     int protocol,
     const std::string &filename,
@@ -198,7 +200,7 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
 }
 
 L2ENCDEC_API l2encdec::DecodeResult l2encdec::decode(
-    const std::vector<unsigned char> &input,
+    std::span<const unsigned char> input,
     std::vector<unsigned char> &output,
     int protocol,
     const std::string &filename,

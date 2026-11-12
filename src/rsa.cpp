@@ -1,6 +1,7 @@
 #include "rsa.h"
 #include <algorithm>
 #include <atomic>
+#include <mutex>
 #include <system_error>
 #include <thread>
 #include <tommath.h>
@@ -49,11 +50,12 @@ void store_first_error(std::atomic<int> &err, int rc)
     err.compare_exchange_strong(expected, rc);
 }
 
-int transform_blocks(const std::vector<unsigned char> &input,
+int transform_blocks(std::span<const unsigned char> input,
                      std::vector<unsigned char> &output,
                      const std::string &modulus_hex,
                      const std::string &exponent_hex,
-                     bool reject_unreduced_blocks)
+                     bool reject_unreduced_blocks,
+                     const rsa::Progress &progress)
 {
     Mpi modulus, exponent;
     if (mpi_read_hex(modulus, modulus_hex) != MP_OKAY ||
@@ -65,13 +67,34 @@ int transform_blocks(const std::vector<unsigned char> &input,
     if (input.empty()) return 0;
 
     const size_t total_blocks = input.size() / BLOCK_SIZE;
+    if (progress && !progress(0, total_blocks))
+        return rsa::CANCELLED;
+
     std::atomic<size_t> next_block{0};
+    std::atomic<size_t> completed{0};
     std::atomic<int> error{0};
+    std::mutex progress_mutex;
+
+    auto report = [&]()
+    {
+        if (!progress || !progress_mutex.try_lock()) return;
+        std::lock_guard lock(progress_mutex, std::adopt_lock);
+        if (error.load() == 0 && !progress(completed.load(), total_blocks))
+            store_first_error(error, rsa::CANCELLED);
+    };
     auto worker = [&]()
     {
         Mpi block, result;
-        if (block.status != MP_OKAY) { store_first_error(error, block.status); return; }
-        if (result.status != MP_OKAY) { store_first_error(error, result.status); return; }
+        if (block.status != MP_OKAY)
+        {
+            store_first_error(error, block.status);
+            return;
+        }
+        if (result.status != MP_OKAY)
+        {
+            store_first_error(error, result.status);
+            return;
+        }
         std::vector<unsigned char> buffer(BLOCK_SIZE);
 
         while (error.load() == 0)
@@ -86,8 +109,14 @@ int transform_blocks(const std::vector<unsigned char> &input,
                 rc = mp_exptmod(&block.v, &exponent.v, &modulus.v, &result.v);
             if (rc == MP_OKAY)
                 rc = mpi_write_block(result.v, buffer);
-            if (rc != MP_OKAY) { store_first_error(error, rc); return; }
+            if (rc != MP_OKAY)
+            {
+                store_first_error(error, rc);
+                return;
+            }
             std::copy(buffer.begin(), buffer.end(), output.begin() + offset);
+            completed.fetch_add(1);
+            report();
         }
     };
 
@@ -107,11 +136,13 @@ int transform_blocks(const std::vector<unsigned char> &input,
         }
         worker();
     }
+    if (progress && error.load() == 0)
+        progress(total_blocks, total_blocks);
     return error.load();
 }
 } // namespace
 
-size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
+size_t rsa::add_padding(std::vector<uint8_t> &output, std::span<const uint8_t> input)
 {
     size_t input_offset = 0;
     size_t num_blocks = (input.size() + BLOCK_BODY_SIZE - 1) / BLOCK_BODY_SIZE;
@@ -131,7 +162,7 @@ size_t rsa::add_padding(std::vector<uint8_t> &output, const std::vector<uint8_t>
     return output.size();
 }
 
-size_t rsa::remove_padding(std::vector<uint8_t> &output, const std::vector<uint8_t> &input)
+size_t rsa::remove_padding(std::vector<uint8_t> &output, std::span<const uint8_t> input)
 {
     output.clear();
 
@@ -148,26 +179,28 @@ size_t rsa::remove_padding(std::vector<uint8_t> &output, const std::vector<uint8
     return output.size();
 }
 
-int rsa::encrypt(const std::vector<unsigned char> &input_data,
+int rsa::encrypt(std::span<const unsigned char> input_data,
                  std::vector<unsigned char> &output_data,
                  const std::string &modulus_hex,
-                 const std::string &public_exp_hex)
+                 const std::string &public_exp_hex,
+                 const Progress &progress)
 {
     std::vector<unsigned char> padded;
     if (add_padding(padded, input_data) == 0) return -1;
-    const int rc = transform_blocks(padded, output_data, modulus_hex, public_exp_hex, false);
+    const int rc = transform_blocks(padded, output_data, modulus_hex, public_exp_hex, false, progress);
     if (rc != MP_OKAY) output_data.clear();
     return rc;
 }
 
-int rsa::decrypt(const std::vector<unsigned char> &input_data,
+int rsa::decrypt(std::span<const unsigned char> input_data,
                  std::vector<unsigned char> &output_data,
                  const std::string &modulus_hex,
-                 const std::string &private_exp_hex)
+                 const std::string &private_exp_hex,
+                 const Progress &progress)
 {
     if (input_data.size() % BLOCK_SIZE != 0) return -1;
     std::vector<unsigned char> decrypted;
-    const int rc = transform_blocks(input_data, decrypted, modulus_hex, private_exp_hex, true);
+    const int rc = transform_blocks(input_data, decrypted, modulus_hex, private_exp_hex, true, progress);
     if (rc != MP_OKAY) return rc;
     remove_padding(output_data, decrypted);
     return 0;

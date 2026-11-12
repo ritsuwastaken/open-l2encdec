@@ -9,7 +9,7 @@ constexpr size_t COMPRESSED_HEADER_SIZE = 4;
 constexpr uint64_t MAX_DEFLATE_RATIO = 1032;
 } // namespace
 
-int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
+int zlib_utils::unpack(std::span<const unsigned char> input_buffer, std::vector<unsigned char> &output_buffer)
 {
     if (input_buffer.size() < COMPRESSED_HEADER_SIZE)
         return -1;
@@ -34,7 +34,7 @@ int zlib_utils::unpack(const std::vector<unsigned char> &input_buffer, std::vect
     return 0;
 }
 
-int zlib_utils::pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer)
+int zlib_utils::pack(std::span<const unsigned char> input_buffer, std::vector<unsigned char> &output_buffer)
 {
     if (input_buffer.size() > std::numeric_limits<uint32_t>::max())
         return -1;

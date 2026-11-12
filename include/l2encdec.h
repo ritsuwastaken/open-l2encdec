@@ -5,6 +5,9 @@
 #define L2ENCDEC_API
 #endif
 
+#include <cstddef>
+#include <functional>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -34,6 +37,7 @@ enum class DecodeResult
     INVALID_TYPE = -1,
     DECOMPRESSION_FAILED = -2,
     DECRYPTION_FAILED = -3,
+    CANCELLED = -4,
 };
 
 enum class EncodeResult
@@ -42,6 +46,7 @@ enum class EncodeResult
     INVALID_TYPE = -1,
     COMPRESSION_FAILED = -2,
     ENCRYPTION_FAILED = -3,
+    CANCELLED = -4,
 };
 
 struct Params
@@ -61,6 +66,8 @@ struct Params
     std::string rsa_private_exponent; // for l2encdec::Type::RSA, decrypt
 };
 
+using ProgressCallback = std::function<bool(std::size_t done, std::size_t total)>;
+
 /**
  * @brief Initialize default parameters for the specified protocol.
  * @param params Struct to populate with parameters
@@ -76,26 +83,28 @@ L2ENCDEC_API bool init_params(Params &params, int protocol, const std::string &f
 /**
  * @brief Verify the checksum of the input data.
  */
-L2ENCDEC_API ChecksumResult verify_checksum(const std::vector<unsigned char> &input_data);
+L2ENCDEC_API ChecksumResult verify_checksum(std::span<const unsigned char> input_data);
 
 /**
  * @brief Encode the input data using params.
  */
-L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input_data,
+L2ENCDEC_API EncodeResult encode(std::span<const unsigned char> input_data,
                                  std::vector<unsigned char> &output_data,
-                                 const Params &params);
+                                 const Params &params,
+                                 const ProgressCallback &progress = {});
 
 /**
  * @brief Decode the input data using params.
  */
-L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input_data,
+L2ENCDEC_API DecodeResult decode(std::span<const unsigned char> input_data,
                                  std::vector<unsigned char> &output_data,
-                                 const Params &params);
+                                 const Params &params,
+                                 const ProgressCallback &progress = {});
 
 /**
  * @brief Decode input data using protocol-derived parameters.
  */
-L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
+L2ENCDEC_API DecodeResult decode(std::span<const unsigned char> input,
                                  std::vector<unsigned char> &output,
                                  int protocol,
                                  const std::string &filename = "", // only needed for protocol 121
@@ -105,7 +114,7 @@ L2ENCDEC_API DecodeResult decode(const std::vector<unsigned char> &input,
  * @brief Encode input data using protocol-derived parameters.
  * @param use_legacy_decrypt_rsa Ignored for encryption; modern RSA parameters are always used for 411-414.
  */
-L2ENCDEC_API EncodeResult encode(const std::vector<unsigned char> &input,
+L2ENCDEC_API EncodeResult encode(std::span<const unsigned char> input,
                                  std::vector<unsigned char> &output,
                                  int protocol,
                                  const std::string &filename = "", // only used for protocol 121

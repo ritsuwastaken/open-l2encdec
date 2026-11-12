@@ -7,8 +7,8 @@
 
 namespace zlib_utils
 {
-int unpack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer);
-int pack(const std::vector<unsigned char> &input_buffer, std::vector<unsigned char> &output_buffer);
+int unpack(std::span<const unsigned char> input_buffer, std::vector<unsigned char> &output_buffer);
+int pack(std::span<const unsigned char> input_buffer, std::vector<unsigned char> &output_buffer);
 uint32_t checksum(std::span<const unsigned char> buffer, uint32_t checksum = 0);
 } // namespace zlib_utils
 
