@@ -1,6 +1,7 @@
 #include "rsa.h"
 #include <algorithm>
 #include <atomic>
+#include <system_error>
 #include <thread>
 #include <tommath.h>
 
@@ -51,7 +52,8 @@ void store_first_error(std::atomic<int> &err, int rc)
 int transform_blocks(const std::vector<unsigned char> &input,
                      std::vector<unsigned char> &output,
                      const std::string &modulus_hex,
-                     const std::string &exponent_hex)
+                     const std::string &exponent_hex,
+                     bool reject_unreduced_blocks)
 {
     Mpi modulus, exponent;
     if (mpi_read_hex(modulus, modulus_hex) != MP_OKAY ||
@@ -78,6 +80,8 @@ int transform_blocks(const std::vector<unsigned char> &input,
             if (i >= total_blocks) break;
             const size_t offset = i * BLOCK_SIZE;
             int rc = mp_from_ubin(&block.v, input.data() + offset, BLOCK_SIZE);
+            if (rc == MP_OKAY && reject_unreduced_blocks && mp_cmp(&block.v, &modulus.v) != MP_LT)
+                rc = MP_VAL;
             if (rc == MP_OKAY)
                 rc = mp_exptmod(&block.v, &exponent.v, &modulus.v, &result.v);
             if (rc == MP_OKAY)
@@ -92,8 +96,15 @@ int transform_blocks(const std::vector<unsigned char> &input,
     {
         std::vector<std::jthread> threads;
         threads.reserve(num_threads - 1);
-        for (size_t i = 1; i < num_threads; ++i)
-            threads.emplace_back(worker);
+        try
+        {
+            for (size_t i = 1; i < num_threads; ++i)
+                threads.emplace_back(worker);
+        }
+        catch (const std::system_error &)
+        {
+            // ignore
+        }
         worker();
     }
     return error.load();
@@ -144,7 +155,7 @@ int rsa::encrypt(const std::vector<unsigned char> &input_data,
 {
     std::vector<unsigned char> padded;
     if (add_padding(padded, input_data) == 0) return -1;
-    const int rc = transform_blocks(padded, output_data, modulus_hex, public_exp_hex);
+    const int rc = transform_blocks(padded, output_data, modulus_hex, public_exp_hex, false);
     if (rc != MP_OKAY) output_data.clear();
     return rc;
 }
@@ -156,7 +167,7 @@ int rsa::decrypt(const std::vector<unsigned char> &input_data,
 {
     if (input_data.size() % BLOCK_SIZE != 0) return -1;
     std::vector<unsigned char> decrypted;
-    const int rc = transform_blocks(input_data, decrypted, modulus_hex, private_exp_hex);
+    const int rc = transform_blocks(input_data, decrypted, modulus_hex, private_exp_hex, true);
     if (rc != MP_OKAY) return rc;
     remove_padding(output_data, decrypted);
     return 0;
