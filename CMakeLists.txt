@@ -32,6 +32,9 @@ block()
     set(BUILD_SHARED_LIBS OFF)
     set(BUILD_TESTING OFF) # libtomcrypt, libtommath, zlibng
     set(WITH_LTM OFF) # libtomcrypt
+    set(CMAKE_C_VISIBILITY_PRESET hidden)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
     fetchcontent_makeavailable(libtomcrypt libtommath zlibng)
 endblock()
 
