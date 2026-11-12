@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <l2encdec.h>
 
@@ -50,11 +51,15 @@ TEST(L2EncodeDecode, XORFilename)
 
 TEST(L2EncodeDecode, Blowfish)
 {
-    auto input = make_input();
+    std::vector<unsigned char> input = {'B', 'L', 'O', 'W', 'F', 'I', 'S', 'H',
+                                        'T', 'E', 'S', 'T', 'D', 'A', 'T', 'A', '!'};
     std::vector<unsigned char> enc, dec;
 
     ASSERT_EQ(l2encdec::encode(input, enc, 211, "", false),
               l2encdec::EncodeResult::SUCCESS);
+
+    ASSERT_EQ(enc.size(), 28 + input.size() + 20);
+    EXPECT_FALSE(std::equal(input.begin(), input.begin() + 16, enc.begin() + 28));
 
     ASSERT_EQ(l2encdec::decode(enc, dec, 211, "", false),
               l2encdec::DecodeResult::SUCCESS);
@@ -128,4 +133,33 @@ TEST(L2DecodeFail, TooSmallInput)
 
     EXPECT_EQ(l2encdec::decode(input, out, 111, "", false),
               l2encdec::DecodeResult::INVALID_TYPE);
+}
+
+TEST(L2Encode, LegacyRsaFlagIgnoredOnEncode)
+{
+    auto input = make_input();
+    std::vector<unsigned char> enc, dec;
+    ASSERT_EQ(l2encdec::encode(input, enc, 413, "", true), l2encdec::EncodeResult::SUCCESS);
+    ASSERT_EQ(l2encdec::decode(enc, dec, 413), l2encdec::DecodeResult::SUCCESS);
+    EXPECT_EQ(dec, input);
+}
+
+TEST(L2EncodeDecode, ChecksumOfEncodedOutputVerifies)
+{
+    auto input = make_input();
+    std::vector<unsigned char> enc;
+    for (int protocol : {111, 120, 211, 413})
+    {
+        ASSERT_EQ(l2encdec::encode(input, enc, protocol), l2encdec::EncodeResult::SUCCESS);
+        EXPECT_EQ(l2encdec::verify_checksum(enc), l2encdec::ChecksumResult::SUCCESS) << protocol;
+    }
+}
+
+TEST(L2Params, DefaultsAreInitialized)
+{
+    l2encdec::Params params;
+    EXPECT_EQ(params.type, l2encdec::Type::NONE);
+    EXPECT_EQ(params.protocol, 0);
+    EXPECT_EQ(params.xor_key, 0);
+    EXPECT_EQ(params.xor_start_position, 0);
 }

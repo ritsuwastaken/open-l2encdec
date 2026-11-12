@@ -189,8 +189,9 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
     const std::string &filename,
     bool use_legacy_decrypt_rsa)
 {
+    (void)use_legacy_decrypt_rsa; // ignore
     l2encdec::Params p{};
-    if (!l2encdec::init_params(p, protocol, filename, use_legacy_decrypt_rsa))
+    if (!l2encdec::init_params(p, protocol, filename, false))
         return EncodeResult::INVALID_TYPE;
 
     return l2encdec::encode(input, output, p);

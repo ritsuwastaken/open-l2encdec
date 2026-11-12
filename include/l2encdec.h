@@ -10,7 +10,7 @@
 
 namespace l2encdec
 {
-const int SUPPORTED_PROTOCOLS[] = {111, 120, 121, 211, 212, 411, 412, 413, 414};
+inline constexpr int SUPPORTED_PROTOCOLS[] = {111, 120, 121, 211, 212, 411, 412, 413, 414};
 
 enum class Type
 {
@@ -46,15 +46,15 @@ enum class EncodeResult
 
 struct Params
 {
-    Type type;
-    int protocol;                     // `encrypt`: used for header construction, required if `header` is empty
+    Type type = Type::NONE;
+    int protocol = 0;                 // `encrypt`: used for header construction, required if `header` is empty
     std::string header;               // `decrypt`: expected header, `encrypt`: header to prepend
     std::string tail;                 // `encode`: custom tail
     bool skip_tail = false;           // `decrypt`: read file without tail; `encrypt`: do not append tail
     bool skip_header = false;         // `decrypt`: ignore/prevent header handling; `encrypt`: do not prepend header
     std::string filename;             // for l2encdec::Type::XOR_FILENAME
-    int xor_key;                      // for l2encdec::Type::XOR
-    int xor_start_position;           // for l2encdec::Type::XOR_POSITION
+    int xor_key = 0;                  // for l2encdec::Type::XOR
+    int xor_start_position = 0;       // for l2encdec::Type::XOR_POSITION
     std::string blowfish_key;         // for l2encdec::Type::BLOWFISH
     std::string rsa_modulus;          // for l2encdec::Type::RSA
     std::string rsa_public_exponent;  // for l2encdec::Type::RSA, encrypt
