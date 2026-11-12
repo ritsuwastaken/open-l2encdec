@@ -1,10 +1,9 @@
 #include "xor_utils.h"
-#include <algorithm>
-#include <cctype>
+#include <cstdint>
 
 namespace
 {
-int get_key_by_index(int index)
+int get_key_by_index(uint32_t index)
 {
     int d1 = index & 0xf;
     int d2 = (index >> 4) & 0xf;
@@ -13,13 +12,17 @@ int get_key_by_index(int index)
     return ((d2 ^ d4) << 4) | (d1 ^ d3);
 }
 
-int get_key_by_filename(std::string filename)
+int get_key_by_filename(const std::string &filename)
 {
-    std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
-    int acc = 0;
+    unsigned acc = 0;
     for (char c : filename)
-        acc += static_cast<int>(c);
-    return acc & 0xff;
+    {
+        auto u = static_cast<unsigned char>(c);
+        if (u >= 'A' && u <= 'Z')
+            u = static_cast<unsigned char>(u - 'A' + 'a');
+        acc += u;
+    }
+    return static_cast<int>(acc & 0xff);
 }
 } // namespace
 
@@ -30,7 +33,7 @@ size_t xor_utils::apply(const std::vector<unsigned char> &input,
     output = input;
     if (params.start_position.has_value())
     {
-        int index = *params.start_position;
+        auto index = static_cast<uint32_t>(*params.start_position);
         for (auto &byte : output)
             byte ^= static_cast<unsigned char>(get_key_by_index(index++));
         return output.size();
