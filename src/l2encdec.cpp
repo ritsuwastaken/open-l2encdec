@@ -122,15 +122,16 @@ L2ENCDEC_API l2encdec::EncodeResult l2encdec::encode(
                 ? p.header
                 : std::string(HEADER_PREFIX) + std::to_string(p.protocol));
 
-    if (!p.skip_tail)
-        utils::add_tail(
+    if (!p.skip_tail &&
+        !utils::add_tail(
             enc,
             !p.tail.empty()
                 ? p.tail
                 : utils::make_tail(
                       zlib_utils::checksum(enc),
                       TAIL_CRC32_OFFSET,
-                      TAIL_SIZE));
+                      TAIL_SIZE)))
+        return EncodeResult::INVALID_TYPE;
 
     output = std::move(enc);
     return EncodeResult::SUCCESS;

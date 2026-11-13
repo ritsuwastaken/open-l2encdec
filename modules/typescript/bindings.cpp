@@ -9,54 +9,23 @@ namespace
 {
 ByteArray copyBytes(const std::vector<unsigned char> &bytes)
 {
-    return ByteArray(val::global("Uint8Array").new_(
-        val(typed_memory_view(bytes.size(), bytes.data()))));
+    return ByteArray(val::global("Uint8Array").new_(val(typed_memory_view(bytes.size(), bytes.data()))));
 }
 
-[[noreturn]] void throwJsError(const char *name, int code, const std::string &message)
+val result(int code)
 {
-    val err = val::global("Error").new_(message);
-    err.set("name", name);
-    err.set("code", code);
-    err.throw_();
+    val r = val::object();
+    r.set("code", code);
+    return r;
 }
 
-void throwEncodeError(l2encdec::EncodeResult r)
+val result(int code, const std::vector<unsigned char> &bytes)
 {
-    switch (r)
-    {
-    case l2encdec::EncodeResult::INVALID_TYPE:
-        throwJsError("EncodeError", static_cast<int>(r), "Invalid encryption type");
-    case l2encdec::EncodeResult::COMPRESSION_FAILED:
-        throwJsError("EncodeError", static_cast<int>(r), "Compression failed");
-    case l2encdec::EncodeResult::ENCRYPTION_FAILED:
-        throwJsError("EncodeError", static_cast<int>(r), "Encryption failed");
-    default:
-        throwJsError("EncodeError", static_cast<int>(r), "Unknown encode error");
-    }
+    val r = result(code);
+    if (code == 0)
+        r.set("data", copyBytes(bytes));
+    return r;
 }
-
-void throwDecodeError(l2encdec::DecodeResult r)
-{
-    switch (r)
-    {
-    case l2encdec::DecodeResult::INVALID_TYPE:
-        throwJsError("DecodeError", static_cast<int>(r), "Invalid encryption type");
-    case l2encdec::DecodeResult::DECOMPRESSION_FAILED:
-        throwJsError("DecodeError", static_cast<int>(r), "Decompression failed");
-    case l2encdec::DecodeResult::DECRYPTION_FAILED:
-        throwJsError("DecodeError", static_cast<int>(r), "Decryption failed");
-    default:
-        throwJsError("DecodeError", static_cast<int>(r), "Unknown decode error");
-    }
-}
-
-void throwChecksumError(l2encdec::ChecksumResult r)
-{
-    if (r == l2encdec::ChecksumResult::MISMATCH)
-        throwJsError("ChecksumError", static_cast<int>(r), "Checksum mismatch");
-}
-
 } // namespace
 
 EMSCRIPTEN_BINDINGS(l2encdec_bindings)
@@ -74,13 +43,15 @@ EMSCRIPTEN_BINDINGS(l2encdec_bindings)
         .value("SUCCESS", l2encdec::EncodeResult::SUCCESS)
         .value("INVALID_TYPE", l2encdec::EncodeResult::INVALID_TYPE)
         .value("COMPRESSION_FAILED", l2encdec::EncodeResult::COMPRESSION_FAILED)
-        .value("ENCRYPTION_FAILED", l2encdec::EncodeResult::ENCRYPTION_FAILED);
+        .value("ENCRYPTION_FAILED", l2encdec::EncodeResult::ENCRYPTION_FAILED)
+        .value("CANCELLED", l2encdec::EncodeResult::CANCELLED);
 
     enum_<l2encdec::DecodeResult>("DecodeResult", enum_value_type::number)
         .value("SUCCESS", l2encdec::DecodeResult::SUCCESS)
         .value("INVALID_TYPE", l2encdec::DecodeResult::INVALID_TYPE)
         .value("DECOMPRESSION_FAILED", l2encdec::DecodeResult::DECOMPRESSION_FAILED)
-        .value("DECRYPTION_FAILED", l2encdec::DecodeResult::DECRYPTION_FAILED);
+        .value("DECRYPTION_FAILED", l2encdec::DecodeResult::DECRYPTION_FAILED)
+        .value("CANCELLED", l2encdec::DecodeResult::CANCELLED);
 
     enum_<l2encdec::ChecksumResult>("ChecksumResult", enum_value_type::number)
         .value("SUCCESS", l2encdec::ChecksumResult::SUCCESS)
@@ -107,38 +78,31 @@ EMSCRIPTEN_BINDINGS(l2encdec_bindings)
                           {
             l2encdec::Params p{};
             if (!l2encdec::init_params(p, protocol, filename, legacy))
-                throwJsError("InitParamsError", -1, "Failed to initialize parameters");
-            return p; }));
+                return val::null();
+            return val(p); }));
 
     function(
         "verify_checksum",
         optional_override([](val inputJs)
                           {
-            auto input = vecFromJSArray<unsigned char>(inputJs);
-            if (auto r = l2encdec::verify_checksum(input); r != l2encdec::ChecksumResult::SUCCESS)
-                throwChecksumError(r); }));
+            auto input = convertJSArrayToNumberVector<unsigned char>(inputJs);
+            return static_cast<int>(l2encdec::verify_checksum(input)); }));
 
     function(
         "encode",
         optional_override([](val inputJs, const l2encdec::Params &p)
                           {
-            auto input = vecFromJSArray<unsigned char>(inputJs);
+            auto input = convertJSArrayToNumberVector<unsigned char>(inputJs);
             std::vector<unsigned char> out;
-
-            if (auto r = l2encdec::encode(input, out, p); r != l2encdec::EncodeResult::SUCCESS)
-                throwEncodeError(r);
-
-            return copyBytes(out); }));
+            const auto r = l2encdec::encode(input, out, p);
+            return result(static_cast<int>(r), out); }));
 
     function(
         "decode",
         optional_override([](val inputJs, const l2encdec::Params &p)
                           {
-            auto input = vecFromJSArray<unsigned char>(inputJs);
+            auto input = convertJSArrayToNumberVector<unsigned char>(inputJs);
             std::vector<unsigned char> out;
-
-            if (auto r = l2encdec::decode(input, out, p); r != l2encdec::DecodeResult::SUCCESS)
-                throwDecodeError(r);
-
-            return copyBytes(out); }));
+            const auto r = l2encdec::decode(input, out, p);
+            return result(static_cast<int>(r), out); }));
 }

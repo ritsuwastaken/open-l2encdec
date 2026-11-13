@@ -76,6 +76,8 @@
             },
             "cacheVariables": {
                 "L2ENCDEC_BUILD_CLI": "OFF",
+                "L2ENCDEC_BUILD_TESTS": "OFF",
+                "L2ENCDEC_BUILD_TS_BINDINGS": "ON",
                 "L2ENCDEC_ENABLE_THREADS": "OFF"
             }
         }

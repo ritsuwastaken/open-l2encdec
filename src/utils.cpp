@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <charconv>
 #include <cstring>
 #include <format>
 
@@ -23,18 +24,25 @@ std::string utils::make_tail(uint32_t crc, size_t crc32_offset, size_t tail_size
     return result;
 }
 
-void utils::add_tail(std::vector<unsigned char> &data, std::string_view tail)
+bool utils::add_tail(std::vector<unsigned char> &data, std::string_view tail)
 {
     std::string padded = std::string(tail);
     if (padded.size() % 2 != 0)
         padded.insert(padded.begin(), '0');
 
-    const size_t byte_count = padded.size() / 2;
-    data.reserve(data.size() + byte_count);
+    std::vector<unsigned char> bytes;
+    bytes.reserve(padded.size() / 2);
 
     for (size_t i = 0; i < padded.size(); i += 2)
     {
-        unsigned char value = static_cast<unsigned char>(std::stoi(padded.substr(i, 2), nullptr, 16));
-        data.push_back(value);
+        unsigned char value = 0;
+        const char *first = padded.data() + i;
+        auto [ptr, ec] = std::from_chars(first, first + 2, value, 16);
+        if (ec != std::errc{} || ptr != first + 2)
+            return false;
+        bytes.push_back(value);
     }
+
+    data.insert(data.end(), bytes.begin(), bytes.end());
+    return true;
 }

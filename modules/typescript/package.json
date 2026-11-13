@@ -37,7 +37,7 @@
         "directory": "modules/typescript"
     },
     "scripts": {
-        "wasm:build": "cd ../.. && cmake --preset emscripten && cmake --build --preset emscripten-build --parallel && cmake --install build_wasm --prefix modules/typescript --component typescript",
+        "wasm:build": "cd ../.. && cmake --preset emscripten && cmake --build --preset emscripten --parallel && cmake --install build/emscripten --prefix modules/typescript --component typescript",
         "ts:build": "tsc -p tsconfig.json",
         "build": "npm run wasm:build && npm run ts:build",
         "prepack": "npm run build"
