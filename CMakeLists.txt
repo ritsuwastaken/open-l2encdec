@@ -29,6 +29,9 @@ fetchcontent_declare(
     EXCLUDE_FROM_ALL
 )
 block()
+    if(EMSCRIPTEN)
+        set(WITH_RUNTIME_CPU_DETECTION OFF) # zlibng
+    endif()
     set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # libtommath
     set(BUILD_SHARED_LIBS OFF)
     set(BUILD_TESTING OFF) # libtomcrypt, libtommath, zlibng
