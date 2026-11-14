@@ -1,6 +1,6 @@
 {
     "name": "open-l2encdec",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "description": "TypeScript/JavaScript bindings for open-l2encdec",
     "type": "module",
     "bin": {
