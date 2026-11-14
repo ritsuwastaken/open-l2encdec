@@ -22,7 +22,7 @@ const decoded = codec.decode(encoded, params);
 
 ## API
 
-- `createL2EncDec(): Promise<L2EncDec>` creates an independent codec instance.
+- `createL2EncDec({ threads? }): Promise<L2EncDec>` creates an independent codec instance.
 - `codec.initParams(protocol, filename = '', useLegacyDecryptRsa = false): Params`
   returns default parameters. Protocol 121 requires the filename. Legacy RSA
   parameters for protocols 411–414 support decryption only.

@@ -3,7 +3,7 @@
 #include <atomic>
 #include <mutex>
 #include <system_error>
-#if L2ENCDEC_ENABLE_THREADS
+#if !defined(__EMSCRIPTEN__) || defined(__EMSCRIPTEN_PTHREADS__)
 #include <thread>
 #endif
 #include <tommath.h>
@@ -122,9 +122,9 @@ int transform_blocks(std::span<const unsigned char> input,
         }
     };
 
-#if L2ENCDEC_ENABLE_THREADS
+#if !defined(__EMSCRIPTEN__) || defined(__EMSCRIPTEN_PTHREADS__)
     const size_t hw = std::thread::hardware_concurrency();
-    const size_t num_threads = std::min({hw ? hw : NUM_THREADS, NUM_THREADS, total_blocks});
+    const size_t num_threads = std::min(hw ? hw : NUM_THREADS, total_blocks);
     {
         std::vector<std::jthread> threads;
         threads.reserve(num_threads - 1);

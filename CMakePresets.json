@@ -77,8 +77,16 @@
             "cacheVariables": {
                 "L2ENCDEC_BUILD_CLI": "OFF",
                 "L2ENCDEC_BUILD_TESTS": "OFF",
-                "L2ENCDEC_BUILD_TS_BINDINGS": "ON",
-                "L2ENCDEC_ENABLE_THREADS": "OFF"
+                "L2ENCDEC_BUILD_TS_BINDINGS": "ON"
+            }
+        },
+        {
+            "name": "emscripten-mt",
+            "inherits": "emscripten",
+            "displayName": "Emscripten (WASM, pthreads)",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-pthread",
+                "CMAKE_CXX_FLAGS": "-pthread"
             }
         }
     ],
@@ -117,6 +125,11 @@
             "name": "emscripten",
             "inherits": "base",
             "configurePreset": "emscripten"
+        },
+        {
+            "name": "emscripten-mt",
+            "inherits": "base",
+            "configurePreset": "emscripten-mt"
         }
     ],
     "testPresets": [

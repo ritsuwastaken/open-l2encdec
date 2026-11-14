@@ -1,8 +1,24 @@
-import createModule, { type Params } from "./l2encdec.js";
+import type { MainModule, Params } from "./l2encdec.js";
 
 export type { Params, Type, EncodeResult, DecodeResult, ChecksumResult } from "./l2encdec.js";
 export type ByteInput = Uint8Array | number[];
 export type L2EncDec = Awaited<ReturnType<typeof createL2EncDec>>;
+
+export interface Options {
+  threads?: boolean;
+}
+
+export function threadsSupported(): boolean {
+  return typeof SharedArrayBuffer !== "undefined"
+    && (globalThis as { crossOriginIsolated?: boolean }).crossOriginIsolated !== false;
+}
+
+async function loadModule(threads: boolean): Promise<MainModule> {
+  const { default: factory } = threads
+    ? await import("./l2encdec-mt.js")
+    : await import("./l2encdec.js");
+  return factory();
+}
 
 type NativeResult = { code: number; data?: Uint8Array };
 
@@ -33,9 +49,13 @@ function unwrap(result: NativeResult, name: string, messages: Record<number, str
   return result.data;
 }
 
-export async function createL2EncDec() {
-  const module = await createModule();
+export async function createL2EncDec(options: Options = {}) {
+  const threads = options.threads ?? threadsSupported();
+  if (threads && !threadsSupported())
+    throw new Error("SharedArrayBuffer support is required (crossOriginIsolated).");
+  const module = await loadModule(threads);
   return {
+    threads,
     Type: module.Type,
     EncodeResult: module.EncodeResult,
     DecodeResult: module.DecodeResult,
